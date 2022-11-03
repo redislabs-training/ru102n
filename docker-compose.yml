@@ -1,0 +1,8 @@
+version: "3.9"
+services:
+  redis:
+    container_name: redisu-ru102n
+    image: redis/redis-stack:latest
+    ports:
+      - "6379:6379"
+      - "8001:8001"
