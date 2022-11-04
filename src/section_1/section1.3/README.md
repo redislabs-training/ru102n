@@ -11,3 +11,7 @@ The `IDatabase` is the primary interactive command interface for Redis. Anything
 ```cs
 var db = muxer.GetDatabase();
 ```
+
+## IServer
+
+The `IServer` is similar to the `IDatabase` in that it is an interactive command interface for server scoped commands. Each instance of an `IServer` maps to an individual Redis server, this conceptually differs from what deem a 'Redis Instance' in that a Redis instance might be comprised of one or many Redis Servers. For example in a cluster with 3 shards, each shard is an instance of a Redis Server. Likewise a Sentinel instance with 2 replicas, the master and both replica's would be 

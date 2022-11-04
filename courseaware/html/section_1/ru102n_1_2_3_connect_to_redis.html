@@ -1,0 +1,37 @@
+<h1>Connect to Redis!</h1>
+<p>
+    Now that we've added StackExchange.Redis to the project, we can move into our first
+    Hands-On exercise, connecting to Redis!
+</p>
+
+<p>
+    There are two methods that you can use to connect to Redis <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.Connect</span>
+    and <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.ConnectAsync</span> either will work. You'll need the parameters
+    that you collected at setup:
+    <ul>
+        <li>hostname</li>
+        <li>port</li>
+        <li>password (if on Redis Cloud or otherwise password protected)</li>
+        <li>username (if not default)</li>
+    </ul>
+</p>
+
+<p>
+    You may use whichever overload you wish, the <span style="font-family: 'courier new', courier;">ConnectionOptions</span> class
+    is easier to organize for sure, but the connection string option is often easier for
+    simple connection.
+</p>
+
+<h2>Ping Redis</h2>
+
+<p>
+    After you've established a connection to Redis. Let's send our very first interactive
+    command to Redis! We'll start off by sending the simplest of Redis commands, Ping. First,
+    you'll need to get a handle to an <span style="font-family: 'courier new', courier;">IDatabase</span>, 
+    the <span style="font-family: 'courier new', courier;">IDatabase</span> is the main interactive
+    command interface for Redis Commands. You can grab it from the Multiplexer
+    by calling the <span style="font-family: 'courier new', courier;">GetDatabase</span> 
+    method on the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>.
+    With that done, all you need to do to ping Redis is call 
+    <span style="font-family: 'courier new', courier;">Ping</span>, print the results, and your done!
+</p>

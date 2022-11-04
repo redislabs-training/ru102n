@@ -1,0 +1,63 @@
+<p>
+    The most fundamental architectural feature StackExchange.Redis is Connection Multiplexing.
+    The library leans heavily on a class called the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>. This
+    class is responsible for arbitrating all connections to Redis, and routing all commands
+    you want to send through the library through a single connection.
+</p>
+
+<p>
+    That's right, a single connection. The <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> opens exactly
+    2 connections per Redis Server, one of which is the interactive command connection to Redis,
+    the other being the subscription connection for the pub/sub API which we'll explore later.
+</p>
+
+<p>
+    Like everything else in computing and software development, this approach has both benefits
+    and tradeoffs.
+</p>
+
+<h3>Benefits</h3>
+
+<p>
+    The ConnectionMultiplexer has proven to be extremely performant and robust. It's a powerhouse
+    for pushing commands through to Redis.
+</p>
+
+<ul>
+    <li>
+        The single connection multiplexer matches the cardinality of Redis Threads. 
+        There's only one command thread in Redis, so sending additional commands concurrently
+        doesn't help much as they will be waiting to be serviced by the command thread.
+    </li>
+    <li>
+        It minimizes the number of sockets your application needs to open and maintain and
+        wards off Socket Exhaustion.
+    </li>
+    <li>
+        The multiplexer will maximize usage of your sockets, and automatically pipeline commands
+        sent concurrently.
+    </li>
+</ul>
+
+<h3>Tradeoffs</h3>
+
+<p>
+    As with every other endeavour in software development, any architectural choice as profound
+    as the ConnectionMultiplexer has some tradeoff. We'll these in more detail throughout the
+    course, but here are they are at a top level.
+</p>
+
+<ul>
+    <li>
+        Head-of-line blockages can occur with large payloads blocking out other requests.
+    </li>
+    <li>
+        Blocking commands, e.g. blocking stream reads, the blocking list/sorted set commands
+        cannot be used. This is because blocking the interactive connection will block out
+        threads trying to use the connection concurrently.
+    </li>
+    <li>
+        Transactions work a bit differently, we'll talk about them later in the course, 
+        but they are a tad different.
+    </li>
+</ul>

@@ -1,0 +1,56 @@
+<p>
+    The client ecosystem for Redis is a disparate and vibrant. With the exception of the 
+    <a href="https://github.com/redis/hiredis">hiredis</a> client, the client ecosystem was
+    initially built out by the larger Redis community. There are different levels of abstraction
+    that Redis clients can provide to users. It's helpful if we try to group those together for
+    a conversation about Redis clients. Let's think of them in these groups:
+</p>
+
+<ul>
+    <li>
+        <b>Minimal Protocol Clients:</b> These clients basically handle connection, wrap the 
+        <a href="https://redis.io/docs/reference/protocol-spec/">RESP protocol</a>(the wire 
+        protocol for Redis) and little else. They're quite minimalist and intended to provide
+        maximum control to the user.
+    </li>
+    <li><b>General Command Level Clients:</b> The client's that directly expose the Redis command
+        interface and provide some parsing for the result structure's bubbling up from it.
+        These have a more or less 1:1 mapping between commands in Redis and Commands in the client.    
+    </li>
+    <li>
+        <b>Higher Level Abstract Clients:</b> These client's are intended more to provide a
+        friendly user interface to developers and provide some meaningful abstraction above the
+        Redis command interface and paradigms the users are used to.
+    </li>
+    <li>
+        <b>Framework Integrations:</b> These client's are written to interact directly with a
+        particular framework, often times they implement some very particular functionality in
+        the a way native to the framework.
+    </li>
+</ul>
+
+<p>
+    There are a plethora of clients of each of these breeds throughout the .NET community.
+    The one that's had the most consequential impact however is undoubtedly StackExchange.Redis.    
+</p>
+
+<p>
+    StackExchange.Redis was written by <a href="https://blog.marcgravell.com/">Marc Gravell</a>
+    in collaboration with <a href="https://nickcraver.com/">Nick Craver</a> as part of their
+    work at StackExchange. Marc had written an older client called <a href="https://www.nuget.org/packages/BookSleeve">BookSleeve</a>
+    which had some <a href="https://blog.marcgravell.com/2014/03/so-i-went-and-wrote-another-redis-client.html">fundamental issues</a> that he sought to address in StackExchange.Redis.
+</p>
+
+<p>
+    The library falls somewhere between the second and third tier clients, while also leaving
+    open a more or less minimalist ad-hoc API that we'll explore in later sections. It's
+    best described as that second-tier General Command Level Client of Redis. And has been
+    adapted by the community as such.
+</p>
+
+<p>
+    Consequentially the .NET Redis community has largely been shaped by this project. All of
+    the other third and fourth level libraries we'll be looking at later in this course has
+    this Library as a dependency. Consequentially it's important for us to dive into some of the
+    fundamentals of the library to see how it works, it's benefits, and some of it's limitations.
+</p>
