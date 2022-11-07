@@ -1,0 +1,85 @@
+<h1>Connect to Redis with TLS</h1>
+
+<p>
+    An important feature of Redis Cloud, Redis Enterprise, and more recently with 
+    Redis 6, is Transportation Layer Security (TLS). To learn more about how to use
+    use TLS with Redis, see <a href="https://university.redis.com/courses/ru330/">RU330: Redis Security</a>
+    or the TLS article on <a href="https://redis.io/docs/manual/security/encryption/">redis.io</a>
+</p>
+
+<h2>.NET Framework vs .NET Core</h2>
+
+<p>
+    When it comes to connecting to Redis with TLS it's important that we differentiate
+    between .NET Framework and .NET Core. Because of the difference in the 
+    <a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslstream">SSLStream</a>
+    API in Framework vs Core, Core is substantially more configurable.
+</p>
+
+<h3>Configuring TLS in .NET Framework</h3>
+
+<p>To configure TLS in the .NET Framework you have two options. You can either:</p>
+
+<ul>
+    <li>Set up the certificate selection and validation event handlers.</li>
+    <li>Set up certificate/password environment variables.</li>
+</ul>
+
+<h4>Event handlers</h4>
+<p>
+    There are two event handlers that you can use with the <code>ConfigurationOptions</code>
+    object to configure TLS. Neither of these can be used from a connection string
+    so you must use the <code>ConfigurationOptions</code> if you need to use them
+    
+</p>
+
+<p>
+    The first of these is the <code>ConfigurationOptions.CertificateSelection</code> event handler.
+    This event handler selects the certificate that you will use to authenticate
+    with the Redis Server.
+</p>
+
+<code>
+    configurationOptions.CertificateSelection += delegate 
+    {
+        var cert = new X509Certificate2(PATH_TO_CERT_FILE, "");
+        return cert;
+    };
+</code>
+
+<p>
+    The other event handler is used to check the validity of the Redis Server's
+    certificates the <code>ConfigurationOptions.CertificateValidation</code> handler.
+</p>
+
+<code>
+    configurationOptions.CertificateValidation += (sender, certificate, chain, errors) =>
+    {
+        var isValid = true;
+        // insert check certificate logic here
+        return isValid;
+    };
+</code>
+
+<h4>Environment Variables</h4>
+
+<p>
+    There are also two environment variables that the ConnectionMultiplexer will
+    check if there is no certificate selection delegate set. This is useful if
+    you are using a derivative library of StackExchange.Redis that does not provide
+    direct access to the ConnectionOptions object.
+</p>
+
+<ul>
+    <li><code>SERedis_ClientCertPfxPath</code>: provides the multiplexer the path to the certificate file.</li>
+    <li><code>SERedis_ClientCertPassword </code>: Is the password for the certificate file if applicable.</li>
+</ul>
+
+ <h3>Connecting in .NET Core</h3>
+
+ <p>
+    In .NET Core (3.1, 5, 6, 7+) <a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslclientauthenticationoptions">SslClientAuthenticationOptions</a>
+    as added as an optional way of configuring an SslStream. This provides a great
+    deal of extra flexibility when it comes to configuring TLS settings Redis.
+    For 
+ </p> 

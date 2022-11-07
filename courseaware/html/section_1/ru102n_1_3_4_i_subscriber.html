@@ -1,0 +1,25 @@
+<h1>ISubscriber</h1>
+
+<p>
+    The ISubscriber is the interface responsible for maintaining subscriptions
+    to Redis in the pub/sub interface. Unlike the other interfaces we've looked
+    at thus far, the subscriber does not leverage the interactive connection.
+</p>
+
+<p>
+    The Multiplexer explicitly opens a separate connection for subscriptions
+    because when you subscribe to any channel on a client in Redis, the client
+    connection converts to subscription mode. This limits the command set down
+    to only a few allowed commands around subscribing.
+</p>
+
+<p>
+    True to it's name however, the Multiplexer continues to maintain a single
+    connection per server, and all subscriptions are handled on that single
+    connection.
+</p>
+
+<p>
+    You you can get an instance of an ISubscriber by calling the
+    <code>IConnectionMultiplexer.GetSubscriber()</code> method
+</p>

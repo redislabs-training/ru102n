@@ -1,0 +1,20 @@
+<h1>ITransaction</h1>
+
+<p>
+    The ITransaction provides an interface for Redis <a href="https://redis.io/docs/manual/transactions/">Transactions</a>.
+    Transactions in Redis differ from transactions in other database, for a full
+    description of transactions check out the transaction section of
+    <a href="https://university.redis.com/courses/ru101/">RU101</a>.    
+</p>
+
+<p>
+    The ITransaction interface is fundamentally an async interface. It exposes 
+    a very similar command set to the IDatabase, but it will only expose async
+    versions of each command. That is because each command in ITransaction is
+    async, as they will not be competed until after Execute is called.
+</p>
+
+<p>
+    You can get an instance of an ITransaction by calling 
+    <code>IDatabase.GetTransaction()</code> on your <code>IDatabase</code> object.    
+</p>
