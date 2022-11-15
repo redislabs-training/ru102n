@@ -1,0 +1,135 @@
+<h1>Hands-On Pipelining</h1>
+
+<p>
+    As we just reviewed previously, pipelining can be absolutely crucial for increasing
+    throughput on your Redis instance. In this exercise, we are going to look at running
+    the same collection of tasks in three modes.
+</p>
+
+<ul>
+    <li>Serially and un-pipelined</li>
+    <li>Implicitly pipelined</li>
+    <li>Explicitly pipelined with <code>IBatch</code></li>
+</ul>
+
+<p>
+    The completed source is in the course's <a href="https://github.com/redislabs-training/ru102n">repository</a>
+    under <code>/src/section_1/section1.5/section1.5.csproj</code>. We'll be using the ping
+    command in this case, but this will extrapolate to any command, and any sequence of
+    commands where the intermediate results are not needed.
+</p>
+
+<h2>Preamble</h2>
+
+<p>
+    Before we run our examples, let's initialize a Multiplexer, get an instance of an <code>IDatabase</code>
+    and create and start a <code>StopWatch</code>:
+</p>
+
+<code>
+using System.Diagnostics;
+using StackExchange.Redis;
+
+var options = new ConfigurationOptions
+{
+    EndPoints = new EndPointCollection { "localhost:6379" }
+};
+
+var muxer = ConnectionMultiplexer.Connect(options);
+var db = muxer.GetDatabase();
+
+var stopwatch = Stopwatch.StartNew();
+</code>
+
+<h2>Un-Pipelined</h2>
+
+<p>
+    Sending a serial chain of commands that are not pipelined is pretty straight forward.
+    For the sake of consistency with the other examples, we'll use the async version of
+    the <code>Ping</code> Command. We'll just call and await the result 1000 times. This
+    will cause the Multiplexer to wait for the command to complete between runs, and prevent
+    it from pipelining the commands automatically. 
+</p>
+
+<code>
+// un-pipelined commands incur the added cost of an extra round trip
+for (var i = 0; i &lt; 1000; i++)
+{
+    await db.PingAsync();
+}
+
+Console.WriteLine($"1000 un-pipelined commands took: {stopwatch.ElapsedMilliseconds}ms to execute");
+</code>
+
+<h2>Implicitly Pipelined</h2>
+
+<p>
+    Now let's try using implicit pipelining, in this instance, we will not await each task
+    as it's dispatched. Rather we will collect all the tasks and await them all en masse 
+    at the end. Each Task is responsible for containing the results of the command after
+    the command completes:
+</p>
+
+<code>
+// If we run out async tasks to StackExchange.Redis concurrently, the library
+// will automatically manage pipelining of these commands to Redis, making
+// them significantly more performant as we remove most of the round trips to Redis.
+var pingTasks = new List<Task<TimeSpan>>();
+
+// restart stopwatch
+stopwatch.Restart();
+
+for (var i = 0; i &lt; 1000; i++)
+{
+    pingTasks.Add(db.PingAsync());
+}
+
+await Task.WhenAll(pingTasks);
+
+Console.WriteLine($"1000 automatically pipelined tasks took: {stopwatch.ElapsedMilliseconds}ms to execute, first result: {pingTasks[0].Result}");
+</code>
+
+<h2>Explicit Pipelining with IBatch</h2>
+
+<p>
+    Finally, let's explicitly pipeline all of our pings using an IBatch. An IBatch will
+    guarantee that the client sends the entire batch to redis in 1 shot, with no other
+    commands interleaved in the pipeline. This is slightly different behavior than our
+    implicit pipelining as in the case of implicit pipelining, where the commands would
+    be interleaved with any other commands the client was executing at the time.
+</p>
+
+<p>
+    To explicitly pipeline these commands we'll follow a similar pattern, in this case,
+    however, we will use the <code>IDatabase.CreateBatch()</code> method to create the
+    batch, and use the batch's async methods to 'dispatch' the the tasks. It's important
+    to note here that unlike in our implicit case, the tasks will not be truly dispatched
+    until after the <code>IBatch.Execute()</code> method is called, if you try awaiting
+    any of the tasks before then, you can accidentally deadlock your command. After calling
+    <code>Execute</code>, you can then await all of the tasks.
+
+</p>
+
+<code>
+// clear our ping tasks list.
+pingTasks.Clear();
+
+// Batches allow you to more intentionally group together the commands that you want to send to Redis.
+// If you employee a batch, all commands in the batch will be sent to Redis in one contiguous block, with no
+// other commands from the client interleaved. Of course, if there are other clients to Redis, commands from those
+// other clients may be interleaved with your batched commands.
+var batch = db.CreateBatch();
+
+// restart stopwatch
+stopwatch.Restart();
+
+for (var i = 0; i &lt; 1000; i++)
+{
+    pingTasks.Add(batch.PingAsync());
+}
+
+batch.Execute();
+await Task.WhenAll(pingTasks);
+Console.WriteLine($"1000 batched commands took: {stopwatch.ElapsedMilliseconds}ms to execute, first result: {pingTasks[0].Result}");
+</code>
+

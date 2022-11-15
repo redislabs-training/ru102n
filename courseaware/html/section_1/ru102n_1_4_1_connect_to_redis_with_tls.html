@@ -81,5 +81,21 @@
     In .NET Core (3.1, 5, 6, 7+) <a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslclientauthenticationoptions">SslClientAuthenticationOptions</a>
     as added as an optional way of configuring an SslStream. This provides a great
     deal of extra flexibility when it comes to configuring TLS settings Redis.
-    For 
- </p> 
+    Using the <code>SslClientAuthenticationOptions</code> delegate in <code>ConfigurationOptions</code>
+    you can configure:
+
+    <ul>
+        <li>Allowed SSL/TLS protocols</li>
+        <li>TLS/SSL Cipher Suites allowed in the cipher negotiation</li>
+        <li>Certificate selection delegate</li>
+        <li>Certificate validation delegate</li>
+    </ul>
+ </p>
+
+ <code>
+options.SslClientAuthenticationOptions = new Func<string, SslClientAuthenticationOptions>(
+hostName => new SslClientAuthenticationOptions
+{
+    EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
+});
+ </code>
