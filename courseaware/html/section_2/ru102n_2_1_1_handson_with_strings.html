@@ -1,0 +1,132 @@
+<h1>Hands-On with Strings</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to use Redis Strings from StackExchange.Redis.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/secion2.1/section2.1.csproj</code> in your IDE.
+</p>
+
+<h2>Simple Sets and Gets</h2>
+
+<p>
+    The simplest thing you can do with a string is set it and get it, to do this all you
+    need to do is use the <code>StringSet</code> and <code>StringGet</code> methods:
+</p>
+
+<code>
+    var instructorNameKey = new RedisKey("instructors:1:name");
+
+    db.StringSet(instructorNameKey, "Steve"); 
+    var instructor1Name = db.StringGet(instructorNameKey);
+
+    Console.WriteLine($"Instructor 1's name is: {instructor1Name}");
+</code>
+
+<p>
+    Now, if you want to append a string onto a string, you can use the StringAppend method:
+</p>
+
+<code>
+    db.StringAppend(instructorNameKey, " Lorello");
+    instructor1Name = db.StringGet(instructorNameKey);
+    Console.WriteLine($"Instructor 1's full name is: {instructor1Name}");
+</code>
+
+<h2>String Numerics</h2>
+
+<p>
+    There are alternative encodings of strings beyond a raw character string. If a string
+    is set to a numeric, you can use the <code>StringIncrement</code> methods on it.
+</p>
+
+<p>
+    There are two overloads of the StringIncrement method, if you pass in a long, it will
+    increment the key by a long value:
+</p>
+<code>
+    var tempKey = "temperature";
+    db.StringSet(tempKey, 42);
+    var tempAsLong = db.StringIncrement(tempKey, 5);
+    Console.WriteLine($"New temperature: {tempAsLong}");
+</code>
+
+<p>
+    You can use that same overload, leaving the increment empty, and it will default to using
+    an integer increment of 1.
+</p>
+
+<code>
+    tempAsLong = db.StringIncrement(tempKey);
+    Console.WriteLine($"New Temp: {tempAsLong}");
+</code>
+
+<p>
+    Now, if you need to increment by a floating point, you can pass in a double as the 
+    increment like so:
+</p>
+
+<code>
+    var tempAsDouble = db.StringIncrement(tempKey, .5);
+    Console.WriteLine($"New temperature: {tempAsDouble}");
+</code>
+
+<p>
+    Note that if you increment by a floating point, you will not be able to increment by 
+    an integer anymore, as you've changed the encoding of the string.
+</p>
+
+<h2>String Options</h2>
+
+<p>
+    There are a couple of important options to take note of when you are setting strings.    
+</p>
+
+<h3>Expiration</h3>
+
+<p>
+    You can set an expiration on a string when you set it by using the expiry option. The
+    expiry is a <code>TimeSpan</code>, there are a variety of ways you can create them. In
+    this instance we'll just create a super short lived key by using the <code>FromSeconds</code>
+    method to initialize a key that will live for 1 second.
+</p>
+
+<code>
+    db.StringSet("temporaryKey", "hello world", expiry: TimeSpan.FromSeconds(1));
+</code>
+
+<h3>Conditional Set</h3>
+
+<p>
+    You can also make your <code>StringSet</code> conditional using the when option.
+    The when option uses the <code>When</code> enum, and has three possible values.
+</p>
+
+<ul>
+    <li><b>Always</b>: This is the default, always set the key.</li>
+    <li><b>Exists</b>: Set only if the key exists</li>
+    <li><b>NotExists</b>: Set only if the key does not exist.</li>    
+</ul>
+
+<p>
+    Using them is as simple as passing in the when option
+</p>
+
+<code>
+    var conditionalKey = "ConditionalKey";
+    var conditionalKeyText = "this has been set";
+    // You can also specify a condition for when you want to set a key
+    // For example, if you only want to set a key when it does not exist
+    // you can by specifying the NotExists condition
+    var wasSet = db.StringSet(conditionalKey, conditionalKeyText, when: When.NotExists);
+    Console.WriteLine($"Key set: {wasSet}");
+
+    // Of course, after the key has been set, if you try to set the key again
+    // it will not work, and you will get false back from StringSet
+    wasSet = db.StringSet(conditionalKey, "this text doesn't matter since it won't be set", when:When.NotExists);
+    Console.WriteLine($"Key set: {wasSet}");
+
+    // You can also use When.Exists, to set the key only if the key already exists
+    wasSet = db.StringSet(conditionalKey, "we reset the key!");
+    Console.WriteLine($"Key set: {wasSet}");
+</code>
+
