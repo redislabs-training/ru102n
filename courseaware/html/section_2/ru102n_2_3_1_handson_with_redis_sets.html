@@ -1,0 +1,118 @@
+<h1>Hands-On with Redis Sets</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to use Redis Sets from StackExchange.Redis.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/secion2.3/section2.3.csproj</code> in your IDE.
+</p>
+
+<p>
+    In this example we'll be working with 5 sets of users.
+</p>
+
+<ul>
+    <li>ActiveUsers</li>
+    <li>InactiveUsers</li>
+    <li>OnlineUsers</li>
+    <li>OfflineUsers</li>
+    <li>AllUsers</li>
+</ul>
+
+<p>
+    Let's start out by clearing out the sets we'll be working with from Redis:
+</p>
+
+<code>
+    var allUsersSet = "users";
+    var activeUsersSet = "users:state:active";
+    var inactiveUsersSet = "users:state:inactive";
+    var offlineUsersSet = "users:state:offline";
+    db.KeyDelete(new RedisKey[]{allUsersSet, activeUsersSet,inactiveUsersSet, offlineUsersSet});
+</code>
+
+<h2>Populate Sub Sets</h2>
+
+<p>
+    Now let's go about populating our active, inactive, and offline user sets. To do this,
+    we'll use the <code>SetAdd</code>Method. This method is variadic so we can do it in one
+    command for each set.
+</p>
+
+<code>
+    db.SetAdd(activeUsersSet, new RedisValue[]{"User:1","User:2"});
+    db.SetAdd(inactiveUsersSet, new RedisValue[]{"User:3", "User:4"});
+    db.SetAdd(offlineUsersSet, new RedisValue[] {"User:5", "User:6", "User:7"});
+</code>
+
+<h2>Combining sets to get all users</h2>
+
+<p>
+    You'll notice that we did not populate our allUsers set. If we consider active, inactive, offline
+    to be an exhaustive list of states, we can use the set combination operations to get a
+    set with all of our users. We can even use <code>SetCombineAndStore</code> to store those
+    combined users in our all users key.
+</p>
+
+<code>
+    db.SetCombineAndStore(SetOperation.Union, allUsersSet, new RedisKey[]{activeUsersSet, inactiveUsersSet, offlineUsersSet});
+</code>
+
+<h2>Check Membership</h2>
+
+<p>
+    Sets do not allow duplication, but they allow very rapid O(1) membership checks. So if 
+    wanted to check to see if User:6 is offline we could do so very easily
+</p>
+
+<code>
+    var user6Offline = db.SetContains(offlineUsersSet, "User:6");
+    Console.WriteLine($"User:6 offline: {user6Offline}");
+</code>
+
+<h2>Enumerate Set</h2>
+
+<p>
+    When you want to enumerate the members of a set, you have two options, you can enumerate
+    them all in one shot, or you can scan over the set and enumerate everything. We'll go
+    over how to do each of those here.
+</p>
+
+<h3>Enumerate Entire Set</h3>
+
+<p>
+    If you want to guarantee that you are enumerating the entire set in one round trip, 
+    you can do so by using the <code>SetMembers</code> method. This will uses <code>SMEMBERS</code> 
+    command in Redis. If your set is relatively compact (under 1000 members), this is a
+    perfectly valid way to pull back all of your set members.
+</p>
+
+<code>
+    Console.WriteLine($"All Users In one shot: {string.Join(", ", db.SetMembers(allUsersSet))}");
+</code>
+
+<h3>Enumerate Set in Chunks</h3>
+
+<p>
+    The alternate way to enumerate a set is to enumerate it <code>SetScan</code>, which will
+    create a Set Enumerator, and use the <code>SSCAN</code> to scan over the entire set until
+    the set is exhausted.
+</p>
+
+<code>
+    Console.WriteLine($"All Users with scan  : {string.Join(", ", db.SetScan(allUsersSet))}");
+</code>
+
+<h2>Move Elements Between Sets</h2>
+
+<p>
+    A very typical operation you might need to perform with sets is to move elements between
+    them. For example if <code>User:1</code> were to move offline, you can use <code>SetMove</code>
+    to move them from the active user set to the offline user set.
+</p>
+
+<code>
+    Console.WriteLine("Moving User:1 from active to offline");
+    var moved = db.SetMove(activeUsersSet, offlineUsersSet, "User:1");
+    Console.WriteLine($"Move Successful: {moved}");
+</code>
+
