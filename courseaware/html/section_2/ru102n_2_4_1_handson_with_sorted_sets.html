@@ -1,0 +1,219 @@
+<h1>Hands-On with Redis Sorted Sets in .NET</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to use Redis Sorted Sets from StackExchange.Redis.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/secion2.4/section2.4.csproj</code> in your IDE.
+</p>
+
+<p>
+    To illustrate the usage of Sorted Sets, we'll be using five sets. Four of them will be
+    connected under the same domain, <i>users:age</i>, <i>users:lastAccess</i>, <i>users:highScores</i>, <i>users:mostRecentlyActive</i>,
+    and we'll have one set <i>names</i> to demonstrate lexicographic ordering. First let's start
+    by purging all these sets, that way we can run this repeatedly without any other preamble.
+</p>
+
+<code>
+    var userAgeSet = "users:age";
+    var userLastAccessSet = "users:lastAccess";
+    var userHighScoreSet = "users:highScores";
+    var namesSet = "names";
+    var mostRecentlyActive = "users:mostRecentlyActive";
+
+    db.KeyDelete(new RedisKey[]{userAgeSet, userLastAccessSet, userHighScoreSet, namesSet, mostRecentlyActive});
+</code>
+
+<h2>Populate Sets</h2>
+
+<p>
+    Now that we've cleared everything out, we can populate the sets. We'll add six members
+    to each set. To add an item to a set you will add a <code>SortedSetEntry</code>, which
+    is a member name and score. Because these commands are variadic, we will be passing in
+    arrays of <code>SortedSetEntry</code>.For our purposes, we will set users with Id 1-6, for our users
+    sets, and then for our names set, we will add an arbitrary set of names. For our user sets
+    we'll provide scores that are relevant for the key, and importantly for the names set.
+    Which we intend to sort lexicographically, we will provide a score of 0.
+</p>
+
+<code>
+    db.SortedSetAdd(userAgeSet,
+        new SortedSetEntry[]
+        {
+            new("User:1", 20),
+            new("User:2", 23),
+            new("User:3", 18),
+            new("User:4", 35),
+            new("User:5", 55),
+            new("User:6", 62)
+        });
+        
+    db.SortedSetAdd(userLastAccessSet,
+        new SortedSetEntry[]
+        {
+            new("User:1", 1648483867),
+            new("User:2", 1658074397),
+            new("User:3", 1659132660),
+            new("User:4", 1652082765),
+            new("User:5", 1658087415),
+            new("User:6", 1656530099)
+        });
+        
+    db.SortedSetAdd(userHighScoreSet,
+        new SortedSetEntry[]
+        {
+            new("User:1", 10),
+            new("User:2", 55),
+            new("User:3", 36),
+            new("User:4", 25),
+            new("User:5", 21),
+            new("User:6", 44)
+        });
+        
+    db.SortedSetAdd(namesSet,
+        new SortedSetEntry[]
+        {
+            new("John", 0),
+            new("Fred", 0),
+            new("Bob", 0),
+            new("Susan", 0),
+            new("Alice", 0),
+            new("Tom", 0)
+        });
+</code>
+
+<h2>Check Score</h2>
+
+<p>
+    To check a score of a member, simply use <code>SortedSetScore</code> passing in the key name
+    and the user id.
+</p>
+
+<code>
+    var user3HighScore = db.SortedSetScore(userHighScoreSet, "User:3");
+    Console.WriteLine($"User:3 High Score: {user3HighScore}");  
+</code>
+
+<h2>Check Rank</h2>
+
+<p>
+    To check a users rank, you can use the <code>SortedSetRank</code> method, with this method you can pass in the key, the User Id, and a 
+    direction that you want the sorting to be done in. In this case, when we say "Rank" we mean we want the high score coming up first. Hence
+    we'll use the <Code>Descending</Code> direction.
+</p>
+
+<code>
+    var user2Rank = db.SortedSetRank(userHighScoreSet, "User:2", Order.Descending);
+    Console.WriteLine($"User:2 Rank: {user2Rank}");
+</code>
+
+<h2>Range Queries</h2>
+
+<p>
+    Probably the most popular way to query members from a stream is by using the "Range" methods. There are three ways that you can run ranges
+    on a sorted set.
+</p>
+
+<ul>
+    <li>By Rank</li>
+    <li>By Score</li>
+    <li>By Lex</li>
+</ul>
+
+<p>
+    There are also several other options that you can add to these queries to change the directions of these ranges, to determine whether you
+    will get the scores along with the members, and finally to decide whether you want to store the output of the range, rather than pulling
+    the members back in one shot.
+</p>
+
+<h3>Range By Rank</h3>
+
+<p>
+    Ranging over a sorted set by rank is the default method for ranges with sorted set. In the case of a range by rank, there are only three things
+    you need to know:
+</p>
+
+<ul>
+    <li><b>1.</b>What rank do you want to start at?</li>
+    <li><b>2.</b>What rank do you want to stop at?</li>
+    <li><b>3.</b>What direction do you want the set to be sorted in?</li>
+</ul>
+
+<p>
+   With this information it's straight forward to start ranging over your sorted sets by rank, just use the <code>SortedSetRange</code> command
+   passing in the relevant arguments. Let's try printing out the three highest scorers. To do this, we'll just go from index zero to two, and
+   order the sorted set descending:
+</p>
+
+<code>
+    var topThreeScores = db.SortedSetRangeByRank(userHighScoreSet, 0, 2, Order.Descending);
+    Console.WriteLine($"Top three: {string.Join(", ", topThreeScores)}");
+</code>
+
+<h2>Range By Score</h2>
+
+<p>
+    Ranging a Sorted Set by Score is also pretty straight forward. There are two differences major differences:
+</p>
+
+<ul>
+    <li>You are using the member's score rather than their rank within the set</li>
+    <li>You have to decide whether you want the scores you are using to be inclusive or exclusive</li>
+</ul>
+
+<p>
+    With that decided, you can use the <code>SortedSetRangeByScore</code> method to range over your sorted set. Let's find all the users between
+    18 and 30 inclusively with their ages, since we want to pull back the ages as well, we will use the <code>SortedSetRangeByScoreWithScores</code> method.
+</p>
+
+<code>
+    var eighteenToThirty = db.SortedSetRangeByScoreWithScores(userAgeSet, 18, 30, Exclude.None);
+    Console.WriteLine($"Users between 18 and 30: {string.Join(", ", eighteenToThirty)}");
+</code>
+
+<h2>Lexicographic Ranges</h2>
+
+<p>
+    When all the scores within a sorted set are set to the same score, traditionally 0, there is a lexicographic ordering mechanic available.
+    If you wanted to alphabetize all of the names in our names sorted set, all you would have to do is use the <code>SortedSetRangeByValue</code> 
+    method:
+</p>
+
+<code>
+    var namesAlphabetized = db.SortedSetRangeByValue(namesSet);
+    Console.WriteLine($"Names Alphabetized: {string.Join(",",namesAlphabetized)}");
+</code>
+
+<p>
+    If you wanted to find a proper alphabetic range, for example, all the names that start with between an "A" and "J", you can do that as well,
+    these comparisons will be based off ASCII encoding and will be based off what memcmp returns. The Sorted Sets section of RU101 has a rich,
+    detailed view as to how this works exactly. But for our purposes here, if we want to find all the names that start with between "A" and "J",
+    we'd actually want to end with an exclusive "K" at the end like so:
+</p>
+
+<code>
+    var namesBetweenAandJ = db.SortedSetRangeByValue(namesSet, "A", "K", Exclude.Stop);
+    Console.WriteLine($"Names between A and J: {string.Join(", ", namesBetweenAandJ)}");
+</code>
+
+<h2>Combining Sorted Sets</h2>
+
+<p>
+    We can also combine sorted sets together to help us answer more interesting questions. Say for example we wanted to find the three most
+    recently active players, and then determine the rank order of those three by high score. Well, we have an unpopulated as of yet sorted set
+    <i>users:mostRecentlyActive</i> that we can populate using the SortedSetRangeAndStore method:
+</p>
+
+<code>
+    db.SortedSetRangeAndStore(userLastAccessSet,mostRecentlyActive,  0, 2, order: Order.Descending);
+</code>
+
+<p>
+    With that done, we can use the intersection sorted set operation to find the intersection between the most recently active players, and the
+    player scores set. We can then weight the high score to 1, and the last access time to 0, producing only the high score. This will return
+    the players and their scores in ascending order, but we can reverse this easily with a call to Reverse at the end.
+</p>
+
+<code>
+    var rankOrderMostRecentlyActive = db.SortedSetCombineWithScores(SetOperation.Intersect, new RedisKey[]{userHighScoreSet, mostRecentlyActive}, new double[]{1,0}).Reverse();
+    Console.WriteLine($"Highest Scores Most Recently Active: {string.Join(", ", rankOrderMostRecentlyActive)}");
+</code>
