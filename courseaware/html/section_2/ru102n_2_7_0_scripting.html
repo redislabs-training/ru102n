@@ -1,0 +1,25 @@
+<h1>Scripting in StackExchange.Redis</h1>
+
+<p>
+    StackExchange.Redis exposes the Redis <a href="https://redis.io/docs/manual/programmability/eval-intro/">Lua Scripting</a> API. This allows
+    you to run multiple commands in sequence, and use the intermediate results of those commands within the context of the script. Since
+    Redis is single threaded, and each command within redis executes atomically, we can leverage Redis Scripts to handle some thorny problems
+    where we might need to use the result of one command in another command.
+</p>
+
+<p>
+    Getting fully into the weeds of Lua Scripting is outside the scope of this course. There's a good exhibition on it in 
+    <a href="https://university.redis.com/courses/ru101/">RU101 Introduction to Redis Data Structures</a> if you want to learn more. But for
+    the purposes of this course. We'll simply be discussing how to work with the Lua Scripts in the context of StackExchange.Redis.
+</p>
+
+<h2>Prepared Scripts</h2>
+
+<p>
+    Prepared scripts are the preferred way to interact with scripting in StackExchange.Redis. Prepared scripts tend to be more readable than
+    their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the ARGV array to pass in
+    arguments. Prepared scripts are also registered with the library's internal script cache. Which tracks which scripts have been registered
+    with which servers, handles automatic retry's of scripts after a server's script cache has been cleared. In other words, the prepared
+    script API removes a lot of the complexity from using lua scripts in Redis. In this section we'll briefly go over how to Prepare, run,
+    and use the results from a script.
+</p>

@@ -1,0 +1,44 @@
+<h1>Hands-On with Redis Scripts</h1>
+
+<p>
+    In this Hands-On, we'll be exploring how to use Prepared Lua Scripts from StackExchange.Redis.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/section2.7/section2.7.csproj</code> in your IDE.
+</p>
+
+<h2>Preparing Scripts</h2>
+
+<p>
+    Prepared Scripts allow you to parameterize your scripts in a way that just isn't possible with traditional lua scripts. In a prepared
+    lua script, you can use the <b>@</b> symbol to denote an identifier that will be substituted when the script is called. You can then
+    pass in objects with your named parameters. StackExchange.Redis will then differentiate what goes in through the <i>KEYS</i> array versus
+    the <i>ARGV</i> array based on the type provided for the parameter. All <i>RedisKey</i> values will be treated as keys, and thus used
+    to determine which shard to execute the script against. Let's take a look at a simple script that will auto-increment an id based off 
+    of an id key that's stored in Redis, and use that Id to create the key for the value that we're inserting.
+</p>
+
+<code>
+    var scriptText = @"
+        local id = redis.call('incr', @id_key)
+        local key = 'key:' .. id
+        redis.call('set', key, @value)
+        return key
+    ";
+
+    var script = LuaScript.Prepare(scriptText);
+
+    var key1 = db.ScriptEvaluate(script, new {id_key=(RedisKey)"autoIncrement", value="A String Value"});
+    var key2 = db.ScriptEvaluate(script, new {id_key=(RedisKey)"autoIncrement", value="Another String Value"});
+
+    Console.WriteLine($"Key 1: {key1}");
+    Console.WriteLine($"Key 2: {key2}");
+
+</code>
+
+<p>
+    Notice how in the anonymous constructor we're using to create the parameters <code>id_key</code> is being cast to a <code>RedisKey</code>.
+    This will make that key go through the <i>KEYS</i> array, and it will use that key when determining which shard to execute against. Keep in 
+    mind that in the context of this script we are dynamically creating a key in the script. In a clustered environment, you would want to make
+    sure that you are using hashtags to ensure that the key belongs on the shard that the script is being run on, the script has been simplified
+    for demonstration purposes. If you'd like to learn more about sharding and hashtags check out <a href="https://university.redis.com/courses/ru301/">RU301: Running Redis at Scale</a>.
+</p>
