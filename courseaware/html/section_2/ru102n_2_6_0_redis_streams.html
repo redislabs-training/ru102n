@@ -1,0 +1,25 @@
+<h1>Redis Streams</h1>
+
+<p>
+    Redis Streams are an append-only log like data structure that allows you to enqueue messages from producers to be consumed by consumers in
+    your application. They are powerful data structure with a rich feature set, and for a full explanation as to how and why to use Redis Streams,
+    you can checkout <a href="https://university.redis.com/courses/ru202/">RU202: Redis Streams.</a>
+</p>
+
+<p>
+    In this section, we'll explore using Redis Streams in .NET using the StackExchange.Redis library. We'll learn how to:
+</p>
+
+<ul>
+    <li>Add Messages to a Stream</li>
+    <li>Read Messages from a Stream</li>
+    <li>Read Messages from a Stream in a Consumer Group</li>    
+</ul>
+
+<h2>Stream Limitations in StackExchange.Redis</h2>
+
+<p>
+    Do to the multiplexed nature of StackExchange.Redis, it's important to note at the top that there is no mechanism for using the blocking
+    paradigms available within the stream reading operations. This means that the Stream Read operations, StreamRead & StreamReadGroup, will
+    not be able to use the XREAD and XREADGROUP block timer or the special <i>$</i> id to read only new messages. 
+</p>

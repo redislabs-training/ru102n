@@ -1,0 +1,10 @@
+<h1>Connect to Redis Cluster</h1>
+
+<p>
+    Of the "advanced" Redis Connections cluster is probably the easiest to 
+    understand. Connecting to an OSS Cluster instance is the same as connecting
+    to a standalone Redis Instance. The only exception is that when you are
+    listing endpoints, you'll want to use more than one. This is so that if
+    the endpoint you are trying to reach has failed over, the Multiplexer
+    still has a chance to connect to the other master instances.
+</p>

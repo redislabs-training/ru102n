@@ -1,0 +1,111 @@
+<h1>Hands on with Redis Hashes</h1>
+
+<p>
+    In this Hands-On, we'll be exploring how to use Redis Hashes from StackExchange.Redis.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/section2.5/section2.5.csproj</code> in your IDE.
+</p>
+
+<h2>Collect and Clean out Keys</h2>
+
+<p>
+    In this example we'll be working with some pretty simple flat objects which we'll use hashes to organize. We'll be using three person
+    hashes stored at the keys.
+</p>
+
+<ul>
+    <li>person:1</li>
+    <li>person:2</li>
+    <li>person:3</li>
+</ul>
+
+<p>
+    Before we get started with our example, we want to make sure that we remove these hashes so there isn't anything stale in Redis. Let's
+    create keys for each of them and delete them.
+</p>
+
+<code>
+    var person1 = "person:1";
+    var person2 = "person:2";
+    var person3 = "person:3";
+
+    db.KeyDelete(new RedisKey[]{person1, person2, person3});
+</code>
+
+<h2>Create the Hashes</h2>
+
+<p>
+    Next, we'll want to create our three hashes, to create a hash, use the <code>HashSet</code> method, passing in an array of 
+    <code>HashEntry</code> structs, which are simple key-value pairs.
+</p>
+
+<code>
+    db.HashSet(person1, new HashEntry[]
+    {
+        new("name","Alice"),
+        new("age", 33),
+        new("email","alice@example.com")
+    });
+
+    db.HashSet(person2, new HashEntry[]
+    {
+        new("name","Bob"),
+        new("age", 27),
+        new("email","robert@example.com")
+    });
+
+    db.HashSet(person3, new HashEntry[]
+    {
+        new("name","Charlie"),
+        new("age", 50),
+        new("email","chuck@example.com")
+    });
+</code>
+
+<h2>Increment a Field in a Hash</h2>
+
+<p>
+    Much like Redis Strings, you can increment fields in hashes. To Do this, use the <code>HashIncrement</code> method, passing in the incrementor
+    you want to use. If you pass nothing in, it will increment by 1.
+</p>
+
+<code>
+    var newAge = db.HashIncrement(person3, "age");
+    Console.WriteLine($"person:3 new age: {newAge}");
+</code>
+
+
+<h2>Retrieve a Field from Hash</h2>
+
+<p>
+    Retrieving a field from a hash is simple. All you need to do is use the <code>HashGet</code> method, passing in the key and 
+    field you want to get.
+</p>
+
+<code>
+    var person1Name = db.HashGet(person1, "name");
+    Console.WriteLine($"person:1 name: {person1Name}");
+</code>
+
+<h2>Get All Fields From a Hash</h2>
+
+<p>
+    There are two ways to retrieve all the fields from a hash. Which one is appropriate to use is dependent on how large your hash is.
+    If your hash is relatively small, in Redis Terms this means less than 1000 fields. You can use <code>HashGetAll</code>. If you are working
+    with a very large hash with many thousands of fields, you may want to use HashScan instead. HashScan, allows you to paginate over your hash.
+    This will decrease the amount of time that Redis is busy servicing any one request, but will require multiple round trips to Redis.    
+</p>
+
+<h3>HashGetAll</h3>
+
+<code>
+    var person2Fields = db.HashGetAll(person2);
+    Console.WriteLine($"person:2 fields: {string.Join(", ", person2Fields)}");
+</code>
+
+<h3>HashScan</h3>
+
+<code>
+    var person3Fields = db.HashScan(person3);
+    Console.WriteLine($"person:3 fields: {string.Join(", ", person3Fields)}");
+</code>
