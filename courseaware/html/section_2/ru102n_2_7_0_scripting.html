@@ -17,9 +17,9 @@
 
 <p>
     Prepared scripts are the preferred way to interact with scripting in StackExchange.Redis. Prepared scripts tend to be more readable than
-    their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the ARGV array to pass in
-    arguments. Prepared scripts are also registered with the library's internal script cache. Which tracks which scripts have been registered
-    with which servers, handles automatic retry's of scripts after a server's script cache has been cleared. In other words, the prepared
-    script API removes a lot of the complexity from using lua scripts in Redis. In this section we'll briefly go over how to Prepare, run,
-    and use the results from a script.
+    their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the <i>ARGV</i> and <i>KEYS</i> 
+    arrays to pass in arguments and keys to the script. Prepared scripts are also registered with the library's internal script cache. Which 
+    tracks which scripts have been registered with which servers, handles automatic retry's of scripts after a server's script cache has 
+    been cleared. In other words, the prepared script API removes a lot of the complexity from using lua scripts in Redis. In this section 
+    we'll briefly go over how to Prepare, run, and use the results from a script.
 </p>

@@ -1,0 +1,14 @@
+<h1>Caching in ASP.NET Core</h1>
+
+<p>
+    Using Redis as a Cache in ASP.NET Core is as simple as using the Distributed Cache API that's available for any manor of cache that you
+    might use in ASP.NET Core. The only change that occurs when you add Redis to your Cache's in ASP.NET Core is that ASP.NET core will
+    use Redis as it's cache provider. The remainder of the operations are abstracted away from us so we don't have to think about it. That
+    means that fundamentally, the feature set provided by the Redis Cache Provider is limited to the <code>IDistributedCache</code> API.
+</p>
+
+<p>
+    In this section we'll be encountering our Employee Aggregation System for the first time, where we'll use a simple model, and running some
+    aggregations against a SQLite database with Entity Framework to see how one might use a caching framework to remove the need to repeat
+    major computation.
+</p>

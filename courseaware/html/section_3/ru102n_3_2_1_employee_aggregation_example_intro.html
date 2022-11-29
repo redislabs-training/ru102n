@@ -1,0 +1,31 @@
+<h1>Introducing our Employee Example</h1>
+   
+<p>
+    For our employee aggregations example, we'll keep it simple, we'll have two components of our model, Employees and Sales. They'll
+    look like this:
+</p>
+
+<code>    
+    public class Employee
+    {
+        public int EmployeeId { get; set; }
+        public string Name { get; set; }
+        public List&lt;Sale&gt; Sales { get; } = new();
+    }
+
+    public class Sale
+    {
+        public int SaleId { get; set; }
+        public int Total { get; set; }
+
+        public int EmployeeId { get; set; }
+        public Employee Employee { get; set; }
+    }
+</code>
+
+<p>
+    We'll use Entity Framework and a local SQLite database for our example. If you are using a remote Redis Database, keep in mind that you'll
+    incur some latency over the network when going to Redis vs going to our SQLite database, so if you want to truly compare apples to apples
+    you can either run Redis locally (see setup instruction), or you can use a remote SQL Database by updating the adapter we're using in our
+    example.
+</p>

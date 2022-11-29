@@ -1,0 +1,247 @@
+<h1>Hands On with Caching in ASP.NET Core</h1>
+
+<p>
+    In this Hands-On, we'll be exploring how to use Caching in ASP.NET Core.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_3/section3.2/section3.2.csproj</code> in your IDE.
+</p>
+
+<p>
+    Much of the sinew for this is already built, even if you are starting from the start point, we have a
+    SalesContext that contains our model, as well as the EntityFramework bits to migrate the database correctly.
+    All you need to do to migrate the database to where we need it for this example, is to from the
+    <code>/src/section_3/section3.2</code> directory run the following commands
+</p>
+
+<code>
+    dotnet tool install --global dotnet-ef
+    dotnet ef database update
+</code>
+
+<p>
+    The first of these commands will install the dotnet-ef tool for the CLI, the second will create and migrate
+    the Database for you.
+</p>
+
+<h2>Add Redis to Your Services</h2>
+
+<p>
+    After we've migrated the database, we'll need to make sure that we are adding Redis as a caching layer for
+    our app. To do this, you'll just need to open <i>Program.cs</i>, and find the comment <i>// add Redis here</i>
+    below that you'll just have the builder add the StackExchange Redis Cache, passing in a function to configure
+    StackExchange.Redis.
+</p>
+
+<code>
+    builder.Services.AddStackExchangeRedisCache(x => x.ConfigurationOptions = new ConfigurationOptions
+    {
+        EndPoints = { "localhost:6379" },
+        Password = ""
+    });
+</code>
+
+<p>
+    adjust the cache settings to your endpoint/password.
+</p>
+
+<h2>Clear Cache in Init Service</h2>
+
+<p>
+    When the application restarts, we want to reset the items that we are going to cache, as part of this,
+    we'll need to open the <i>InitService.cs</i>, a hosted service that runs at startup to clean up and re-seed
+    the database, we'll need to add some logic to have it clean up the cache as well. We have a scope factory
+    already DI'd into this service, so we can pull out the <code>IDistributedCache</code> fairly easily. Then
+    it's a matter of clearing out the relevant records for our app. Add The following code immediately below the
+    <code>// add cache invalidation logic here</code> comment in <i>InitService.cs</i>
+</p>
+
+<code>
+    var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
+
+    var cachePipe = new List<Task>
+    {
+        cache.RemoveAsync("top:sales", cancellationToken),
+        cache.RemoveAsync("top:name", cancellationToken),
+        cache.RemoveAsync("totalSales", cancellationToken)
+    };
+    cachePipe.AddRange(salesDb.Employees.Select(employee => cache.RemoveAsync($"employee:{employee.EmployeeId}:avg", cancellationToken)));
+
+    await Task.WhenAll(cachePipe);
+</code>
+
+<h2>Dependency Inject IDistributedCache</h2>
+
+<p>
+    With the cache added to our DI container, we will need to inject it into our controller. Open up
+    <i>Controllers/EmployeeController.cs</i> in there, add the <code>IDistributedCache</code> as a readonly field
+</p>
+
+
+<code>
+    private readonly IDistributedCache _cache;
+</code>
+
+<p>
+    Then, modify the <code>EmployeeController</code> constructor to accepted an IDistributedCache, when you're
+    done, it should look like this:
+</p>
+
+<code>
+    public EmployeeController(SalesContext salesDb, IDistributedCache cache)
+    {
+        _cache = cache;
+        _salesDb = salesDb;
+    }
+</code>
+
+<h2>Employee Aggregations</h2>
+
+<p>
+    As we discussed earlier, when the application boots it will randomly seed the database with thousands of records.
+    We have some API calls here that will do some aggregating on our employee's sales figures. There's three different
+    aggregation's well be performing.
+</p>
+
+<ul>
+    <li>The Top Salesperson and their sales</li>
+    <li>A given sales person's average sales</li>
+    <li>The Total Sales of all the salespeople</li>
+</ul>
+
+<p>
+    None of these, with the relatively small amount of data we're working with (~50,000 records), are particularly
+    long running operations - probably on the order of 50-150 ms. However, keep in mind that if we need access to
+    these types of values repeatedly, we're going to be performing a lot of extra work, and of course, if we're 
+    doing anything that involves a UI, even this relatively small latency is pretty rough. That's where Redis comes
+    in, we're going to be storing these records in our Redis Cache using the <code>IDistributedCache</code> abstraction.
+</p>
+
+<h3>Caching Top Salesperson</h3>
+
+<p>
+    Our first task here will be caching the top sales-person. This is a relatively straight forward LINQ query to
+    go to SQLite, compute the top sales-person and their sales, and to get the information for our application,
+    you can see it already in the <code>GetTopSalesperson</code> method.
+</p>
+
+<code>
+    var topSalesperson = await _salesDb.Employees.Select(x=>new {Employee = x, sumSales = x.Sales
+        .Sum(x=>x.Total)}).OrderByDescending(x=>x.sumSales)
+        .FirstAsync();
+</code>
+
+<p>
+    Now, realistically, this will take time to compute - somewhere on the order of 50-150 ms for our smallish sample
+    here. If we are going to run this operation repeatedly, it'd behove us to do something with this data so that 
+    we don't have to go back to our SQL database each time and recompute it. So, we'll cache it using our
+    <code>IDistributedCache</code>.
+</p>
+
+<p>
+    Find the place marked <i>// add cache insert here</i>, and add the following code to it.
+</p>
+
+<code>
+    // add cache insert here
+    var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
+    var topSalesInsertTask = _cache.SetStringAsync("top:sales", topSalesperson.sumSales.ToString(), cacheOptions);
+    var topNameInsertTask = _cache.SetStringAsync("top:name", topSalesperson.Employee.Name, cacheOptions);
+    await Task.WhenAll(topSalesInsertTask, topNameInsertTask);
+</code>
+
+<p>
+    This will add the total sales of the top seller and the their name to the cache, and it will invalidate that
+    after 5 minutes. With that done, we need to add some logic up front to check the cache to see if those keys
+    exist, if they do, then we can short circuit the rest of this process, and 
+</p>
+
+<h2>Cache Individual Average Sale</h2>
+
+<p>
+    Next, we'll look at calculating the average sale of a given individual salesperson. To do that we'll have
+    and endpoint that takes an Id, which we'll use to run a simple average on their sales like so:
+</p>
+
+<code>
+    var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x=>x.EmployeeId == id).Select(x=>x.Sales.Average(y=>y.Total)).FirstAsync();
+</code>
+
+<p>
+    Again, we'll want to cache this by setting a key in redis, find the spot marked <i>// add caching logic here</i>
+    and add:
+</p>
+
+<code>
+    var key = $"employee:{id}:avg";
+</code>
+
+<p>
+    To create the key that we'll use. Then, underneath the mark <i>// add cache set here</i>, add the following
+    to set that key to the computed average. In this case, we'll set it to have a 30 minute sliding expiration,
+    what that means is that the key will persist unless it is not touched for 30 minutes.
+</p>
+
+<code>
+    await _cache.SetStringAsync(key, avg.ToString(CultureInfo.InvariantCulture), options: new DistributedCacheEntryOptions{SlidingExpiration = TimeSpan.FromMinutes(30)});
+</code>
+
+<p>
+    With the cache setting logic complete, the only thing that's left to do is to check to see if the key already
+    exists, underneath where we created our key, add the check:
+</p>
+
+
+<code>
+    var cacheResult = await _cache.GetStringAsync(key);
+
+        if (cacheResult != null)
+        {
+            stopwatch.Stop();
+            return new Dictionary<string, double>
+            {
+                { "average", double.Parse(cacheResult) },
+                { "elapsed", stopwatch.ElapsedMilliseconds }
+            };
+        }
+</code>
+
+<h2>Cache Total Sales</h2>
+
+<p>
+    Finally, we'll want to cache the total sales that the whole organization created, this is probably the simplest
+    of the calculations we're performing as there's no logic beyond summing up all the sales. However this is still
+    a linear complexity process, so it'd still behoove us to cache it. So, let's start out by adding our cache 
+    checking logic, find the section marked <i>// add caching logic here</i> and add the following:    
+</p>
+
+<code>
+    var cacheResult = await _cache.GetStringAsync("totalSales");
+    if (cacheResult != null)
+    {
+        stopwatch.Stop();
+        return new Dictionary<string, long>()
+        {
+            { "Total Sales", long.Parse(cacheResult) },
+            { "elapsed", stopwatch.ElapsedMilliseconds }
+        };
+    }
+</code>
+
+<p>
+    This might be a metric that you run every day, so let's have it expire at midnight tomorrow morning, below
+    mark <i>// add cache set here</i>, add the following:
+</p>
+
+<code>
+    await _cache.SetStringAsync("totalSales", totalSales.ToString(CultureInfo.InvariantCulture), new DistributedCacheEntryOptions(){AbsoluteExpiration = DateTime.Today.AddDays(1)});
+</code>
+
+<h2>Run the App</h2>
+
+<p>
+    All That's left to do now is run the app, to do this, all you need to do that is run <code>dotnet run</code>
+    from the console in the same project as the <i>>.csproj</i> file. Then you can navigate to 
+    <a href="http://localhost:5053/swagger/index.html">http://localhost:5053/swagger/index.html</a> in your browser
+    and you can play with the API. You'll notice that each of these methods is pretty snappy regardless, but after
+    the first try for each, you'll see a latency drop down to about a millisecond on each call (if you are running Redis locally). 
+</p>
