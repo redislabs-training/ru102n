@@ -1,0 +1,11 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Redis Distributed Session State ASP.NET Core Basic Demo</h1>
+</div>
+
+<div>
+    <p style="font-size: 24px">Our Session tells us that the meaning of life is: @Context.Session.GetString("meaning of life")</p>
+</div>
