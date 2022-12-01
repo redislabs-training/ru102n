@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Section3._3
+namespace section3._3
 {
     public class RouteConfig
     {
