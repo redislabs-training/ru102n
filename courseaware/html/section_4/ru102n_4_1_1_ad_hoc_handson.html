@@ -1,0 +1,220 @@
+<h1>Hands-On with Ad-Hoc Commands and Probabilistic Data Structures</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to use the Ad-Hoc API and Probabilistic Data Structures from StackExchange.Redis.
+    You can either create your own project to follow along with an1d connect a multiplexer,
+    or you can open <code>/src/section_2/section2.1/section2.1.csproj</code> in your IDE.
+</p>
+
+<p>
+    The Ad-Hoc Commands are relatively straight forward to work with, they center entirely around two methods in StackExchange.Redis: 
+    <code>Execute</code> and <code>ExecuteAsync</code>. Naturally the primary differentiator between these two methods is whether or not they
+    execute asynchronously. These methods each take three parameters.
+</p>
+
+<ul>
+    <li>The command name</li>
+    <li>A collection of argument objects for the command</li>
+    <li>The Command Flags for the command</li>
+</ul>
+
+<h2>Command Name</h2>
+
+<p>
+    The Command Name is the name of the main command to be executed. If you look at the commands on the <a href="https://redis.io/commands/">Command Page of redis.io</a>
+    the Command Name is the first word preceding a space in the bold block, for any command with two or more words, only the first is a name, the
+    remainder are technically options which must be passed in as arguments.
+</p>
+
+<h2>Arguments</h2>
+
+<p>
+    The arguments parameter can be passed one of two ways. Either using the params macro:
+</p>
+
+<code>
+    await db.ExecuteAsync("SET", "foo", "bar");
+</code>
+
+<p>
+    Or, you can pass them in as a collection:
+</p>
+
+<code>
+    var arguments = new object[] { "foo", "bar" };
+    await db.ExecuteAsync("SET", arguments);
+</code>
+
+<p>
+    Both work, the first way requires less code of course, but if you use it, you cannot pass any command flags in, since the params macro must
+    be the last argument in the list.
+</p>
+
+<h2>Command Flags</h2>
+
+<p>
+    Command Flags provide some useful operational features, particularly around server selection and performance tuning. For example, if you
+    are running a read-command, and do not want to hit your master shard, you can use the command flag <code>CommandFlags.DemandReplica</code>,
+    there are corresponding flags to demand a master shard, prefer a master shard, or prefer a replica shard. Another really useful thing you can
+    drive via the command flags is to set a command to fire-and-forget. If you set a command to fire and forget, StackExchange.Redis will read back
+    the result of your command, and release execution as soon as it sends the command to Redis, this can increase throughput, particularly in cases
+    where you do not care about the result of a command.
+</p>
+
+<h2>Working with Probabilistic Data Structures</h2>
+
+<p>
+    Now that we know a little more about using the Ad-Hoc API, let's look a little bit deeper at how to use them with with something that we
+    can't emulate with a better structured Library command from the main library.
+</p>
+
+<p>
+    Probabilistic Data Structures area specialized type of data structures that allow you to provide approximations for very specific questions.
+    They're also great for an example as to how to use the ad-hoc api for something really useful. We're going to look at how to use two of 
+    these probabilistic data structures.
+</p>
+
+<ul>
+    <li><b>Bloom Filters</b>: Which allows you to very compactly and quickly tell if an item has been added to a set yet.</li>
+    <li><b>Tok-K</b>: This allows you to keep track of heavy hitters in large streams of data.</li>
+</ul>
+
+<h2>Reserve and Add to a Bloom Filter</h2>
+
+<p>
+    A bloom filter allows you to quickly and compactly tell whether a word has been added to a set yet. It has an incidence of false positives
+    that is inherent with the data structure, but for our purposes here it will serve to allow us to add all the words from Moby Dick to our 
+    bloom filter in a relatively compact way. To add to a Bloom Filter, we just need arrange our words in such a way that they're in a sequential
+    collection (e.g. an array or list) with the name of the Bloom Filter as the first element, and then each subsequent element being a word we
+    want to add to the filter. A simple aggregation will take care of this pretty simply after we've parsed out our words (which is already done in the example)
+</p>
+
+<code>
+    var bloomList = words.Aggregate(new List<object> { "bf" }, (list, word) =>
+    {
+        list.Add(word);
+        return list;
+    });
+</code>
+
+<p>
+    With the words aggregated together into a much larger argument list, all that's left to do is use the <code>BF.RESERVE</code> command to reserve
+    the Bloom Filter:
+</p>
+
+<code>
+    await db.ExecuteAsync("BF.RESERVE", "bf", 0.01, 20000);
+</code>
+
+<p>
+    And then use the <code>BF.MADD</code> command to add everything to the Bloom Filter in one shot.
+</p>
+
+<code>
+    await db.ExecuteAsync("BF.MADD", bloomList, CommandFlags.FireAndForget);
+</code>
+
+<h2>Reserve and Add to Top-K</h2>
+
+<p>
+    The Top-K let's us keep track of who the heavy hitters are in enormous streams of data using the Heavy Keeper Data Structure. To Reserve a
+    heavy keeper, all we need to do run the <code>TOPK.RESERVE</code> command:
+</p>
+
+<code>
+    await db.ExecuteAsync("TOPK.RESERVE", "topk", 10, 20, 10, .925);
+</code>
+
+<p>
+    And then we need to arrange all of our words so that they are not duplicated (this isn't absolutely necessary, but if you are using a cloud
+    instance of Redis locally it will speed things up) and each word is followed by it's count. We'll run a couple quick aggregations against our
+    word list to this end:
+</p>
+
+<code>
+    // We need to organize the words into a list where each word is followed by the number of occurrences it has in moby dick
+    var topKList = words.Aggregate(new Dictionary<string, int>(), (dict, word) =>
+    {
+        if (!dict.ContainsKey(word))
+        {
+            dict.Add(word, 0);
+        }
+
+        dict[word]++;
+        return dict;
+    }).Aggregate(new List<object> {"topk"}, (list, kvp) =>
+    {
+        list.Add(kvp.Key);
+        list.Add(kvp.Value);
+        return list;
+    });
+</code>
+
+<p>
+    Then we just need to call <code>TOPK.INCRBY</code> passing in our list of word/count pairs:
+</p>
+
+<code>
+    // Add everything to the Top-K
+    await db.ExecuteAsync("TOPK.INCRBY", topKList, CommandFlags.FireAndForget);
+</code>
+
+<h2>Querying our Bloom Filter</h2>
+
+<p>
+    Querying the Bloom filter is really simple, you just need to call <code>BF.EXISTS</code>. This will return a <code>RedisResult</code>,
+    which is a highly versatile class that StackExchange.Redis uses to abstract the complexity of how the RESP protocol works. Fundamentally
+    what it does is pulls in the result, and those results can be converted explicitly (by casting) to whatever the pertanent result type is.
+    For <code>BF.EXISTS</code>, redis will return an integer result. So let's try to work with this a bit. Let's check if the word 'the' appears
+    in Moby Dick (hint: it does).
+</p>
+
+<code>
+    var doesTheExist = await db.ExecuteAsync("BF.EXISTS", "bf", "the");
+</code>
+
+<p>
+    There's two things you can do with a <code>RedisResult</code>, you can cast/use it as it's appropriate type: supported types are basically
+    any value type, and as a dictionary of strings and RedisResults. If the type is supported by what was returned, and you try to cast it to
+    that type, the cast will be successful, so let's try casting it to a couple of different types:   
+</p>
+
+<code>
+    var doesTheExistAsInt = (int)doesTheExist;
+    Console.WriteLine($"Typeof {nameof(doesTheExistAsInt)}: {doesTheExistAsInt.GetType()}");
+
+    var doesTheExistAsDouble = (double)doesTheExist;
+    Console.WriteLine($"Typeof {nameof(doesTheExistAsDouble)}: {doesTheExistAsDouble.GetType()}");
+</code>
+
+<p>
+    Both of these are Valid casts for our RedisResult, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
+    array of RedisResults), it will fail with an <code>InvalidCastException</code>. The determination as to whether or not a cast is valid is
+    based off what Redis actually returned as a result of the command. You can check the <code>RedisResult</code> to see what the appropriate
+    type is if you are unsure use the <code>Type</code> property, but the results will follow the format laid out in the 
+    <a href="https://redis.io/commands">Command Pages on redis.io</a> so you should have a pretty good idea ahead of time as to what you are looking for.
+</p>
+
+<h2>Enumerate the Top-K</h2>
+
+<p>
+    To Enumerate our TopK, we just need to call <code>TOPK.LIST</code>, the trick here however, is the at we need to cast it to something useable,
+    like an array, preferably an array of strings. To do that, we just need to perform an explicit cast, and they select each as a string.
+</p>
+
+<code>
+    var res = await db.ExecuteAsync("TOPK.LIST", "topk");
+    var arr = ((RedisResult[])res!).Select(x=>x.ToString());
+    Console.WriteLine($"Top 10: {string.Join(", ", arr)}");
+</code>
+
+<p>
+    Finally, if we wanted the counts as of our Top-K as well (which will come back as a dictionary of values), we can easily reduce it to a 
+    dictionary, and convert that dictionary to an enumerable that we can use to print out a discernable list of values with their counts using
+    the <code>ToDictionary</code> method.
+</p>
+
+<code>
+    var withCounts = (await db.ExecuteAsync("TOPK.LIST", "topk", "WITHCOUNT")).ToDictionary().Select(x=>$"{x.Key}: {x.Value}");
+    Console.WriteLine($"Top 10, with counts: {string.Join(", ", withCounts)}");
+</code>
