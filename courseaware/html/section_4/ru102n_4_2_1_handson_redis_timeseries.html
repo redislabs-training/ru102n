@@ -1,0 +1,123 @@
+<h1>Hands-On with Redis Time Series</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to use the Time Series in Redis using NRedisTimeSeries.
+    You can either create your own project to follow along with and connect a multiplexer,
+    or you can open <code>/src/section_2/section2.2/section2.2.csproj</code> in your IDE.
+</p>
+
+<h2>Connecting to Redis</h2>
+
+<p>
+    NRedisTimeSeries is an extension of StackExchange.Redis, consequentially connecting to Redis is exactly the same with NRedisTimeSeries 
+    as with StackExchange.Redis. The key difference, is that at the top of your <i>Program.cs</i> file, you need to add a few imports to
+    use the NRedisTimeSeries bits:
+</p>
+
+<code>
+    using NRedisTimeSeries;
+    using NRedisTimeSeries.Commands.Enums;
+    using NRedisTimeSeries.DataTypes;
+</code>
+
+<p>
+    NRedisTimeSeries is built as static extensions to IDatabase, so after you've gotten a handle to your IDatabase, you'll be able to execute
+    whatever you like against the Time Series Data Structure.
+</p>
+
+<h2>Create Time Series and Compaction Rules</h2>
+
+<p>
+    A Time Series is a time-tagged sequence of numbers that flow into the same key, for our example here, we'll be working with a very simple
+    Time Series <i>sensor</i>, and we'll have a producer task to add random data to the Time Series continually, we'll then have compaction 
+    rules that will find the average, min, and max that occurred in the Time Series during a given interval. First we'll create the Time Series.
+</p>
+
+<code>
+    await db.TimeSeriesCreateAsync("sensor", 60000, new List<TimeSeriesLabel>{new TimeSeriesLabel("id", "sensor-1")});
+</code>
+
+<p>
+    With the Time Series created, we'll then identify the three aggregations we want to run, we'll create a Time Series for each of our
+    compactions, those Time Series will carry a label with them so that we can filter on that label later when we are query. After the
+    Time Series are created, we'll then bind a rule to our primary Time Series, to run the compaction into the relevant Time Series. To do that
+    we just need to call <code>TimeSeriesCreate</code> and <code>TimeSeriesCreateRule</code> for each rule we want to create:
+</p>
+
+<code>
+    var aggregations = new TsAggregation[]{TsAggregation.Avg, TsAggregation.Min, TsAggregation.Max};
+    foreach(var agg in aggregations)
+    {
+        await db.TimeSeriesCreateAsync($"sensor:{agg}", 60000, new List<TimeSeriesLabel>{new ("type", agg.ToString()), new("aggregation-for", "sensor-1")});
+        await(db.TimeSeriesCreateRuleAsync("sensor", new TimeSeriesRule($"sensor:{agg}", 5000, agg)));
+    }
+</code>
+
+<h2>Produce Time Series Data</h2>
+
+<p>
+    Time Series Data can consisted of any time-tagged numeric data, this can be anything from sensor temperature readings, to live stock prices 
+    from a stock exchange, to radio signals. In our example, we're going to have a producer task which produces a simple random integer every
+    second. To do this, all you need to do is use the <code>TimeSeriesAdd</code> method, for a Time Series, you can either pass in a <code>Timestamp</code>
+    or you can just pass in the string "<i>*</i>" - which will create the millisecond timestamp based on when the data reached Redis.
+</p>
+
+<code>
+    var producerTask = Task.Run(async()=>{
+        while(true)
+        {
+            await db.TimeSeriesAddAsync("sensor", "*", Random.Shared.Next(50));
+            await Task.Delay(1000);
+        }
+    });
+</code>
+
+<h2>Primary Consumer</h2>
+
+<p>
+    Because we have the primary Time Series, and the extra compaction Time Series running in Parallel, we will have two consumer tasks. The first
+    of these will use <code>TimeSeriesGet</code> every second, to retrieve the most recent data from the Time Series.
+</p>
+
+<code>
+    var consumerTask = Task.Run(async()=>{
+        while(true)
+        {
+            await Task.Delay(1000);
+            var result = await db.TimeSeriesGetAsync("sensor");
+            Console.WriteLine($"{result.Time.Value}: {result.Val}");
+        }
+    });
+</code>
+
+<h2>Aggregation Consumer</h2>
+
+<p>
+    The second Consumer will retrieve the aggregated data across our compacted Time Series, this will run every 5 seconds to coincide with
+    our compaction rules, in this case we'll use <code>TimeSeriesMGet</code>. In this case however we'll be using the label that we created earlier
+    to query multiple Time Series with the relevant label.
+</p>
+
+<code>
+    var aggregationConsumerTask = Task.Run(async()=>
+    {
+        while(true)
+        {
+            await Task.Delay(5000);
+            var results = await db.TimeSeriesMGetAsync(new List<string>(){"aggregation-for=sensor-1"}, true);
+            foreach(var result in results)
+            {
+                Console.WriteLine($"{result.labels.First(x=>x.Key == "type").Value}: {result.value.Val}");
+            }
+
+        }
+    });
+</code>
+
+<h2>Add a ReadKey and Run</h2>
+
+<p>
+    The last thing we need to do for this sample is to add a <code>Console.ReadKey()</code> at the bottom of our file, this will
+    cause the tasks we spun up earlier to run endlessly until you press any key to exit. To run the example, just use <code>dotnet run</code>
+    from your terminal.
+</p>
