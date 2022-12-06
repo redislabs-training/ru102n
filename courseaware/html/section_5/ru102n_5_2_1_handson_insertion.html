@@ -93,4 +93,10 @@
     leans on the defaults for Redis OM, it uses the fully qualified class name as the key prefix, since we provided the ID in the form
     of a freshly generated GUID, Redis OM will not try to generate a ULID for you. Finally, since we added a <code>TimeSpan</code> as our
     second argument, we've ensured that after the allotted time (5 minutes), the key will expire automatically and be removed from Redis.
+    An example output for this would look like:
 </p>
+
+<code>
+    Sale Id: 161f0348-7557-4d9f-994b-dbb06b500b0e
+    Key Name: section5._2.Sale:161f0348-7557-4d9f-994b-dbb06b500b0e
+</code>
