@@ -111,5 +111,33 @@
 </code>
 
 <p>
-    We can then query all of the walkers of honey by pulling back all of the human nodes that have an own's relationship with honey
+    We can then query all of the walkers of honey by pulling back all of the human nodes that have an <i>WALKS</i> relationship with honey.
+    If we do a little bit more introspection on the result set, we can pull out individual nodes from each record, and print out only the
+    information that we need, e.g. a name to print out the people who walk Honey.
 </p>
+
+<code>
+    matches = await graph.QueryAsync("pets", "MATCH(a:human),(p:pet) where (a)-[:WALKS]->(p) and p.name='Honey' return a");
+
+    foreach (var rec in matches)
+    {
+        var node = (Node)rec.Values.First();
+        Console.WriteLine($"{node.PropertyMap["name"].Value} walks honey");
+    }
+</code>
+
+
+<p>
+    In reverse, we can also enumerate all the dogs owned by a particular human by matching that same owns relationship with that human's
+    name and with a pet who's species is "canine":
+</p>
+
+<code>
+    matches = await graph.QueryAsync("pets", "MATCH(a:human),(p:pet) where (a)-[:OWNS]->(p) and p.species='canine' and a.name='Bob' return p");
+
+    foreach (var rec in matches)
+    {
+        var dogs = rec.Values.Select(x=>(Node)x).Select(x=>x.PropertyMap["name"].Value.ToString());
+        Console.WriteLine($"Bob's dogs are: {string.Join(", ", dogs)}");
+    }
+</code>

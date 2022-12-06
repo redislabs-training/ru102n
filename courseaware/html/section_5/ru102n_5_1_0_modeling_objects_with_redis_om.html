@@ -1,0 +1,107 @@
+<h1>Modeling Objects with Redis OM</h1>
+
+<p>
+    Redis OM .NET gives you the ability to natively model your objects in Redis. Let's start off with the model that we will use for the
+    remainder of this course. It will look very similar to the model that we used in Unit 3, but with some important changes:
+</p>
+
+<code>
+    public class Employee
+    {
+        public string? Id { get; set; }
+        public List&lt;string&gt;? Sales { get; set; }
+        public Address? Address { get; set; }
+        public string? Name { get; set; }
+    }
+
+    public class Sale
+    {
+        public string? Id { get; set; }
+        public int Total { get; set; }
+        public Address? Address { get; set; }
+    }
+
+    public class Address
+    {
+        public string? StreetAddress { get; set; }
+        public string? PostalCode { get; set; }
+        public GeoLoc Location { get; set; }
+        public Address? ForwardingAddress { get; set; }
+    }
+</code>
+
+<p>
+    In the examples for the remainder of this course, this model will be found in <i>Model.cs</i>, and will need to be imported into <i>Program.cs</i>
+    before being used. In this section, we'll learn how to take this model, and turn it into something that can be stored and
+    queried in Redis.
+</p>
+
+<h2>The Document Attribute</h2>
+
+<p>
+    The <code>DocumentAttribute</code> is the primary attribute for a class, it's meant to decorate the class definition directly.
+    It defines a few things with regards to how Redis OM will store and index a document inserted into Redis. The <code>DocumentAttribute</code>
+    need only decorate a class that will be inserted into Redis, it does not need to decorate classes that will be embedded within the
+    documents that we are inserting. In our example, the only class we'll be inserting is the <code>Employee</code> and <code>Sale</code> class, the
+    <code>Address</code> will be embedded within it. With the <code>DocumentAttribute</code> we define the parameters of the class. This includes the
+    following:
+</p>
+
+<ul>
+    <li>Storage Type</li>
+    <li>Key prefix</li>
+    <li>Index Name</li>
+    
+</ul>
+
+<h3>Storage Type</h3>
+
+<p>
+    Redis OM has two ways of storing documents, as JSON and as Hashes. It's highly recommended that you use JSON, unless there's some 
+    compelling reason not to do so. JSON is better at storing more complicated objects, particularly collections within those objects.
+</p>
+
+<h3>Key Prefix</h3>
+
+<p>
+    The Key Prefix is expressed as a collection of potential prefixes that keys inserted into Redis can hold. When the index is created
+    later. During key-generation at insertion time, if the <code>Prefixes</code> array is set, Redis OM will select the first prefix
+    and use that as the prefix for all inserted keys. If no prefixes are set, Redis OM will use the fully qualified class name as the 
+    prefix for keys when it inserts your documents into Redis.
+</p>
+
+<h3>Index Name</h3>
+
+<p>
+    The Index Name is the name of the index in Redis. An index is the construct that will allow us to query records by their values later
+    with LINQ, the Index Name has an easily computable name if not set (&lt;lowercaseclassname&gt;-idx) so it's not critical at all that
+    this be set, but if you care what your index is called, you may set this.
+</p>
+
+<h2>The Redis Id Field Attribute</h2>
+
+<p>
+    The <code>RedisIdFieldAttribute</code> marks the Id Field for the model. There should only be one of these per class, on the top level
+    class being stored. This Id Field is attached to at storage time. If there is an ID present, then the Id that's in that field is respected
+    and used during key generation, if it's empty, then Redis OM sets it based off the Id Generation Strategy, which can be changed in
+    the <code>DocumentAttribute</code>, and by default will use a ULID. It's recommended that the Id Field be either a string, ULID, or
+    GUID, unless you provide a generation strategy, or supply the ID itself when creating the classes for insertion.
+</p>
+
+<h2>The Indexed Attribute</h2>
+
+<p>
+    The <code>IndexedAttribute</code> is the workhorse attribute of Redis OM, it can be applied to most types, strings, enums, numerics,
+    <code>GeoLoc</code>, and even other classes. The <code>IndexedAttribute</code> tells Redis OM that you want to be able to query the field, or
+    in the case of other classes - sub-fields of those classes. The <code>IndexedAttribute</code> allows you to mark fields as sortable,
+    and for more complex documents allows you to specify either how far down the object tree the indexing will cascade, or the exact paths
+    you want to search on.
+</p>
+
+
+<h2>The Searchable Attribute</h2>
+
+<p>
+    The <code>SearchableAttribute</code> enables full-text search on a string field stored in Redis. If an attribute is marked as searchable,
+    <i>==</i> operations in LINQ will be tantamount to asking for a match against the Full Text Search field rather than an exact match.
+</p>
