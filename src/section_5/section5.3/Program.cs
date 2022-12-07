@@ -1,10 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-
-using Redis.OM;
+﻿using Redis.OM;
 using Redis.OM.Modeling;
 using section5._3;
-
-Console.WriteLine("Hello, World!");
 
 var provider = new RedisConnectionProvider("redis://localhost:6379");
 

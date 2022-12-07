@@ -1,0 +1,118 @@
+<h1>Hands-On Updating and Deleting Documents with Redis OM</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to Update and Delete Documents in Redis OM .NET.
+    You can either create your own project to follow along with and connect a RedisConnectionProvider,
+    or you can open <code>/src/section_2/section5.4/section5.4.csproj</code> in your IDE.
+</p>
+
+<h2>Setting up our Example</h2>
+
+<p>
+    In this example, we'll be inserting two employees, Alice and Bob, and we'll add Sales to each of them, and then delete them both.
+    So let's start off by adding Alice and Bob to Redis, as we would any other document:
+</p>
+
+<code>
+    var alice = new Employee
+    {
+        Name = &quot;Alice&quot;,
+        Age = 45,
+        Address = new Address { StreetAddress = &quot;Elm Street&quot;, Location = new GeoLoc(-81.957, 27.058), PostalCode = &quot;34269&quot; },
+        Sales = new List&lt;string&gt;()
+    };
+
+    var bob = new Employee
+    {
+        Name = &quot;Bob&quot;,
+        Age = 60,
+        Address = new Address() { StreetAddress = &quot;Bleecker Street&quot;, Location = new GeoLoc(-74.003, 40.732), PostalCode = &quot;10014&quot; },
+        Sales = new List&lt;string&gt;()
+    };
+
+    var bobKeyName = await employees.InsertAsync(bob);
+    await employees.InsertAsync(alice);
+</code>
+
+<h2>Updating Documents with Redis OM</h2>
+
+<p>
+    Updating documents with Redis OM revolves around the <code>IRedisCollection</code>, which exposes two methods for this behavior, update
+    and save. To perform any updates it's critical that the documents you are trying to Update have an Id Field that has a value set, 
+    this allows Redis OM to determine what the key should be that it is updating.
+</p>
+
+<h3>Update a single Document</h3>
+
+<p>
+    Using <code>IRedisCollection.Update</code> allows you to run an update on a single record in Redis. So, if we wanted to add a bunch of
+    sales for Bob, we would simply update the Bob record, and call Update on the Redis Collection:
+</p>
+
+<code>
+    var sales = provider.RedisCollection&lt;Sale&gt;();
+    var saleInsertTasks = new List&lt;Task&lt;string&gt;&gt;();
+    var random = new Random();
+    
+    for (var i = 0; i &lt; 500; i++)
+    {
+        saleInsertTasks.Add(sales.InsertAsync(new Sale
+        {
+            Total = random.Next(1000, 30000),
+            EmployeeId = bob.Id
+        }));
+    }
+    
+    await Task.WhenAll(saleInsertTasks);
+    
+    bob.Sales.AddRange(saleInsertTasks.Select(x=&gt;x.Result.Split(&quot;:&quot;)[1]));
+    
+    await employees.UpdateAsync(bob);
+    
+    var bobFromDb = employees.FindById(bob.Id!);
+    Console.WriteLine($&quot;Bob has: {bobFromDb!.Sales!.Count} sales&quot;);
+</code>
+
+<h2>Updating a Multiple Documents</h2>
+
+<p>
+    You can update multiple documents simultaneously by using the <code>IRedisCollection.Save</code> method. When an <code>IRedisCollection</code>
+    is enumerated, it maintains a snapshot of each record that it enumerates. If you update those records after they've been enumerated, and call
+    <code>IRedisCollection.Save</code> on the collection, the collection will diff each record's current state against it's snapshot, and update
+    the relevant documents accordingly. So let's try this in practice, let's increment the age of each person who's name is "Alice":
+</p>
+
+<code>
+    await foreach (var employee in employees.Where(x => x.Name == "Alice"))
+    {
+        Console.WriteLine($"Alice's old age: {employee.Age}");
+        employee.Age++;
+    }
+
+    employees.Save();
+
+    Console.WriteLine($"Alice's new age: {employees.First(x=>x.Name == "Alice").Age}");
+</code>
+
+<h2>Deleting Documents</h2>
+
+<p>
+    There are two ways to delete Documents in Redis. If your model has an Id Field, you can use the <code>IRedisCollection.Delete</code> method,
+    passing in the document you want to delete, Redis OM will then remove the document from Redis for you. So, let's just try removing Alice from
+    Redis:
+</p>
+
+<code>
+    await employees.DeleteAsync(alice);
+    Console.WriteLine($"Alice's present in Redis: {await employees.AnyAsync(x=>x.Name == "Alice")}");
+</code>
+
+<p>
+    If our model does not have an Id field on it, we can also use the <code>IRedisConnection.Unlink</code> method, passing in the key name that
+    you want to remove. When we inserted Bob before, we collected the key name from the insert, so let's use that to delete him from Redis:
+</p>
+
+<code>
+    await provider.Connection.UnlinkAsync(bobKeyName);
+    Console.WriteLine($"Bob's present in Redis: {await employees.AnyAsync(x=>x.Name == "Bob")}");
+</code>
