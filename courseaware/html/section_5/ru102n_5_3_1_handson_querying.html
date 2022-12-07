@@ -1,0 +1,148 @@
+<h1>Hands-On Querying Redis with Redis OM</h1>
+
+<p>
+    In this Hands-On we'll be exploring how to query your documents in Redis with Redis OM .NET.
+    You can either create your own project to follow along with and connect a RedisConnectionProvider,
+    or you can open <code>/src/section_2/section5.3/section5.3.csproj</code> in your IDE.
+</p>
+
+<h2>Make Age and Name Sortable</h2>
+
+<p>
+    In this section we'll only be working with Employees, the first thing we need to do is to make a minor update to the model making 
+    the name and age sortable, to do this, open <i>Model.cs</i> and change the <code>IndexedAttribute</code> in the Age and Name property so
+    they look like this:
+</p>
+
+<code>
+    [Indexed(Sortable = true)]
+</code>
+
+<h2>Insert some records</h2>
+
+<p>
+    Let's Now insert some records into Redis, we'll just hard code the 5 people we were using in Unit 3, but they will be slightly more complex
+    now because they have some added fields, e.g. Age and Address (with a geoloc!)
+</p>
+
+<code>
+    var alice = new Employee
+    {
+        Name = "Alice",
+        Age = 45,
+        Address = new Address { StreetAddress = "Elm Street", Location = new GeoLoc(-81.957, 27.058), PostalCode = "34269" }
+    };
+
+    var bob = new Employee
+    {
+        Name = "Bob",
+        Age = 60,
+        Address = new Address() { StreetAddress = "Bleecker Street", Location = new GeoLoc(-74.003, 40.732), PostalCode = "10014" }
+    };
+
+    var charlie = new Employee
+    {
+        Name = "Charlie",
+        Age = 26,
+        Address = new Address() { StreetAddress = "Ocean Boulevard", Location = new GeoLoc(-121.869, 36.604), PostalCode = "93940" }
+    };
+
+    var dan = new Employee
+    {
+        Name = "Dan",
+        Age = 42,
+        Address = new Address() { StreetAddress = "Baker Street", Location = new GeoLoc(-0.158, 51.523), PostalCode = "NW1 6XE" }
+    };
+
+    var yves = new Employee
+    {
+        Name = "Yves",
+        Age = 19,
+        Address = new Address() { StreetAddress = "Rue de Rivoli", Location = new GeoLoc(2.361, 48.863), PostalCode = "75003" }
+    };
+
+    await employees.InsertAsync(bob);
+    await employees.InsertAsync(alice);
+    await employees.InsertAsync(charlie);
+    await employees.InsertAsync(dan);
+    await employees.InsertAsync(yves);
+</code>
+
+<h2>Our First Query with a String</h2>
+
+<p>
+    For our First query, we'll be using the <code>First</code> method to find the first employee in Redis named "Bob", This operation
+    works exactly how you would expect it would if you've used LINQ in the past:
+</p>
+
+<code>
+    Console.WriteLine($"Employees Named Bob");
+    var alsoBob = await employees.FirstAsync(x=>x.Name == "Bob");
+    Console.WriteLine($"Bob's age is: {alsoBob.Age} and his postal code is: {alsoBob.Address!.PostalCode}");
+</code>
+
+<p>
+    The <code>FirstAsync</code> method materializes immediately serializing the query in the pipeline immediately and sending it onto Redis.
+</p>
+
+<h2>Numeric Range Queries</h2>
+
+<p>
+    To query a range, you simply need to use the greater than or less than operators against numeric values, as you would in any other LINQ
+    context. Since we are querying multiple records here, we will use a <code>Where</code> predicate. Let's try querying all the people under forty:
+</p>
+
+<code>
+    // Query by age 
+    var employeesUnderForty = employees.Where(x => x.Age &lt; 40);
+
+    Console.WriteLine("----Employees under 40----");
+    await foreach (var emp in employeesUnderForty)
+    {
+        Console.WriteLine($"{emp.Name} is {emp.Age}");
+    }
+</code>
+
+<h2>Proximity Geo Queries</h2>
+
+<p>
+    One of the really neat features of Redis OM .NET is that it give you the ability to perform GeoFilters on your data in Redis. A Geo Filter
+    is a radius filter from a point on earth, you can express a Geo Filter in terms of one of your model's attributes, for example the 
+    <code>Address.Location</code> attribute, which is a <code>GeoLoc</code>, a special type within Redis for holding a geographic position.
+    To run a Geo filter, simply provide the attribute as well as the desired center-point of your geo filter, the radius from the center point
+    you want to search, and the units you want to use for the filter. For example, if we wanted to find all of the employees within 1500 miles
+    of Philadelphia, we can do so like this:
+</p>
+
+<code>
+    var employeesNearPhilly = await employees.GeoFilter(x=>x.Address!.Location, -75.159, 39.963, 1500, GeoLocDistanceUnit.Miles).ToListAsync();
+
+    Console.WriteLine("----Employees near Philly----");
+
+    foreach (var emp in employeesNearPhilly)
+    {
+        Console.WriteLine($"{emp.Name} lives in the postal code: {emp.Address!.PostalCode}");
+    }
+</code>
+
+<h2>Sorting</h2>
+
+<p>
+    Any property that has been marked <code>Sortable = true</code> in the model definition can be sorted on, to sort on a field, you will use
+    an <code>OrderBy</code> and <code>OrderByDescending</code> predicate in constructing your query, consequentially, if we wanted to select
+    the names of of our employees in Ascending order, we could do so with an <code>OrderBy</code> and <code>Select</code>:
+</p>
+
+<code>
+    var employeesByAge = await employees.OrderBy(x=>x.Age).Select(x=>x.Name!).ToListAsync();
+    Console.WriteLine($"In Ascending order: {string.Join(", ", employeesByAge)}");
+</code>
+
+<p>
+    Conversely, if we wanted to order employees names in reverse alphabetical order we could do so with an <code>OrderByDescending</code>:
+</p>
+
+<code>
+    var employeesInReverseAlphabeticalOrder = await employees.OrderByDescending(x=>x.Name).Select(x=>x.Name!).ToListAsync();
+    Console.WriteLine($"In Reverse Alphabetical Order: {string.Join(", ", employeesInReverseAlphabeticalOrder)}");
+</code>

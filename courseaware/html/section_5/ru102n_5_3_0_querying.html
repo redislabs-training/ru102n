@@ -1,0 +1,67 @@
+<h1>Querying Documents in Redis OM</h1>
+
+<p>
+    In this section, we'll be looking at how to query documents that have been inserted in to Redis using Redis OM. There are three ways to
+    query our documents in Redis OM.
+</p>
+
+<ul>
+    <li>Using The RedisCollection's LINQ API</li>
+    <li>Directly using ID or Key Name</li>    
+    <li>Using the Low-Level <code>IRedisConnection.Search</code> API</li>
+</ul>
+
+<p>
+    In this section we'll primarily be focusing on LINQ, but we'll very briefly cover the other two ways here.
+</p>
+
+<h2>Querying with LINQ</h2>
+
+<p>
+    Querying with LINQ revolves around using the <code>IRedisCollection&lt;T&gt;</code>, this works like most <code>IQueryable</code> where
+    it collects predicates to build out the query and then materializes when enumerated (e.g. a call to <code>ToList</code> or <code>ToArray</code>)
+    Supported LINQ methods include:
+</p>
+
+<ul>
+    <li>Where</li>  
+    <li>Select</li>  
+    <li>OrderBy</li>
+    <li>OrderByDescending</li>
+    <li>Skip</li>
+    <li>Take</li>
+    <li>Any</li>
+    <li>First</li>
+    <li>FirstOrDefault</li>
+    <li>Single</li>
+    <li>SingleOrDefault</li>
+    <li>Count</li>    
+</ul>
+
+<p>
+    These methods work more or less as you'd expect them to if you've ever used an IQueryable interface before. However, there are a couple of key
+    caveats to make around the Selects and OrderBy predicates. Selects will work best with fields that have been indexed. OrderBy predicates
+    will only work on fields that have been marked sortable. So if we go into our <code>Employee</code> model, we can update the <code>IndexedAttribute</code>
+    above the Name property to set it to Sortable:
+</p>
+
+<code>
+    [Indexed(Sortable = true)]
+    public string? Name { get; set; }
+</code>
+
+<h2>Querying by Id or Key</h2>
+
+<p>
+    Probably the simplest way to query a document in Redis is to use it's Id or Key Name. You can use either just the Id, or the complete key name,
+    whichever is preferable for you. To query this you would just use the <code>IRedisCollection&lt;T&gt;.FindById</code> methods, passing in
+    either the Id or Key, the Collection is smart enough to construct a key regardless of which you end up using in your query.
+</p>
+
+<h3>Querying with the Raw Search API</h3>
+
+<p>
+    You can still preform strongly typed searches using the Raw Search API, to do this you would invoke <code>IRedisConnection.Search&lt;T&gt;</code>
+    method, this takes a <code>RedisQuery</code> object which you can initialize in line with the arguments in <a href="https://redis.io/commands/ft.search/">FT.SEARCH</a>.
+    By using the generic, you are able to pull back your results as strongly typed objects.
+</p>

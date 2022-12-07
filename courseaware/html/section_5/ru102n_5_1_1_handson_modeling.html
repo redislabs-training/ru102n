@@ -2,7 +2,7 @@
 
 <p>
     In this Hands-On we'll be exploring how to do object and index modeling with Redis OM.NET.
-    You can either create your own project to follow along with and connect a multiplexer,
+    You can either create your own project to follow along with and connect a RedisConnectionProvider,
     or you can open <code>/src/section_2/section5.1/section5.1.csproj</code> in your IDE.
 </p>
 
@@ -72,6 +72,8 @@
         public Address? Address { get; set; }
         [Indexed]
         public string? Name { get; set; }
+        [Indexed] 
+        public int Age { get; set; }
     }
 
     [Document(StorageType = StorageType.Json)]
