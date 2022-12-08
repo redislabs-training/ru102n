@@ -1,0 +1,97 @@
+<h1>Grouping and Reduction</h1>
+
+<p>
+    Redis OM also allows you to group records together by their attributes, and run reductions on the data within each group. Take our Top Salesperson
+    example from Section 3. If you wanted to determine who the top salesperson was with our given model, you can group all of our sales by
+    the employee ID, then run a summation on the sales, then order by the result of that summation: 
+</p>
+
+<code>
+    // Top Salesperson
+    var topSalesId = saleAggregations
+        .GroupBy(x=>x.RecordShell.EmployeeId)
+        .Sum(x=>x.RecordShell.Total)
+        .OrderByDescending(x=>x["Total_SUM"])
+        .Take(1)
+        .First()["EmployeeId"]
+        .ToString();
+    var topSalesPerson = await employees.FindByIdAsync(topSalesId);
+    Console.WriteLine($"Top seller: {topSalesPerson.Name}");
+</code>
+
+<p>
+    When running reductions, the name of the result in the aggregation pipeline is always the attribute's name that the reduction was being
+    run on, plus the reduction command's name in screaming caps joined by an underscore. So in our example above the <code>SUM</code> of 
+    <code>x.RecordShell.Total</code> comes out to <code>Total_SUM</code>. See the table below for a full enumeration of supported reducers 
+    and their command postfixes
+</p>
+
+<h3>Supported Reducers and Postfixes</h3>
+
+<table>
+    <tr>
+        <td>Command Name</td>
+        <td>Command Postfix</td>
+        <td>Description</td>
+    </tr>
+    <tr>
+        <td>Count</td>
+        <td>COUNT</td>
+        <td>number of records meeting the query, or in the group</td>
+    </tr>
+    <tr>
+        <td>CountDistinct</td>
+        <td>COUNT_DISTINCT</td>
+        <td>Counts the distinct occurrences of a given property in a group</td>
+    </tr>
+    <tr>
+        <td>CountDistinctish</td>
+        <td>COUNT_DISTINCTISH</td>
+        <td>Provides an approximate count of distinct occurrences of a given property in each group - less expensive computationally but does have a small 3% error rate</td>
+    </tr>
+    <tr>
+        <td>Sum</td>
+        <td>SUM</td>
+        <td>The sum of all occurrences of the provided field in each group</td>
+    </tr>
+    <tr>
+        <td>Min</td>
+        <td>MIN</td>
+        <td>Minimum occurrence for the provided field in each group</td>
+    </tr>
+    <tr>
+        <td>Max</td>
+        <td>MAX</td>
+        <td>Maximum occurrence for the provided field in each group</td>
+    </tr>
+    <tr>
+        <td>Average</td>
+        <td>Avg</td>
+        <td>Arithmetic mean of all the occurrences for the provided field in a group</td>
+    </tr>
+    <tr>
+        <td>StandardDeviation</td>
+        <td>STDDEV</td>
+        <td>Standard deviation from the arithmetic mean of all the occurrences for the provided field in each group</td>
+    </tr>
+    <tr>
+        <td>Quantile</td>
+        <td>QUANTLE</td>
+        <td>The value of a record at the provided quantile for a field in each group, e.g., the Median of the field would be sitting at quantile .5</td>
+    </tr>
+    <tr>
+        <td>Distinct</td>
+        <td>TOLIST</td>
+        <td>Enumerates all the distinct values of a given field in each group</td>
+    </tr>
+    <tr>
+        <td>FirstValue</td>
+        <td>FIRST_VALUE</td>
+        <td>Retrieves the first occurrence of a given field in each group</td>
+    </tr>
+    <tr>
+        <td>RandomSample</td>
+        <td>RANDOM*SAMPLE*{NumRecords}</td>
+        <td>Random sample of the given field in each group</td>
+    </tr>
+</table>

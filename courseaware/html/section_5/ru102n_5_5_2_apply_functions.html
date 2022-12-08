@@ -1,0 +1,174 @@
+<h1>Apply Functions</h1>
+
+<p>
+    One of the key features of Redis Aggregations is the ability to run apply functions against the data at Rest in Redis. There are a variety
+    of Apply Functions spanning five categories, Math, Strings, Time, Geographic, and Existence. To run an apply function in Redis, you
+    use the <code>AggregationSet.Apply</code> method, passing in a simple function you want to run against your data against Redis, as well
+    as an alias you want to give to the output for each record you're running your apply against.
+</p>
+
+<h2>Math</h2>
+
+<p>
+    Apply functions support typical arithmetic operations you might run normally, as well as a subset of the <code>System.Math</code> static
+    methods native to .NET. For example, if we were keeping tabs of our total sales for each employee, and we wanted to compute some Adjusted
+    Sales figure for each employee based on a regional sales adjustment, and then round it up to the nearest integer we could do so like this: 
+</p>
+
+<code>
+    var employeeAggregations = provider.AggregationSet<Employee>();
+    var adjustedSales = employeeAggregations.Apply(x=>Math.Ceiling(x.RecordShell.SalesAdjustment * x.RecordShell.TotalSales), "ADJUSTED_SALES");
+    
+    foreach(var employee in adjustedSales)
+    {
+        Console.WriteLine($"Adjusted Sales: {employee["ADJUSTED_SALES"]}");
+    }
+</code>
+
+<p>
+    All of the normal mathematical operators are supported for .NET, the only major divergence is that the XOR operator "^", is reserved for power
+    functions in the Aggregation Apply pipeline, and will not perform XORs See the table below for a list of supported mathematical apply functions:
+</p>
+
+<h3>Supported Math Apply Functions</h3>
+
+<table>
+    <tr>
+        <td>Function</td>
+        <td>Type</td>
+        <td>Description</td>
+        <td>Example</td>
+    </tr>
+    <tr>
+        <td>Log10</td>
+        <td>Math</td>
+        <td>yields the 10 base log for the number</td>
+        <td><code>Math.Log10(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Abs</td>
+        <td>Math</td>
+        <td>yields the absolute value of the provided number</td>
+        <td><code>Math.Abs(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Ceil</td>
+        <td>Math</td>
+        <td>yields the smallest integer not less than the provided number</td>
+        <td><code>Math.Ceil(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Floor</td>
+        <td>Math</td>
+        <td>yields the smallest integer not greater than the provided number</td>
+        <td><code>Math.Floor(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Log</td>
+        <td>Math</td>
+        <td>yields the Log base 2 for the provided number</td>
+        <td><code>Math.Log(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Exp</td>
+        <td>Math</td>
+        <td>yields the natural exponent for the provided number (e^y)</td>
+        <td><code>Math.Exp(x["AdjustedSales"])</code></td>
+    </tr>
+    <tr>
+        <td>Sqrt</td>
+        <td>Math</td>
+        <td>yields the Square root for the provided number</td>
+        <td>`Math.Sqrt(x["AdjustedSales"])`</td>
+    </tr>
+</table>
+
+<h2>String Apply Functions</h2>
+
+<p>
+    There are also a variety of string based apply functions that are quite helpful in, for example if you wanted to craft a birthday message
+    for each employee you could do so using string interpolation within the Apply pipeline:
+</p>
+
+<code>
+    var birthdayMessage = employeeAggregations.Apply(x=>$"Happy Birthday {x.RecordShell.Name} you're now {x.RecordShell.Age} ","BIRTHDAY_MESSAGE");
+    foreach (var employee in birthdayMessage)
+    {
+        Console.WriteLine($"{employee["BIRTHDAY_MESSAGE"]}");
+    }
+</code>
+
+<h3>Supported String Functions</h3>
+
+<table>
+    <tr>
+        <td>Function</td>
+        <td>Type</td>
+        <td>Description</td>
+        <td>Example</td>
+    </tr>
+    <tr>
+        <td>ToUpper</td>
+        <td>String</td>
+        <td>yields the provided string to upper case</td>
+        <td><code>x.RecordShell.Name.ToUpper()</code></td>
+    </tr>
+    <tr>
+        <td>ToLower</td>
+        <td>String</td>
+        <td>yields the provided string to lower case</td>
+        <td><code>x.RecordShell.Name.ToLower()</code></td>
+    </tr>
+    <tr>
+        <td>StartsWith</td>
+        <td>String</td>
+        <td>Boolean expression - yields 1 if the string starts with the argument</td>
+        <td><code>x.RecordShell.Name.StartsWith("bob")</code></td>
+    </tr>
+    <tr>
+        <td>Contains</td>
+        <td>String</td>
+        <td>Boolean expression - yields 1 if the string contains the argument</td>
+        <td><code>x.RecordShell.Name.Contains("bob")</code></td>
+    </tr>
+    <tr>
+        <td>Substring</td>
+        <td>String</td>
+        <td>yields the substring starting at the given 0 based index, the length of the second argument, if the second argument is not provided, it will simply return the balance of the string</td>
+        <td><code>x.RecordShell.Name.Substring(4, 10)</code></td>
+    </tr>
+    <tr>
+        <td>Format</td>
+        <td>string</td>
+        <td>Formats the string based off the provided pattern</td>
+        <td><code>string.Format("Hello {0} You are {1} years old", x.RecordShell.Name, x.RecordShell.Age)</code></td>
+    </tr>
+    <tr>
+        <td>Split</td>
+        <td>string</td>
+        <td>Split's the string with the provided string - unfortunately if you are only passing in a single splitter, because of how expressions work, you'll need to provide string split options so that no optional parameters exist when building the expression, just pass `StringSplitOptions.None`</td>
+        <td><code>x.RecordShell.Name.Split(",", StringSplitOptions.None)</code></td>
+    </tr>
+</table>
+
+<h2>Geographic Apply Functions</h2>
+
+<p>
+    If you're <code>GeoLoc</code> data structures within your model, you can also compute the distance from a different geo location using the
+    <code>GeoDistance</code> apply function. Let's take the Geo Loc of the Empire State Building (-74.0031713, 40.7484396), you can check the
+    distance of all our employees from that landmark using the <code>ApplyFunctions.GeoDistance</code> method:
+</p>
+
+<code>
+    var empireGeoLoc = new GeoLoc(-74.0031713,40.7484396);
+
+    var distanceFromEmpireStateBuilding = employeeAggregations
+                                            .Load(x=>new {x.RecordShell.Name})
+                                            .Apply(x=>ApplyFunctions.GeoDistance(x.RecordShell.Address.Location, empireGeoLoc),"DISTANCE_FROM_EMPIRE_STATE_BUILDING");
+    foreach (var res in distanceFromEmpireStateBuilding)
+    {
+        var employee = res.Hydrate();
+        Console.WriteLine($"{employee.Name} is {res["DISTANCE_FROM_EMPIRE_STATE_BUILDING"]} meters from the Empire State Building");
+    }
+</code>
+
