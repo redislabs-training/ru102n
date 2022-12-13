@@ -51,7 +51,7 @@
     When the application restarts, we want to reset the items that we are going to cache, as part of this,
     we'll need to open the <i>InitService.cs</i>, a hosted service that runs at startup to clean up and re-seed
     the database, we'll need to add some logic to have it clean up the cache as well. We have a scope factory
-    already DI'd into this service, so we can pull out the <code>IDistributedCache</code> fairly easily. Then
+    already DI'd into this service, so we can pull out the <code>IDistributedCache</code> fairly easily. Then,
     it's a matter of clearing out the relevant records for our app. Add The following code immediately below the
     <code>// add cache invalidation logic here</code> comment in <i>InitService.cs</i>
 </p>
@@ -153,8 +153,27 @@
 <p>
     This will add the total sales of the top seller and the their name to the cache, and it will invalidate that
     after 5 minutes. With that done, we need to add some logic up front to check the cache to see if those keys
-    exist, if they do, then we can short circuit the rest of this process, and 
+    exist, if they do, then we can short circuit the rest of this process, and return those results. Find the mark <i>// add cache check above here</i>
+    and add the following above it.
 </p>
+
+<code>
+    var topSalesTask = _cache.GetStringAsync("top:sales");
+        var topNameTask = _cache.GetStringAsync("top:name");
+
+        await Task.WhenAll(topSalesTask, topNameTask);
+
+        if (!string.IsNullOrEmpty(topSalesTask.Result) && !string.IsNullOrEmpty(topNameTask.Result))
+        {
+            stopwatch.Stop();
+            return new Dictionary<string, object>()
+            {
+                { "sum_sales", topSalesTask.Result },
+                { "employee_name", topNameTask.Result },
+                { "time", stopwatch.ElapsedMilliseconds }
+            };
+        }
+</code>
 
 <h2>Cache Individual Average Sale</h2>
 

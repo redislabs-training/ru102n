@@ -152,42 +152,49 @@
 
 <code>
     var groupName = "tempAverage";
-db.StreamCreateConsumerGroup(sensor1, groupName, "0-0");
-db.StreamCreateConsumerGroup(sensor2, groupName, "0-0");
+    db.StreamCreateConsumerGroup(sensor1, groupName, "0-0");
+    db.StreamCreateConsumerGroup(sensor2, groupName, "0-0");
 
-Task.Run(async()=>
-{
-    var tempTotals = new Dictionary<string, double> { { sensor1, 0 }, { sensor2, 0 } };
-
-    var messageCountTotals = new Dictionary<string, long>() { { sensor1, 0 }, { sensor2, 0 } };
-    var consumerName = "consumer:1";
-    var positions = new Dictionary<string, StreamPosition>
+    Task.Run(async()=>
     {
-        { sensor1, new StreamPosition(sensor1, ">") },
-        { sensor2, new StreamPosition(sensor2, ">") }
-    };
-    
-    while (true)
-    {
-        var result = await db.StreamReadGroupAsync(positions.Values.ToArray(), groupName, consumerName, countPerStream: 1);
-        if (!result.Any(x => x.Entries.Any()))
-        {
-            await Task.Delay(1000);
-            continue;
-        }
+        var tempTotals = new Dictionary<string, double> { { sensor1, 0 }, { sensor2, 0 } };
 
-        foreach (var stream in result)
+        var messageCountTotals = new Dictionary<string, long>() { { sensor1, 0 }, { sensor2, 0 } };
+        var consumerName = "consumer:1";
+        var positions = new Dictionary<string, StreamPosition>
         {
-            foreach (var entry in stream.Entries)
+            { sensor1, new StreamPosition(sensor1, ">") },
+            { sensor2, new StreamPosition(sensor2, ">") }
+        };
+        
+        while (true)
+        {
+            var result = await db.StreamReadGroupAsync(positions.Values.ToArray(), groupName, consumerName, countPerStream: 1);
+            if (!result.Any(x => x.Entries.Any()))
             {
-                var temp = (int)entry.Values.First(x => x.Name == "temp").Value;
-                messageCountTotals[stream.Key!]++;
-                tempTotals[stream.Key!] += temp;
-                var avg = tempTotals[stream.Key!]/messageCountTotals[stream.Key!];
-                Console.WriteLine($"{stream.Key} average Temp = {avg:0.###}");
-                await db.StreamAcknowledgeAsync(stream.Key, groupName, entry.Id);
+                await Task.Delay(1000);
+                continue;
+            }
+
+            foreach (var stream in result)
+            {
+                foreach (var entry in stream.Entries)
+                {
+                    var temp = (int)entry.Values.First(x => x.Name == "temp").Value;
+                    messageCountTotals[stream.Key!]++;
+                    tempTotals[stream.Key!] += temp;
+                    var avg = tempTotals[stream.Key!]/messageCountTotals[stream.Key!];
+                    Console.WriteLine($"{stream.Key} average Temp = {avg:0.###}");
+                    await db.StreamAcknowledgeAsync(stream.Key, groupName, entry.Id);
+                }
             }
         }
-    }
-});
+    });
 </code>
+
+<h2>Run the App</h2>
+
+<p>
+    At this point, all that's left to do is to run the application with <code>dotnet run</code>. This will kick get the app to spit out
+    telemetry until you press any key.
+</p>

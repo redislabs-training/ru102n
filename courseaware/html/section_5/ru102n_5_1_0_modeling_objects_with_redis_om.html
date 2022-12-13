@@ -85,8 +85,8 @@
     The <code>RedisIdFieldAttribute</code> marks the Id Field for the model. There should only be one of these per class, on the top level
     class being stored. This Id Field is attached to at storage time. If there is an ID present, then the Id that's in that field is respected
     and used during key generation, if it's empty, then Redis OM sets it based off the Id Generation Strategy, which can be changed in
-    the <code>DocumentAttribute</code>, and by default will use a ULID. It's recommended that the Id Field be either a string, ULID, or
-    GUID, unless you provide a generation strategy, or supply the ID itself when creating the classes for insertion.
+    the <code>DocumentAttribute</code>, and by default will use a ULID. It's recommended that the Id Field be either a <code>string</code>, 
+    <code>Ulid</code>, or <code>Guid</code>, unless you provide a generation strategy, or supply the ID itself when creating the classes for insertion.
 </p>
 
 <h2>The Indexed Attribute</h2>

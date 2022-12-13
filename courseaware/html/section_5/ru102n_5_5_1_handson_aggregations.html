@@ -14,14 +14,14 @@
 </p>
 
 <ul>
-    <li>Marked as sortable in the original Index.</li>
+    <li>Marked as sortable in the original index.</li>
     <li>Explicitly Loaded into the pipeline.</li>
 </ul>
 
 <p>
     We'll go over both of these methodologies in this section, but so we don't become overly distracted by this, let's go into our model and
     set a couple of fields as sortable that we had previously left not sortable. Specifically in the Sale class, we'll mark both the Total and
-    EmployeeId fields as <code>Aggregatable</code> - this is an alias of sortable - I like to use it because it makes it explicit that we're 
+    EmployeeId fields as <code>Aggregatable</code> - this is an alias of <code>Sortable</code> - I like to use it because it makes it explicit that we're 
     setting it this way so we can run aggregations on our field:
 </p>
 

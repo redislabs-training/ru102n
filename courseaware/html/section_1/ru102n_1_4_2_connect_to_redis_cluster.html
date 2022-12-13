@@ -8,3 +8,17 @@
     the endpoint you are trying to reach has failed over, the Multiplexer
     still has a chance to connect to the other master instances.
 </p>
+
+<p>
+    An example <code>ConfigurationOptions</code> for a cluster instance might look something along the lines fo this, notice
+    how the Endpoints collection takes multiple endpoints which the <code>ConnectionMultiplexer</code> can use as backups if
+    one of the endpoints should fail to respond (possibly because it's failed over).
+</p>
+
+<code>
+    var options = new ConfigurationOptions
+    {
+        // add and update parameters as needed
+        EndPoints = new EndPointCollection{"redis-1:6379", "redis-2:6379", "redis-3:6379"}
+    };
+</code>

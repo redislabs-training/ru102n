@@ -18,7 +18,7 @@
 <h2>Querying with LINQ</h2>
 
 <p>
-    Querying with LINQ revolves around using the <code>IRedisCollection&lt;T&gt;</code>, this works like most <code>IQueryable</code> where
+    Querying with LINQ revolves around using the <code>IRedisCollection&lt;T&gt;</code>, this works like most <code>IQueryable</code> types where
     it collects predicates to build out the query and then materializes when enumerated (e.g. a call to <code>ToList</code> or <code>ToArray</code>)
     Supported LINQ methods include:
 </p>
@@ -39,7 +39,7 @@
 </ul>
 
 <p>
-    These methods work more or less as you'd expect them to if you've ever used an IQueryable interface before. However, there are a couple of key
+    These methods work as you'd expect them to if you've ever used an IQueryable interface before. However, there are a couple of key
     caveats to make around the Selects and OrderBy predicates. Selects will work best with fields that have been indexed. OrderBy predicates
     will only work on fields that have been marked sortable. So if we go into our <code>Employee</code> model, we can update the <code>IndexedAttribute</code>
     above the Name property to set it to Sortable:

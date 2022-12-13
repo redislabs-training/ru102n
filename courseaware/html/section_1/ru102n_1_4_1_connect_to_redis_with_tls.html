@@ -29,7 +29,7 @@
 <p>
     There are two event handlers that you can use with the <code>ConfigurationOptions</code>
     object to configure TLS. Neither of these can be used from a connection string
-    so you must use the <code>ConfigurationOptions</code> if you need to use them
+    so you must use the <code>ConfigurationOptions</code> if you need to use them.
     
 </p>
 
@@ -64,10 +64,10 @@
 <h4>Environment Variables</h4>
 
 <p>
-    There are also two environment variables that the ConnectionMultiplexer will
+    There are also two environment variables that the <code>ConnectionMultiplexer</code> will
     check if there is no certificate selection delegate set. This is useful if
     you are using a derivative library of StackExchange.Redis that does not provide
-    direct access to the ConnectionOptions object.
+    direct access to the <code>ConfigurationOptions</code> object.
 </p>
 
 <ul>
@@ -79,7 +79,7 @@
 
  <p>
     In .NET Core (3.1, 5, 6, 7+) <a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslclientauthenticationoptions">SslClientAuthenticationOptions</a>
-    as added as an optional way of configuring an SslStream. This provides a great
+    was added as an optional way of configuring an SslStream. This provides a great
     deal of extra flexibility when it comes to configuring TLS settings Redis.
     Using the <code>SslClientAuthenticationOptions</code> delegate in <code>ConfigurationOptions</code>
     you can configure:
@@ -93,9 +93,9 @@
  </p>
 
  <code>
-options.SslClientAuthenticationOptions = new Func<string, SslClientAuthenticationOptions>(
-hostName => new SslClientAuthenticationOptions
-{
-    EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
-});
+    options.SslClientAuthenticationOptions = new Func<string, SslClientAuthenticationOptions>(
+    hostName => new SslClientAuthenticationOptions
+    {
+        EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
+    });
  </code>

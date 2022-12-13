@@ -11,8 +11,8 @@
 </p>
 
 <ul>
-    <li>All commands under a Redis Transaction will execute sequentially with nothing interleaved from any client in Redis.</li>
-    <li>You can add conditions to the transaction that will prevent the transaction from moving forward in certain conditions.</li>
+    <li>All commands under a Redis Transaction will be sent to Redis at the same time, as opposed to traditional transactions where commands can be sent in multiple round trips.</li>
+    <li>You cannot watch keys in a StackExchange.Redis transactions. But: you can add conditions to the transaction that will prevent the transaction from moving forward in certain conditions.</li>
 </ul>
 
 <h2>A Simple Transaction</h2>
@@ -20,7 +20,7 @@
 <p>
     Before we get into anything complex. Let's take a look at a simple transaction. Imagine we wanted to add a simple person hash to Redis.
     But in addition to adding the simple person hash, we also wanted to add some secondary indexes to it, keep in mind that we will explore 
-    in later sections SIGNIFICANTLY more effective ways to index your data in Redis, but old-style OSS secondary indexing provides a great
+    in later sections <b>SIGNIFICANTLY</b> more effective ways to index your data in Redis, but old-style OSS secondary indexing provides a great
     illustration of transactions. Anyway, we have a person hash with three fields, name, age, and postal code and we will index all three fields.
     So that our data is consistent, we want to add the hash and update all the indexes at the same time. This is a perfect place for transactions
     as all the commands will execute in isolation. We can do all this by initializing an <code>ITransaction</code> with <code>db.CreateTransaction</code>.
@@ -48,7 +48,7 @@
 
 <p>
     Redis Transactions typically allow you to watch a key to see if the key has been touched at all while the transaction was being created
-    and fleshed out. Due to the multiplexed nature of StackExchange.Redis, this isn't something that can be done practically as all multiple
+    and fleshed out. Due to the multiplexed nature of StackExchange.Redis, this isn't something that can be done practically as multiple
     transaction's watches can be interleaved with each other. However, what StackExchange.Redis does allow is for is for you to add conditions
     that must be satisfied in order for the transaction to complete. Let's try this out.
 </p>

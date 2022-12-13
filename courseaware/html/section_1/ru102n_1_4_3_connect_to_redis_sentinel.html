@@ -8,15 +8,15 @@
     your master and replicas, detecting fail-overs, and promoting new masters.
 
     Additionally, you must specify the <code>ServiceName</code>, which corresponds
-    to the master name that you tell the sentinel's to monitor when configuring.
+    to the master name that you tell the sentinels to monitor when configuring them.
 </p>
 
 <code>
-var options = new ConfigurationOptions
-{
-    EndPoints = new EndPointCollection(){"sentinel-1:26379"},
-    ServiceName = "sentinel"
-};
+    var options = new ConfigurationOptions
+    {
+        EndPoints = new EndPointCollection{"sentinel-1:26379"},
+        ServiceName = "sentinel"
+    };
 
-var muxer = ConnectionMultiplexer.Connect(options);
+    var muxer = ConnectionMultiplexer.Connect(options);
 </code>

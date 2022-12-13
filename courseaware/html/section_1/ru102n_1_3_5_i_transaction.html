@@ -11,10 +11,12 @@
     The ITransaction interface is fundamentally an async interface. It exposes 
     a very similar command set to the IDatabase, but it will only expose async
     versions of each command. That is because each command in ITransaction is
-    async, as they will not be competed until after Execute is called.
+    async, as they will not be competed until after <code>Execute</code> is called.
+    Only after the <code>Execute</code> is called can the underpinning tasks for the
+    Transaction be awaited. 
 </p>
 
 <p>
     You can get an instance of an ITransaction by calling 
-    <code>IDatabase.GetTransaction()</code> on your <code>IDatabase</code> object.    
+    <code>IDatabase.GetTransaction()</code> on your <code>IDatabase</code> object.
 </p>

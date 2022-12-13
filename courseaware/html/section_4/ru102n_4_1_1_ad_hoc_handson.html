@@ -132,7 +132,7 @@
 </p>
 
 <code>
-    // We need to organize the words into a list where each word is followed by the number of occurrences it has in moby dick
+    // We need to organize the words into a list where each word is followed by the number of occurrences it has in Moby Dick
     var topKList = words.Aggregate(new Dictionary<string, int>(), (dict, word) =>
     {
         if (!dict.ContainsKey(word))
@@ -164,8 +164,8 @@
 <p>
     Querying the Bloom filter is really simple, you just need to call <code>BF.EXISTS</code>. This will return a <code>RedisResult</code>,
     which is a highly versatile class that StackExchange.Redis uses to abstract the complexity of how the RESP protocol works. Fundamentally
-    what it does is pulls in the result, and those results can be converted explicitly (by casting) to whatever the pertanent result type is.
-    For <code>BF.EXISTS</code>, redis will return an integer result. So let's try to work with this a bit. Let's check if the word 'the' appears
+    what it does is pulls in the result, and those results can be converted explicitly (by casting) to whatever the pertinent result type is.
+    For <code>BF.EXISTS</code>, Redis will return an integer result. So let's try to work with this a bit. Let's check if the word 'the' appears
     in Moby Dick (hint: it does).
 </p>
 
@@ -174,8 +174,8 @@
 </code>
 
 <p>
-    There's two things you can do with a <code>RedisResult</code>, you can cast/use it as it's appropriate type: supported types are basically
-    any value type, and as a dictionary of strings and RedisResults. If the type is supported by what was returned, and you try to cast it to
+    There's two things you can do with a <code>RedisResult</code>, you can cast/use it as its appropriate type: supported types are basically
+    any value type, arrays, and as a dictionary of strings and RedisResults. If the type is supported by what was returned, and you try to cast it to
     that type, the cast will be successful, so let's try casting it to a couple of different types:   
 </p>
 
@@ -198,7 +198,7 @@
 <h2>Enumerate the Top-K</h2>
 
 <p>
-    To Enumerate our TopK, we just need to call <code>TOPK.LIST</code>, the trick here however, is the at we need to cast it to something useable,
+    To Enumerate our Top-K, we just need to call <code>TOPK.LIST</code>, the trick here however, is the at we need to cast it to something useable,
     like an array, preferably an array of strings. To do that, we just need to perform an explicit cast, and they select each as a string.
 </p>
 

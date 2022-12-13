@@ -43,7 +43,7 @@
 
 <p>
     As with every other endeavour in software development, any architectural choice as profound
-    as the ConnectionMultiplexer has some tradeoff. We'll these in more detail throughout the
+    as the ConnectionMultiplexer has some tradeoff. We'll explore these in more detail throughout the
     course, but here are they are at a top level.
 </p>
 
@@ -58,6 +58,8 @@
     </li>
     <li>
         Transactions work a bit differently, we'll talk about them later in the course, 
-        but they are a tad different.
+        but they are a tad different in that they don't fully support
+        watches, and no command in a transaction is dispatched to Redis
+        until execution time.
     </li>
 </ul>

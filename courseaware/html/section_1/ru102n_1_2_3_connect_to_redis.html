@@ -1,7 +1,8 @@
 <h1>Connect to Redis!</h1>
 <p>
     Now that we've added StackExchange.Redis to the project, we can move into our first
-    Hands-On exercise, connecting to Redis!
+    Hands-On exercise, connecting to Redis! You can follow along with this Hands-On by opening
+    <code>/src/section_1/section1.2/section1.2.csproj</code> in your IDE.
 </p>
 
 <p>
@@ -17,10 +18,40 @@
 </p>
 
 <p>
-    You may use whichever overload you wish, the <span style="font-family: 'courier new', courier;">ConnectionOptions</span> class
-    is easier to organize for sure, but the connection string option is often easier for
-    simple connection.
+    There are essentially two overloads, one taking a connection string, and the other taking an instance of
+    <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> class, which is definitely
+    easier to organize, but the connection string option is often easier for simple connection.
 </p>
+
+<h3>Connection String</h3>
+<p>
+    The Connection string is just a comma delimitate string of different configuration paramaters, any <code>hostname:port</code>
+    formatted argument in the connection string is treated as it's own endpoint, while any <code>param=val</code> formatted argument
+    is treated as a parameter value. So the connection string:
+</p>
+
+<code>
+    redis-1:6379,password=foobar
+</code>
+
+<p>
+    Equates to StackExchange.Redis connecting to the host  redis-1, port 6379, and using the password "foobar" as it's password.
+</p>
+
+<h3>ConfigurationOptions</h3>
+
+<p>
+    The <code>ConfigurationOptions</code> class allows for parameterized construction of a collection of options for the multiplexer.
+    The equivalent options to our connection string above would be:
+</p>
+
+<code>
+    var options = new ConfigurationOptions
+    {
+        EndPoints = new EndPointCollection{"redis-1:6379"},
+        Password = "foobar"
+    };
+</code>
 
 <h2>Ping Redis</h2>
 

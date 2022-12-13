@@ -19,7 +19,7 @@
 <h2>Stream Limitations in StackExchange.Redis</h2>
 
 <p>
-    Do to the multiplexed nature of StackExchange.Redis, it's important to note at the top that there is no mechanism for using the blocking
+    Due to the multiplexed nature of StackExchange.Redis, it's important to note at the top that there is no mechanism for using the blocking
     paradigms available within the stream reading operations. This means that the Stream Read operations, StreamRead & StreamReadGroup, will
     not be able to use the XREAD and XREADGROUP block timer or the special <i>$</i> id to read only new messages. 
 </p>

@@ -3,7 +3,7 @@
 <p>
     StackExchange.Redis exposes the Redis <a href="https://redis.io/docs/manual/programmability/eval-intro/">Lua Scripting</a> API. This allows
     you to run multiple commands in sequence, and use the intermediate results of those commands within the context of the script. Since
-    Redis is single threaded, and each command within redis executes atomically, we can leverage Redis Scripts to handle some thorny problems
+    Redis is single threaded, and each command within redis executes in isolation, we can leverage Redis Scripts to handle some thorny problems
     where we might need to use the result of one command in another command.
 </p>
 
