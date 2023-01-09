@@ -10,7 +10,7 @@ var muxer = ConnectionMultiplexer.Connect(options);
 var db = muxer.GetDatabase();
 
 var stopwatch = Stopwatch.StartNew();
-// un-pipelined commands incur the added cost of an extra round trip
+// un-pipelined commands incur the added cost of an extra network round trip
 for (var i = 0; i < 1000; i++)
 {
     await db.PingAsync();
@@ -20,7 +20,7 @@ Console.WriteLine($"1000 un-pipelined commands took: {stopwatch.ElapsedMilliseco
 
 // If we run out async tasks to StackExchange.Redis concurrently, the library
 // will automatically manage pipelining of these commands to Redis, making
-// them significantly more performant as we remove most of the round trips to Redis.
+// them significantly more performant as we remove most of the network round trips to Redis.
 var pingTasks = new List<Task<TimeSpan>>();
 
 // restart stopwatch
@@ -39,9 +39,9 @@ Console.WriteLine($"1000 automatically pipelined tasks took: {stopwatch.ElapsedM
 pingTasks.Clear();
 
 // Batches allow you to more intentionally group together the commands that you want to send to Redis.
-// If you employee a batch, all commands in the batch will be sent to Redis in one contiguous block, with no
-// other commands from the client interleaved. Of course, if there are other clients to Redis, commands from those
-// other clients may be interleaved with your batched commands.
+// If you use a batch, all commands in the batch will be sent to Redis in one contiguous block, with no
+// other commands from the client interleaved. Of course, if there are other clients sending commands to Redis, 
+// commands from those other clients may be interleaved with your batched commands.
 var batch = db.CreateBatch();
 
 // restart stopwatch
