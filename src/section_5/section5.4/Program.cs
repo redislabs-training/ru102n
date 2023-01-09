@@ -12,7 +12,7 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
-// create a couple of employees
+// Create a couple of employees.
 var alice = new Employee
 {
     Name = "Alice",
