@@ -7,24 +7,24 @@ Welcome! This is the course repository for the Redis University Course RU102N: R
 To take this course you'll need the following.
 
 1. The [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
-2. Clone this git repository from github.
+2. Clone this git repository from GitHub.
 3. Get a [Redis Stack](https://redis.io/docs/stack/) instance running locally or in the cloud.
 
 There are instructions for each step below.
 
-Throughout the course we've provided code examples written in C#. Writing and running these examples will invaluable for those trying to learn how to use Redis from the .NET ecosystem. In order to run all these examples, you'll simply need the [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
+Throughout the course we've provided code examples written in C#. Writing and running these examples will be invaluable for those trying to learn how to use Redis from the .NET ecosystem. In order to run all these examples, you'll simply need the [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0).
 
 ## Install the .NET 7 SDK
 
-Instillation of the .NET 7 SDK is pretty self explanatory on Windows and MacOS. All you need to do is to grab the SDK installer from the [downloads page](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and run it.
+Installation of the .NET 7 SDK is pretty self explanatory on Windows and MacOS. All you need to do is to grab the SDK installer from the [downloads page](https://dotnet.microsoft.com/en-us/download/dotnet/7.0) and run it.
 
 ## Clone the Course Git Repository
 
-There ar two ways to get a copy of the git repository on your machine.
+There are two ways to get a copy of the git repository on your machine.
 
 ### Option 1: Use git clone
 
-If you have the [git command line tools](https://git-scm.com/downloads) installed, open your command line or terminal and clone the repository like so:
+If you have the [Git command line tools](https://git-scm.com/downloads) installed, open your command line or terminal and clone the repository like so:
 
 ```
 git clone https://github.com/redislabs-training/ru102n
@@ -46,17 +46,17 @@ If you don't have the command line tools for Git, you can download the zip file 
 
 ![Download Zip File](images_for_readme/download_repo_zip.png)
 
-After the zip file is download, simply unzip it to wherever you want to use the files from, and change directories into the the folder with the command `cd ru102n`.
+After the zip file has downloaded, simply unzip it to wherever you want to use the files from, and change directories into that folder with the command `cd ru102n`.
 
 The remainder of these instructions assume that you are in the `ru102n` directory.
 
 ## Redis Setup
 
-This course requires an instance of [Redis Stack](https://redis.io/docs/stack/) - an extension of Redis with loads of really neat features we'll be exploring later in this course. Redis stack is free and available under the [Redis Source Available License (RSAL)](https://redis.com/wp-content/uploads/2019/09/redis-source-available-license.pdf). There are a variety of ways to get up and running with it. Browse the options below and see which one works best for you.
+This course requires an instance of [Redis Stack](https://redis.io/docs/stack/) - an extension of Redis with loads of really neat features we'll be exploring later in this course. Redis Stack is free and available under the [Redis Source Available License (RSAL)](https://redis.com/wp-content/uploads/2019/09/redis-source-available-license.pdf). There are a variety of ways to get up and running with it. Browse the options below and see which one works best for you.
 
 ### Option 1: Redis Cloud
 
-This option doesn't require you to run redis locally. We provide a free tier for Redis Cloud which will be perfectly sufficient for the purposes of this course. And of course, once the course is over you're totally welcome to flush all the data from this course out and use it in your own personal projects.
+This option doesn't require you to run Redis locally. We provide a free tier for Redis Cloud which will be perfectly sufficient for the purposes of this course. And of course, once the course is over you're totally welcome to flush all the data from this course out and use the database in your own personal projects.
 
 Let's get up and running with Redis Cloud:
 
@@ -79,7 +79,7 @@ Let's get up and running with Redis Cloud:
     * Port
     * User name - this will be `default`, which means we won't actually need it to connect.
     * Password
-* Your host name and port can be found in the "General" section (see example below here the host name is `redis-15676.c10.us-east-1-3.ec2.cloud.redislabs.com` and the port is `15676`).
+* Your host name and port can be found in the "General" section (see example below where the host name is `redis-15676.c10.us-east-1-3.ec2.cloud.redislabs.com` and the port is `15676`).
 
 ![Redis Cloud database details](images_for_readme/cloud_new_sub_3.png)
 
