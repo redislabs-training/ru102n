@@ -8,3 +8,5 @@ provider.Connection.DropIndexAndAssociatedRecords(typeof(Employee));
 
 await provider.Connection.CreateIndexAsync(typeof(Sale));
 await provider.Connection.CreateIndexAsync(typeof(Employee));
+
+Console.WriteLine("Created indexes.");
