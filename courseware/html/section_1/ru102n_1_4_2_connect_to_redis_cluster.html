@@ -1,7 +1,7 @@
-<h1>Connect to Redis Cluster</h1>
+<h1>Connecting to a Redis Cluster</h1>
 
 <p>
-    Of the "advanced" Redis Connections cluster is probably the easiest to 
+    Of the "advanced" Redis Connections, cluster is probably the easiest to 
     understand. Connecting to an OSS Cluster instance is the same as connecting
     to a standalone Redis Instance. The only exception is that when you are
     listing endpoints, you'll want to use more than one. This is so that if
@@ -10,11 +10,12 @@
 </p>
 
 <p>
-    An example <code>ConfigurationOptions</code> for a cluster instance might look something along the lines fo this, notice
-    how the Endpoints collection takes multiple endpoints which the <code>ConnectionMultiplexer</code> can use as backups if
+    An example <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> for a cluster instance might look something along the lines of this, notice
+    how the Endpoints collection takes multiple endpoints which the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> can use as backups if
     one of the endpoints should fail to respond (possibly because it's failed over).
 </p>
 
+<pre>
 <code>
     var options = new ConfigurationOptions
     {
@@ -22,3 +23,4 @@
         EndPoints = new EndPointCollection{"redis-1:6379", "redis-2:6379", "redis-3:6379"}
     };
 </code>
+</pre>

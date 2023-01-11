@@ -11,17 +11,17 @@
 
 <p>
     With StackExchange.Redis, there are two ways to pipeline commands,
-    either implicitly with the Async API, and explicitly with the <code>IBatch</code> API.
+    either implicitly with the Async API, and explicitly with the <span style="font-family: 'courier new', courier;">IBatch</span> API.
 </p>
 
 <h2>Implicit Pipelining with Async API</h2>
 
 <p>
     If you use the async version of a commands, the command will be automatically
-    pipelined to Redis. If you use <code>await</code> to await the result of a
+    pipelined to Redis. If you use <span style="font-family: 'courier new', courier;">await</span> to await the result of a
     task dispatched by one of these async commands, it will wait until the command
     is complete before returning control. However, if you group a set of tasks dispatched
-    by the async methods together and await them all in one shot, the ConnectionMultiplexer
+    by the async methods together and await them all in one shot, the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>
     will automatically find an efficient way to pipeline the commands to Redis, so that
     you can cut down the number of round trips significantly.
 </p>
@@ -29,10 +29,13 @@
 <h2>Explicit Pipelining with IBatch</h2>
 
 <p>
-    You can also be much more explicit about pipelining commands. The <code>IBatch</code>
+    You can also be much more explicit about pipelining commands. The <span style="font-family: 'courier new', courier;">IBatch</span>
     API only provides the async interface for commands. You can set up however many commands
     you want to pipeline with those async methods, preserving the tasks as they will provide
-    you the results. And when you have all the commands that you want to pipelined dispatched,
+    you the results. 
+</p>
+<p>    
+    When you have all the commands that you want to pipelined dispatched,
     you can call <code>Execute</code> to run them all. This will pipeline all of your commands
     in one contiguous block to Redis. Using this method, no other commands will be interleaved
     with your batched commands from the client. However, if there are other clients sending
