@@ -3,36 +3,42 @@
 <p>
     In this Hands-On, we'll be exploring how to use Redis Streams from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <code>/src/section_2/section2.6/section2.6.csproj</code> in your IDE.
+    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.6/section2.6.csproj</span> in your IDE.
 </p>
 
 <h2>Collect and Clean Out Stream Keys</h2>
 
 <p>
-    During this exercise we'll be creating streams for two different sensors. We'll call them <i>sensor:1</i> and <i>sensor:2</i>. Our first
-    task, so that we can run this app repeatedly and predictably, will be to initialize those keys, clear out those sensor's current stream state.
+    During this exercise we'll be creating streams for two different sensors. We'll call them <span style="font-family: 'courier new', courier;"><i>sensor:1</i></span> and <span style="font-family: 'courier new', courier;"><i>sensor:2</i></span>. Our first
+    task, so that we can run this app repeatedly and predictably, will be to initialize those keys, to clear out those sensor's current stream state.
 </p>
 
+<pre>
 <code>
     var sensor1 = "sensor:1";
     var sensor2 = "sensor:2";
 
     db.KeyDelete(new RedisKey[]{sensor1, sensor2});
 </code>
+</pre>
 
 <h2>Adding Items to a Stream</h2>
 
 <p>
-    Adding an item to a stream is as simple as calling <code>StreamAdd</code>. However, for the purposes of this example we are going to do
-    something a bit different. We are going to be dispatching all of our StreamAdd/StreamRead methods in tasks that will continually push/poll
-    results from Redis. We'll have a <code>Console.ReadKey</code> at the end to allow you to terminate the program by pressing any key.
+    Adding an item to a stream is as simple as calling <span style="font-family: 'courier new', courier;">StreamAdd</span>. 
+</p>
+<p>
+    However, for the purposes of this example we are going to do
+    something a bit different. We are going to be dispatching all of our <span style="font-family: 'courier new', courier;">StreamAdd</span>/<span style="font-family: 'courier new', courier;">StreamRead</span> methods in tasks that will continually push/poll
+    results from Redis. We'll have a <span style="font-family: 'courier new', courier;">Console.ReadKey</span> at the end to allow you to terminate the program by pressing any key.
 </p>
 
 <p>
-    So, for our StreamAdd Operation we will, in an endless loop, produce new messages every second. Now, so that there's some variation,
+    So, for our <span style="font-family: 'courier new', courier;">StreamAdd</span> Operation we will, in an endless loop, produce new messages every second. Now, so that there's some variation,
     every five seconds we'll try to increment or decrement the temperature and humidity picked up by the sensor by 1.
 </p>
 
+<pre>
 <code>
     var rnd = new Random();
     Task.Run(async () =>
@@ -74,20 +80,25 @@
     //put all your future code above here!
     Console.ReadKey();
 </code>
+</pre>
 
 <h2>Read from Stream</h2>
 
 <p>
     To read from a Redis Stream, you'll need to specify a stream position for each stream you want to read. Then, you can pass in those
-    stream positions to the StreamRead method, that will respond with a set of streams, each of which contains entries, if there are any
-    messages in the stream to read from. It's important that after each stream read, that the stream position be updated, this prevents the
+    stream positions to the <span style="font-family: 'courier new', courier;">StreamRead</span> method. This responds with a set of streams, each of which contains entries, if there are any
+    messages in the stream to read from.
+</p>
+<p>
+    It's important that after each stream read, that the stream position be updated, this prevents the
     reader from re-reading the same message over and over again.
 </p>
 
 <p>
-    To accomplish all of this, add the following to just above the <code>Console.ReadKey()</code> at the bottom of the file.
+    To accomplish all of this, add the following to just above the <span style="font-family: 'courier new', courier;">Console.ReadKey()</span> at the bottom of the file.
 </p>
 
+<pre>
 <code>
     Task.Run(async () =>
     {
@@ -116,6 +127,7 @@
         }
     });
 </code>
+</pre>
 
 <h2>Consumer Groups</h2>
 
@@ -126,30 +138,36 @@
 
 <h3>Create a Consumer Group</h3>
 <p>
-    To Create a consumer group, you just need to call <code>StreamCreateConsumerGroup</code> passing in the stream key, the group name, and
+    To Create a consumer group, you just need to call <span style="font-family: 'courier new', courier;">StreamCreateConsumerGroup</span> passing in the stream key, the group name, and
     the starting position. We'll create an average consumer group. This will be responsible for maintaining a running average of the telemetry
     gotten from each sensor.
 </p>
 
+<pre>
 <code>
     db.StreamCreateConsumerGroup(sensor1, "average", "0-0");
     db.StreamCreateConsumerGroup(sensor2, "average", "0-0");
 </code>
+</pre>
 
 <h3>Read from a Consumer Group</h3>
 
 <p>
-    Reading from a consumer group is slightly different than reading without a consumer group. You user the <code>StreamReadGroup</code> method,
-    and you do not have to keep track of the <i>Id</i> that you want to read from. Instead, you'll use the special <i>></i> id, which tells
+    Reading from a consumer group is slightly different than reading without a consumer group. You use the <span style="font-family: 'courier new', courier;">StreamReadGroup</span> method,
+    and you do not have to keep track of the <span style="font-family: 'courier new', courier;"><i>Id</i></span> that you want to read from.
+</p>
+<p>
+     Instead, you'll use the special <span style="font-family: 'courier new', courier;"><i>></i></span> id, which tells
     it to respond with the next message for that consumer group. We'll be monitoring average temperatures for each of our sensors, so naturally
     we'll need to keep track of how many messages we've seen so far, and the cumulative temperature observed.
 </p>
 
 <p>
     After we've finished processing the result of a stream message, we then need to acknowledge the message with Redis. This will allow Redis to
-    remove the stream message from it's Pending Entries List(PEL).
+    remove the stream message from it's Pending Entries List (PEL).
 </p>
 
+<pre>
 <code>
     var groupName = "tempAverage";
     db.StreamCreateConsumerGroup(sensor1, groupName, "0-0");
@@ -191,10 +209,11 @@
         }
     });
 </code>
+</pre>
 
 <h2>Run the App</h2>
 
 <p>
-    At this point, all that's left to do is to run the application with <code>dotnet run</code>. This will kick get the app to spit out
+    At this point, all that's left to do is to run the application with <span style="font-family: 'courier new', courier;">dotnet run</span>. This will run the app which will then spit out
     telemetry until you press any key.
 </p>

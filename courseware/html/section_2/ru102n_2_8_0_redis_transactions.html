@@ -2,9 +2,12 @@
 
 <p>
     <a href="https://redis.io/docs/manual/transactions/">Transactions</a> in Redis allow you to apply multiple commands in in isolation to Redis
-    sequentially. StackExchange.Redis exposes the <code>ITransaction</code> which operationally is similar to the <code>IBatch</code>
-    in that it allows you to dispatch a series of tasks, which you can then await after calling the <code>Execute</code> method
-    to run the transaction. Unlike <code>IBatch</code> however, all commands sent through a transaction are guaranteed to be executed
+    sequentially. StackExchange.Redis exposes the <span style="font-family: 'courier new', courier;">ITransaction</span> which operationally is similar to the <span style="font-family: 'courier new', courier;">IBatch</span>
+    in that it allows you to dispatch a series of tasks, which you can then await after calling the <<span style="font-family: 'courier new', courier;">>Execute</span> method
+    to run the transaction.
+</p>
+<p>
+    Unlike <span style="font-family: 'courier new', courier;">IBatch</span> however, all commands sent through a transaction are guaranteed to be executed
     sequentially. And you can apply some limited conditions to the transaction to allow it to self terminate if a watched
     key changes. In this section we'll learn how to work with Transactions in StackExchange.Redis.
 </p>
