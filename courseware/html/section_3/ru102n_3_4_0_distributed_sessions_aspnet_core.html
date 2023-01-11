@@ -2,18 +2,26 @@
 
 <p>
     In this Hands-On, we'll be exploring how to use Session State Management in ASP.NET.
-    You'll likely want to open up the csproj file and checkout the <i>starting-point</i>
-    before proceeding, unless of course you'd prefer to build everything from scratch
-    the csproj file is located at  <code>/src/section_3/section3.5/section3.5.csproj</code> 
-    it's highly recommended that you use Visual Studio or Rider for this Hands-On.
+    You'll likely want to open up the csproj file and check out the <span style="font-family: 'courier new', courier;"><i>starting-point</i></span>
+    before proceeding, unless of course you'd prefer to build everything from scratch.
+</p>
+<p>
+    The csproj file is located at <span style="font-family: 'courier new', courier;">/src/section_3/section3.5/section3.5.csproj</span>. 
+    It's highly recommended that you use Visual Studio or Rider for this Hands-On.
 </p>
 
 <p>
     Session state is the state maintained between the client's browser and a web server. However as we live in a world of increasingly larger
     distributed systems, we run into a problem. Do we really want the client to be dependent on a single, theoretically stateless application
-    server? The answer is no, yet this session-state can be absolutely critical for the functionality of some applications. Hence it's often
+    server? 
+</p>
+<p>
+    The answer is no, yet this session-state can be absolutely critical for the functionality of some applications. Hence it's often
     really helpful to have a intermediate database act as a central holder for this session state. This pattern is so popular in fact that it's
-    heavily integrated into both ASP.NET and ASP.NET Core, and since Redis is so often tapped as the database acting as the distributed session
-    state store, there are very straight-forward integrations to add Redis as a native integration which we'll be exploring throughout the next
+    heavily integrated into both ASP.NET and ASP.NET Core. 
+</p>
+<p>
+    Since Redis is so often tapped as the database acting as the distributed session
+    state store, there are very straightforward integrations to add Redis as a native integration which we'll be exploring throughout the next
     couple of sections.
 </p>

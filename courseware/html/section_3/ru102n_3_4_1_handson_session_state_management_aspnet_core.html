@@ -2,53 +2,73 @@
 
 <p>
     In this Hands-On, we'll be exploring how to use Session State Management in ASP.NET Core.
-    You'll likely want to open up the csproj file and checkout the <i>starting-point</i>
-    before proceeding, unless of course you'd prefer to build everything from scratch
-    the csproj file is located at  <code>/src/section_3/section3.4/section3.4.csproj</code> 
-    it's highly recommended that you use Visual Studio or Rider for this Hands-On.
+    You'll likely want to open up the csproj file and checkout the <span style="font-family: 'courier new', courier;"><i>starting-point</i></span>
+    before proceeding, unless of course you'd prefer to build everything from scratch.
+</p>
+<p>
+    The csproj file is located at <span style="font-family: 'courier new', courier;">/src/section_3/section3.4/section3.4.csproj</span>. 
+</p>
+<p>
+    It's highly recommended that you use Visual Studio or Rider for this Hands-On.
 </p>
 
 <h2>Review the State of the App</h2>
 
 <p>
     The actual hands-on bit of this is really simple, so before we jump into it, let's take a look at the state of the current state of the
-    application. If you start the application with <code>dotnet run</code>, You'll see on the home page at <a href="http://localhost:5097/">http://localhost:5097/</a>
-    that the Session State is telling you the meaning of life is "42". This is coming directly out of the Session State. If you look at the 
-    <code>Index</code> method of <i>Controllers/HomeController.cs</i> you'll see that we are setting the session state to 42 with:
+    application. 
+</p>
+<p>
+    If you start the application with <span style="font-family: 'courier new', courier;">dotnet run</span>, you'll see on the home page at <a href="http://localhost:5097/">http://localhost:5097/</a>
+    that the Session State is telling you the meaning of life is "42". 
+</p>
+<p>
+    This is coming directly out of the Session State. If you look at the 
+    <span style="font-family: 'courier new', courier;">Index</span> method of <span style="font-family: 'courier new', courier;"><i>Controllers/HomeController.cs</i></span> you'll see that we are setting the session state to 42 with:
 </p>
 
+<pre>
 <code>
     HttpContext.Session.SetString("meaning of life", fourtyTwo.ToString());
 </code>
+</pre>
 
 <p>
-    Meanwhile, on the front-end, our view at <i>Views/Home/Index.cshtml</i> - is displaying the meaning of life key within the session with:
+    Meanwhile, on the front-end, our view at <span style="font-family: 'courier new', courier;"><i>Views/Home/Index.cshtml</i></span> - is displaying the meaning of life key within the session with:
 </p>
 
+<pre>
 <code>
     @Context.Session.GetString("meaning of life")
 </code>
+</pre>
 
 <p>
-    Finally, In <i>Program.cs</i> we have two lines of code:
+    Finally, In <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span> we have two lines of code:
 </p>
 
+<pre>
 <code>
     builder.Services.AddSession();
 </code>
+</pre>
 
 <p>
-    To add the Session Services to our available services, and:
+    The above line adds the Session Services to our available services.
 </p>
 
+<pre>
 <code>
     // tell app to use session.
     app.UseSession();
 </code>
+</pre>
 
 <p>
-    To add the Session State Middleware to acquire the session state to be passed to the controllers that will interact with the session.
-    These are all the preliminaries for using SessionState. However, in this state, the session is not distributed, so the sessions will not
+    The above adds the Session State Middleware to acquire the session state to be passed to the controllers that will interact with the session.
+</p>
+<p>
+    These are all the preliminaries for using <span style="font-family: 'courier new', courier;">SessionState</span>. However, in this state, the session is not distributed, so the sessions will not
     be able to persist across different application servers, severely limiting your ability to scale out requests from an individual client.
 </p>
 
@@ -58,27 +78,34 @@
     This part's really simple. Ahead of time, I've added:
 </p>
 
+<pre>
 <code>
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.0" />
     </ItemGroup>
 </code>
+</pre>
 
 <p>
-    To the <i>section3.4.csproj</i> file, that's the exact same package we used earlier when we discussed using Redis as a Caching Layer for
-    ASP.NET Core, and enabling this as the backing for the session state is as simple as adding the Cache to our services container in that
-    previous section. You only need to add the following to the services section of your <i>Program.cs</i> section at the mark <i>// Add Redis Cache here.</i>
+    To the <span style="font-family: 'courier new', courier;"><i>section3.4.csproj</i></span> file, that's the exact same package we used earlier when we discussed using Redis as a Caching Layer for
+    ASP.NET Core.
+</p>
+<p>
+    Enabling this as the backing for the session state is as simple as adding the Cache to our services container in that
+    previous section. You only need to add the following to the services section of your <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span> section at the mark <span style="font-family: 'courier new', courier;"><i>// Add Redis Cache here.</i></span>
 </p>
 
+<pre>
 <code>
     builder.Services.AddStackExchangeRedisCache(options => options.ConfigurationOptions = new ConfigurationOptions{
         EndPoints = { "localhost:6379" },
         Password = ""
     });
 </code>
+</pre>
 
 <p>
-    And that's it, with that done, you can run the app again with <code>dotnet run</code>, and when you launch the application's site at
+    And that's it, with that done, you can run the app again with <span style="font-family: 'courier new', courier;">dotnet run</span>, and when you launch the application's site at
     <a href="http://localhost:5097/">http://localhost:5097/</a>, the session will still work, the only difference is now the server is storing
-    the session state in Redis instead of locally. You can even run <code>redis-cli monitor</code> to watch it work with the session state.
+    the session state in Redis instead of locally. You can even run <span style="font-family: 'courier new', courier;">redis-cli monitor</span> to watch it work with the session state.
 </p>

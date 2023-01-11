@@ -2,10 +2,12 @@
 
 <p>
     In this Hands-On, we'll be exploring how to use Caching in ASP.NET.
-    You'll likely want to open up the csproj file and checkout the <i>starting-point</i>
-    before proceeding, unless of course you'd prefer to build everything from scratch
-    the csproj file is located at  <code>/src/section_3/section3.3/section3.3.csproj</code> 
-    it's highly recommended that you use Visual Studio or Rider for this Hands-On.
+    You'll likely want to open up the csproj file and checkout the <span style="font-family: 'courier new', courier;"><i>starting-point</i></span>
+    before proceeding, unless of course you'd prefer to build everything from scratch.
+</p>
+<p>
+    The csproj file is located at <span style="font-family: 'courier new', courier;">/src/section_3/section3.3/section3.3.csproj</span>. 
+    It's highly recommended that you use Visual Studio or Rider for this Hands-On.
 </p>
 
 <h2>Migrate the Database</h2>
@@ -15,17 +17,22 @@
     create the tables, and seed some data into the database. To do this, all you'll need to do is in the Package Manager Console run:
 </p>
 
+<pre>
 <code>
     update-database
 </code>
+</pre>
 
 <h2>Create our Lazy Multiplexer</h2>
 
 <p>
-    Unlike ASP.NET Core, dependency injection is not exactly a given in ASP.NET, there are competing modes of handling dependency injection,
-    but to simplify our example we'll be using a Lazy Multiplexer. In the file <code>Redis.cs</code>, add the following code to the Redis class:
+    Unlike ASP.NET Core, dependency injection is not exactly a given in ASP.NET, there are competing modes of handling dependency injection.
+</p>
+<p>
+    To simplify our example we'll be using a Lazy Multiplexer. In the file <span style="font-family: 'courier new', courier;">Redis.cs</span>, add the following code to the Redis class:
 </p>
 
+<pre>
 <code>
     private static readonly Lazy<ConnectionMultiplexer> LazyMuxer;
 
@@ -43,6 +50,7 @@
     public static ConnectionMultiplexer Muxer => LazyMuxer.Value;
     public static IDatabase Database => Muxer.GetDatabase();
 </code>
+</pre>
 
 <p>
     This will create the Multiplexer the first time it's referenced in our app, and provides a static way of accessing a single multiplexer
@@ -52,11 +60,12 @@
 <h2>Caching Average Sale</h2>
 
 <p>
-    Unlike the ASP.NET Core example, we need to make use of the ConnectionMultiplexer and it's methods directly and leverage the core Redis
-    API. We can approximate what behavior pretty easily using the <code>StringGet</code> and <code>StringSet</code> methods that we explored
-    earlier in this course. Find the <i>// add cache check here</i> mark in <i>AverageController.cs</i> and add the following bit.
+    Unlike the ASP.NET Core example, we need to make use of the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> and it's methods directly and leverage the core Redis
+    API. We can approximate what behavior pretty easily using the <span style="font-family: 'courier new', courier;">StringGet</span> and <span style="font-family: 'courier new', courier;">StringSet</span> methods that we explored
+    earlier in this course. Find the <span style="font-family: 'courier new', courier;"><i>// add cache check here</i></span> mark in <span style="font-family: 'courier new', courier;"><i>AverageController.cs</i></span> and add the following bit.
 </p>
 
+<pre>
 <code>
     var db = Redis.Database;
     var avg = (double?)await db.StringGetSetExpiryAsync($"average:{id}", TimeSpan.FromHours(1));
@@ -70,30 +79,37 @@
         });
     }
 </code>
+</pre>
 
 <p>
-    This will check the cache, and if the average has already been computed, it will simply return the computed result. Using <code>StringGetSetExpiry</code>
+    This will check the cache, and if the average has already been computed, it will simply return the computed result. Using <span style="font-family: 'courier new', courier;">StringGetSetExpiry</span>
     has the added effect of resetting the expiration for more frequently accessed averages.
 </p>
 
 <p>
     Now, if we fail to find the average for the given employee, we'll need to compute it from our SQL database, just as we did in the previous
-    example. After computing that, we'll use a simple <code>StringSet</code> to set the key and the expiration. Find the <i>// add cache set here</i>
+    example. After computing that, we'll use a simple <span style="font-family: 'courier new', courier;">StringSet</span> to set the key and the expiration. Find the <span style="font-family: 'courier new', courier;"><i>// add cache set here</i></span>
     mark, and add the following to set the field in the cache, along with an expiration of an hour.
 </p>
 
+<pre>
 <code>
     await db.StringSetAsync($"average:{id}", avg, TimeSpan.FromHours(1));
 </code>
+</pre>
 
 <h2>Caching our Top Salesperson</h2>
 
 <p>
-    For our Top Salesperson aggregation we have two keys that we're working with so our gets/sets will look slightly different. For the StringGet
-    we will pass an array of keys, and unpack from the resultant <code>RedisValue[]</code> array. Find the <i>// add cache check here</i> mark
+    For our Top Salesperson aggregation we have two keys that we're working with so our gets/sets will look slightly different. For the <span style="font-family: 'courier new', courier;">StringGet</span>
+    we will pass an array of keys, and unpack from the resultant <code>RedisValue[]</code> array.
+</p>
+<p> 
+    Find the <span style="font-family: 'courier new', courier;"><i>// add cache check here</i></span> mark
     and add the following to do just that.
 </p>
 
+<pre>
 <code>
     var res = await db.StringGetAsync(new RedisKey[] { "top:sales", "top:name" });
     long? topSales = (long?)res[0];
@@ -109,28 +125,38 @@
         });
     }
 </code>
+</pre>
 
 <p>
-    Now, if we haven't run this calculation in the last 5 minutes, we'll have had a cache-miss. In which case, we'll run the same calculation we
-    did in the ASP.NET Core example, after which, we'll set the two relevant keys, along with a 5 minute expiration <code>TimeSpan</code>. We
-    don't want to make multiple round trips to Redis, so we'll collect the dispatched tasks and await them. Find the <i>// add cache set logic here</i>
+    Now, if we haven't run this calculation in the last 5 minutes, we'll have had a cache miss. In which case, we'll run the same calculation we
+    did in the ASP.NET Core example, after which, we'll set the two relevant keys, along with a 5 minute expiration <span style="font-family: 'courier new', courier;">TimeSpan</span>. We
+    don't want to make multiple round trips to Redis, so we'll collect the dispatched tasks and await them. 
+</p>
+<p>
+    Find the <span style="font-family: 'courier new', courier;"><i>// add cache set logic here</i></span>
     mark and add the following.
 </p>
 
+<pre>
 <code>
     var topSalesSetTask = db.StringSetAsync("top:sales", topSalesperson.sumSales, expiry: TimeSpan.FromMinutes(5));
     var topNameSetTask = db.StringSetAsync("top:name", topSalesperson.Employee.Name, expiry: TimeSpan.FromMinutes(5));
     await Task.WhenAll(topSalesSetTask, topNameSetTask);
 </code>
+</pre>
 
 <h2>Cache Total Sales</h2>
 
 <p>
-    The last aggregation we'll look at here is the Total Sales Aggregation, we want this to expire this at the same time everyday (local midnight)
-    of the next day. Thus we'll start off in the <i>Controllers/TotalSalesController.cs</i>'s <code>GetTotalSales</code> method's <i>// add cache check logic here</i>
+    The last aggregation we'll look at here is the Total Sales Aggregation. We want this to expire this at the same time everyday (local midnight)
+    of the next day. 
+</p>
+<p>
+    Thus we'll start off in the <span style="font-family: 'courier new', courier;"><i>Controllers/TotalSalesController.cs</i></span>'s <span style="font-family: 'courier new', courier;">GetTotalSales</span> method's <span style="font-family: 'courier new', courier;"><i>// add cache check logic here</i></span>
     and add our normal check:
 </p>
 
+<pre>
 <code>
     long? totalSales = (long?) await db.StringGetAsync("totalSales");
     if(totalSales != null)
@@ -142,21 +168,27 @@
         });
     }
 </code>
+</pre>
 
 <p>
-    Then, after the <i>// add cache set logic here</i> mark, you can add the following - to have it cache the result, and set an expiration of 
+    Then, after the <span style="font-family: 'courier new', courier;"><i>// add cache set logic here</i></span> mark, you can add the following - to have it cache the result, and set an expiration of 
     the local midnight:
 </p>
 
+<pre>
 <code>
     var timeTillMidnight = DateTime.Today.AddDays(1) - DateTime.Now;
     await db.StringSetAsync("totalSales", totalSales, timeTillMidnight);
 </code>
+</pre>
 
 <h2>Run the App</h2>
 
 <p>
-    All That's left to do now is to run the app. To do that, hit F5 in Visual Studio or Rider, and it will launch the app. Once it's running,
+    All that's left to do now is to run the app. To do that, hit F5 in Visual Studio or Rider, and it will launch the app.
+</p>
+<p>
+    Once it's running,
     you can visit the app at <a href="http://localhost:50239/">http://localhost:50239/</a> and you can look at the result of our code at the
     following links:
 </p>
