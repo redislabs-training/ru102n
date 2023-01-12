@@ -3,119 +3,144 @@
 <p>
     In this Hands-On we'll be exploring how to use Graphs in Redis using NRedisGraph.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <code>/src/section_2/section4.3/section4.3.csproj</code> in your IDE.
+    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section4.3/section4.3.csproj</span> in your IDE.
 </p>
 
 <h2>Initialize Graph Object</h2>
 
 <p>
-    The command interface of NRedisGraph revolves around the <code>RedisGraph</code> class, which exposes the relevant RedisGraph commands.
-    Consequentially the first thing we need to do, after we've initialized our multiplexer and gotten our <code>IDatabase</code> is to
-    Initialize a new <code>RedisGraph</code> object, we'll also delete our pets graph (which is what we'll be working with in this example):
+    The command interface of NRedisGraph revolves around the <<span style="font-family: 'courier new', courier;">RedisGraph</span> class, which exposes the relevant RedisGraph commands.
+    Consequentially the first thing we need to do, after we've initialized our multiplexer and gotten our <span style="font-family: 'courier new', courier;">IDatabase</span> is to
+    Initialize a new <span style="font-family: 'courier new', courier;">RedisGraph</span> object, we'll also delete our pets graph (which is what we'll be working with in this example):
 </p>
 
+<pre>
 <code>
     var graph = new RedisGraph(db);
     db.KeyDelete("pets");
 </code>
+</pre>
 
 <h2>Create Our Graph</h2>
 
 <p>
-    In this example, we'll be working on a simple <i>pets</i> graph which will map animals to humans. We'll create two Humans (Alice, and Bob)
-    and one dog (Honey). RedisGraph is primarily built around the <code>GRAPH.QUERY</code> Command, which simply takes a key (our graph name)
+    In this example, we'll be working on a simple <span style="font-family: 'courier new', courier;"><i>pets</i></span> graph which will map animals to humans. We'll create two Humans (Alice, and Bob)
+    and one dog (Honey). 
+</p>
+<p>
+    RedisGraph is primarily built around the <span style="font-family: 'courier new', courier;">GRAPH.QUERY</span> Command, which simply takes a key (our graph name)
     and a <a href="https://opencypher.org/">Cypher Query</a> and runs the cypher against the graph in the key, to produce a result. To create
     a person we'll use a cypher query with a create command:
 </p>
 
+<pre>
 <code>
     var createBobResult = await graph.QueryAsync("pets", "CREATE(:human{name:'Bob',age:32})");
 </code>
+</pre>
 
 <p>
-    This create's a human (Bob), and returns a <code>ResultSet</code> that contains the results of the query, since it's a create query, it doesn't respond
+    This creates a human (Bob), and returns a <span style="font-family: 'courier new', courier;">ResultSet</span> that contains the results of the query. Since it's a create query, it doesn't respond
     with much, aside from the statistics from the query, how many nodes it created, how many properties it set, how many labels it added, and
-    how long the query took to execute. You can print out all that information by accessing the <code>ResultSet</code>
+    how long the query took to execute. You can print out all that information by accessing the <span style="font-family: 'courier new', courier;">ResultSet</span>.
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"Nodes Created:{createBobResult.Statistics.NodesCreated}");
     Console.WriteLine($"Properties Set:{createBobResult.Statistics.PropertiesSet}");
     Console.WriteLine($"Labels Created:{createBobResult.Statistics.LabelsAdded}");
     Console.WriteLine($"Operation took:{createBobResult.Statistics.QueryInternalExecutionTime}");
 </code>
+</pre>
 
 <p>
     Let's add one more Human to our graph (Alice), with a similar query:
 </p>
 
+<pre>
 <code>
     await graph.QueryAsync("pets", "CREATE(:human{name:'Alice',age:30})");
 </code>
+</pre>
 
 <p>
-    Finally we'll add a pet to our graph, Honey, a 5 year old Greyhound:
+    Finally we'll add a pet to our graph: Honey, a 5 year old Greyhound:
 </p>
 
+<pre>
 <code>
     await graph.QueryAsync("pets", "CREATE(:pet{name:'Honey',age:5,species:'canine',breed:'Greyhound'})");
 </code>
+</pre>
 
 <h2>Add Some Relationships</h2>
 
 <p>
     A graph database consists of two primal types, Nodes and Edges, just like a graph. Nodes tend to be nouns, so in our example here our
-    pet, Honey, and humans, Alice and Bob are all nodes. The Edges of our graph will tend to be verbs, so Honey might have an owner, so we can create
+    pet, Honey, and humans, Alice and Bob are all nodes.
+</p>
+<p>
+    The Edges of our graph will tend to be verbs, so Honey might have an owner, so we can create
     an "OWNS" relationship between Honey and one of our Humans, let's make Honey's owner Bob, to do that we just match our pet and human
     and create a relationship between the nodes:
 </p>
 
+<pre>
 <code>
     await graph.QueryAsync("pets",
         "MATCH(a:human),(p:pet) WHERE(a.name='Bob' and p.name='Honey') CREATE (a)-[:OWNS]->(p)");
 </code>
+</pre>
 
 <p>
     We can also create relationships between Honey and Both Alice and Bob to make them walkers of Honey:
 </p>
 
+<pre>
 <code>
     await graph.QueryAsync("pets",
         "MATCH(a:human),(p:pet) WHERE(a.name='Alice' and p.name='Honey') CREATE (a)-[:WALKS]->(p)");
     await graph.QueryAsync("pets",
         "MATCH(a:human),(p:pet) WHERE(a.name='Bob' and p.name='Honey') CREATE (a)-[:WALKS]->(p)");
 </code>
+</pre>
 
 <h2>Querying</h2>
 
 <p>
     Now that we've created some nodes and relationships in our Graph we can go about querying, to run a Match,
-    we'll use the <code>Query</code> command, as we've been using in the previous examples, however in this case we'll be
+    we'll use the <span style="font-family: 'courier new', courier;">Query</span> command, as we've been using in the previous examples, however in this case we'll be
     specifying a return type. So let's start off by finding all the owners of Honey. To perform the query, perform a match between
     a human and pet, where there is an own relationship between the human and the pet and the pet's name is honey, from this we'll return
     the human.
 </p>
 
+<pre>
 <code>
     var matches = await graph.QueryAsync("pets", "MATCH(a:human),(p:pet) where (a)-[:OWNS]->(p) and p.name='Honey' return a");
 </code>
+</pre>
 
 <p>
     You can then pull out the first record from that result and print out that record, and you'll get the value of Bob (which is what we 
     were expecting).
 </p>
 
+<pre>
 <code>
     var record = matches.First();
     Console.WriteLine($"Honey's owner nodes: {record}");
 </code>
+</pre>
 
 <p>
-    We can then query all of the walkers of honey by pulling back all of the human nodes that have an <i>WALKS</i> relationship with honey.
+    We can then query all of the walkers of honey by pulling back all of the human nodes that have an <span style="font-family: 'courier new', courier;"><i>WALKS</i></span> relationship with honey.
     If we do a little bit more introspection on the result set, we can pull out individual nodes from each record, and print out only the
     information that we need, e.g. a name to print out the people who walk Honey.
 </p>
 
+<pre>
 <code>
     matches = await graph.QueryAsync("pets", "MATCH(a:human),(p:pet) where (a)-[:WALKS]->(p) and p.name='Honey' return a");
 
@@ -125,13 +150,14 @@
         Console.WriteLine($"{node.PropertyMap["name"].Value} walks honey");
     }
 </code>
-
+</pre>
 
 <p>
     In reverse, we can also enumerate all the dogs owned by a particular human by matching that same owns relationship with that human's
     name and with a pet who's species is "canine":
 </p>
 
+<pre>
 <code>
     matches = await graph.QueryAsync("pets", "MATCH(a:human),(p:pet) where (a)-[:OWNS]->(p) and p.species='canine' and a.name='Bob' return p");
 
@@ -141,3 +167,4 @@
         Console.WriteLine($"Bob's dogs are: {string.Join(", ", dogs)}");
     }
 </code>
+</pre>
