@@ -2,6 +2,8 @@
 
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
+
+// TODO for Coding Challenge Start here on starting-point branch
 var subscriber = muxer.GetSubscriber();
 var cancellationTokenSource = new CancellationTokenSource();
 var token = cancellationTokenSource.Token;
@@ -59,3 +61,4 @@ Console.ReadKey();
 Console.WriteLine("Unsubscribing from all");
 await subscriber.UnsubscribeAllAsync();
 Console.ReadKey();
+// end coding challenge

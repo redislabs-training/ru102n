@@ -13,6 +13,7 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
+// TODO for Coding Challenge Start here on starting-point branch
 // Create a couple of employees.
 var alice = new Employee
 {
@@ -103,3 +104,4 @@ var topSalesId = saleAggregations
     .ToString();
 var topSalesPerson = await employees.FindByIdAsync(topSalesId);
 Console.WriteLine($"Top seller: {topSalesPerson.Name}");
+// end coding challenge

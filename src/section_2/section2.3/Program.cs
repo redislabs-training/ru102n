@@ -2,6 +2,7 @@
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 // Let's start out by creating a bunch of proper keynames, and then deleting all those sets from Redis
 // This will ensure that we have a clean slate to work with.
 var allUsersSet = "users";
@@ -42,3 +43,4 @@ Console.WriteLine($"All Users ending with 6  : {string.Join(", ", db.SetScan(all
 Console.WriteLine("Moving User:1 from active to offline");
 var moved = db.SetMove(activeUsersSet, offlineUsersSet, "User:1");
 Console.WriteLine($"Move Successful: {moved}");
+// end coding challenge

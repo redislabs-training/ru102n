@@ -12,6 +12,8 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
+// TODO for Coding Challenge Start here on starting-point branch
+
 // Create a couple of employees.
 var alice = new Employee
 {
@@ -83,3 +85,4 @@ Console.WriteLine($"In Ascending order: {string.Join(", ", employeesByAge)}");
 
 var employeesInReverseAlphabeticalOrder = await employees.OrderByDescending(x=>x.Name).Select(x=>x.Name!).ToListAsync();
 Console.WriteLine($"In Reverse Alphabetical Order: {string.Join(", ", employeesInReverseAlphabeticalOrder)}");
+// end coding challenge

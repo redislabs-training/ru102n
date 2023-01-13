@@ -10,6 +10,7 @@ provider.Connection.DropIndexAndAssociatedRecords(typeof(Employee));
 await provider.Connection.CreateIndexAsync(typeof(Sale));
 await provider.Connection.CreateIndexAsync(typeof(Employee));
 
+// TODO for Coding Challenge Start here on starting-point branch
 var employees = provider.RedisCollection<Employee>();
 
 var employee = new Employee
@@ -44,3 +45,4 @@ var sale = new Sale
 key = provider.Connection.Set(sale, TimeSpan.FromMinutes(5));
 Console.WriteLine($"Sale Id: {sale.Id}");
 Console.WriteLine($"Key Name: {key}");
+// end coding challenge

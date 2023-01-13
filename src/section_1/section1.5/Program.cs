@@ -10,6 +10,7 @@ var muxer = ConnectionMultiplexer.Connect(options);
 var db = muxer.GetDatabase();
 
 var stopwatch = Stopwatch.StartNew();
+// TODO for Coding Challenge Start here on starting-point branch
 // un-pipelined commands incur the added cost of an extra network round trip
 for (var i = 0; i < 1000; i++)
 {
@@ -55,3 +56,4 @@ for (var i = 0; i < 1000; i++)
 batch.Execute();
 await Task.WhenAll(pingTasks);
 Console.WriteLine($"1000 batched commands took: {stopwatch.ElapsedMilliseconds}ms to execute, first result: {pingTasks[0].Result}");
+// end Challenge

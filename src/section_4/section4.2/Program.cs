@@ -8,6 +8,7 @@ using StackExchange.Redis;
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 // Delete keys.
 db.KeyDelete(new RedisKey[]{"sensor", "sensor:Max", "sensor:Avg", "sensor:Min"});
 
@@ -53,3 +54,4 @@ var aggregationConsumerTask = Task.Run(async()=>
 });
 
 Console.ReadKey();
+// end coding challenge

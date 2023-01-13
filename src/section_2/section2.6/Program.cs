@@ -3,6 +3,7 @@
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 var sensor1 = "sensor:1";
 var sensor2 = "sensor:2";
 
@@ -111,6 +112,6 @@ Task.Run(async()=>
 });
 
 
-
+// end coding challenge
 //put all your future code above here!
 Console.ReadKey();

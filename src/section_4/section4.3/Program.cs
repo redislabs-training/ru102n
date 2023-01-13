@@ -5,8 +5,11 @@ using StackExchange.Redis;
 
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
-var graph = new RedisGraph(db);
 db.KeyDelete("pets");
+
+// TODO for Coding Challenge Start here on starting-point branch
+var graph = new RedisGraph(db);
+
 
 var createBobResult = await graph.QueryAsync("pets", "CREATE(:human{name:'Bob',age:32})");
 await graph.QueryAsync("pets", "CREATE(:human{name:'Alice',age:30})");
@@ -48,3 +51,4 @@ foreach (var rec in matches)
     Console.WriteLine($"Bob's dogs are: {string.Join(", ", dogs)}");
 }
 
+// end coding challenge

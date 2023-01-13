@@ -5,7 +5,7 @@ using StackExchange.Redis;
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
-
+// TODO for Coding Challenge Start here on starting-point branch
 await db.KeyDeleteAsync("bf");
 await db.KeyDeleteAsync("cms");
 await db.KeyDeleteAsync("topk");
@@ -75,3 +75,4 @@ Console.WriteLine($"Top 10: {string.Join(", ", arr)}");
 var withCounts = (await db.ExecuteAsync("TOPK.LIST", "topk", "WITHCOUNT")).ToDictionary().Select(x=>$"{x.Key}: {x.Value}");
 
 Console.WriteLine($"Top 10, with counts: {string.Join(", ", withCounts)}");
+// end coding challenge

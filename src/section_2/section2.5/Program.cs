@@ -3,6 +3,7 @@
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 var person1 = "person:1";
 var person2 = "person:2";
 var person3 = "person:3";
@@ -43,3 +44,4 @@ Console.WriteLine($"person:2 fields: {string.Join(", ", person2Fields)}");
 // HashScan
 var person3Fields = db.HashScan(person3);
 Console.WriteLine($"person:3 fields: {string.Join(", ", person3Fields)}");
+// end coding challenge
