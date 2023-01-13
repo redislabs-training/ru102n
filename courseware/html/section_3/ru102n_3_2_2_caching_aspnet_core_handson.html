@@ -28,7 +28,7 @@
 
 <p>
     After we've migrated the database, we'll need to make sure that we are adding Redis as a caching layer for
-    our app. To do this, you'll just need to open <i>Program.cs</i>, and find the comment <i>// add Redis here</i>
+    our app. To do this, you'll just need to open <i>Program.cs</i>, and find the comment <i>// TODO Section 3.2 Step 1</i>
     below that you'll just have the builder add the StackExchange Redis Cache, passing in a function to configure
     StackExchange.Redis.
 </p>
@@ -53,7 +53,7 @@
     the database, we'll need to add some logic to have it clean up the cache as well. We have a scope factory
     already DI'd into this service, so we can pull out the <code>IDistributedCache</code> fairly easily. Then,
     it's a matter of clearing out the relevant records for our app. Add The following code immediately below the
-    <code>// add cache invalidation logic here</code> comment in <i>InitService.cs</i>
+    <code>// TODO Section 3.2 Step 2</code> comment in <i>InitService.cs</i>
 </p>
 
 <code>
@@ -139,11 +139,10 @@
 </p>
 
 <p>
-    Find the place marked <i>// add cache insert here</i>, and add the following code to it.
+    Find the place marked <i>// TODO Section 3.2 step 3</i>, and add the following code to it.
 </p>
 
 <code>
-    // add cache insert here
     var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
     var topSalesInsertTask = _cache.SetStringAsync("top:sales", topSalesperson.sumSales.ToString(), cacheOptions);
     var topNameInsertTask = _cache.SetStringAsync("top:name", topSalesperson.Employee.Name, cacheOptions);
@@ -153,8 +152,8 @@
 <p>
     This will add the total sales of the top seller and the their name to the cache, and it will invalidate that
     after 5 minutes. With that done, we need to add some logic up front to check the cache to see if those keys
-    exist, if they do, then we can short circuit the rest of this process, and return those results. Find the mark <i>// add cache check above here</i>
-    and add the following above it.
+    exist, if they do, then we can short circuit the rest of this process, and return those results. Find the mark <i>// TODO Section 3.2 step 4</i>
+    and add the following it.
 </p>
 
 <code>
@@ -187,16 +186,27 @@
 </code>
 
 <p>
-    Again, we'll want to cache this by setting a key in redis, find the spot marked <i>// add caching logic here</i>
+    Again, we'll want to cache this by setting a key in redis, find the spot marked <i>TODO Section 3.2 step 5</i>
     and add:
 </p>
 
 <code>
     var key = $"employee:{id}:avg";
+    var cacheResult = await _cache.GetStringAsync(key);
+
+    if (cacheResult != null)
+    {
+        stopwatch.Stop();
+        return new Dictionary<string, double>
+        {
+            { "average", double.Parse(cacheResult) },
+            { "elapsed", stopwatch.ElapsedMilliseconds }
+        };
+    }
 </code>
 
 <p>
-    To create the key that we'll use. Then, underneath the mark <i>// add cache set here</i>, add the following
+    To create the key that we'll use. Then, underneath the mark <i>TODO Section 3.2 step 6</i>, add the following
     to set that key to the computed average. In this case, we'll set it to have a 30 minute sliding expiration,
     what that means is that the key will persist unless it is not touched for 30 minutes.
 </p>
@@ -205,33 +215,13 @@
     await _cache.SetStringAsync(key, avg.ToString(CultureInfo.InvariantCulture), options: new DistributedCacheEntryOptions{SlidingExpiration = TimeSpan.FromMinutes(30)});
 </code>
 
-<p>
-    With the cache setting logic complete, the only thing that's left to do is to check to see if the key already
-    exists, underneath where we created our key, add the check:
-</p>
-
-
-<code>
-    var cacheResult = await _cache.GetStringAsync(key);
-
-        if (cacheResult != null)
-        {
-            stopwatch.Stop();
-            return new Dictionary<string, double>
-            {
-                { "average", double.Parse(cacheResult) },
-                { "elapsed", stopwatch.ElapsedMilliseconds }
-            };
-        }
-</code>
-
 <h2>Cache Total Sales</h2>
 
 <p>
     Finally, we'll want to cache the total sales that the whole organization created, this is probably the simplest
     of the calculations we're performing as there's no logic beyond summing up all the sales. However this is still
     a linear complexity process, so it'd still behoove us to cache it. So, let's start out by adding our cache 
-    checking logic, find the section marked <i>// add caching logic here</i> and add the following:    
+    checking logic, find the section marked <i>// TODO Section 3.2 step 7</i> and add the following:
 </p>
 
 <code>
@@ -249,7 +239,7 @@
 
 <p>
     This might be a metric that you run every day, so let's have it expire at midnight tomorrow morning, below
-    mark <i>// add cache set here</i>, add the following:
+    mark <i>// TODO Section 3.2 step 8</i>, add the following:
 </p>
 
 <code>

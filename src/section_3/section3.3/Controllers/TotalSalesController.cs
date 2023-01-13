@@ -21,6 +21,7 @@ namespace section3._3.Controllers
         {
             var stopwatch = Stopwatch.StartNew();
 
+            // TODO Section 3.3 step 5
             // add cache check logic here
             var db = Redis.Database;
             long? totalSales = (long?) await db.StringGetAsync("totalSales");
@@ -32,13 +33,15 @@ namespace section3._3.Controllers
                     { "elapsed", stopwatch.ElapsedMilliseconds }
                 });
             }
+            // end Section 3.3 step 5
             
             totalSales = await _salesContext.Sales.SumAsync(x => x.Total);
 
+            // TODO Section 3.3 step 6
             // add cache set logic here
             var timeTillMidnight = DateTime.Today.AddDays(1) - DateTime.Now;
             await db.StringSetAsync("totalSales", totalSales, timeTillMidnight);
-
+            // end section 3.3 step 6
 
             stopwatch.Stop();
 
