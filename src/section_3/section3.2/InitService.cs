@@ -19,7 +19,7 @@ public class InitService : IHostedService
         
         // TODO Section 3.2 Step 2
         // add cache invalidation logic here.
-        var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
+        
         // End Section 3.2 Step 2
 
         var cachePipe = new List<Task>

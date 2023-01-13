@@ -26,19 +26,7 @@ namespace section3._3.Controllers
             // add cache check here
             var db = Redis.Database;
             // TODO Section 3.3 step 3
-            var res = await db.StringGetAsync(new RedisKey[] { "top:sales", "top:name" });
-            long? topSales = (long?)res[0];
-            string topSalesName = res[1];
-            if(topSales.HasValue && !string.IsNullOrEmpty(topSalesName))
-            {
-                stopwatch.Stop();
-                return Ok(new Dictionary<string, object>
-                {
-                    { "sum_sales", topSales },
-                    { "employee_name", topSalesName },
-                    { "time", stopwatch.ElapsedMilliseconds }
-                });
-            }
+
             // end Section 3.3 step 3
 
             var topSalesperson = await _salesContext.Employees
@@ -49,9 +37,7 @@ namespace section3._3.Controllers
 
             // TODO Section 3.3 step 4
             // add cache set logic here
-            var topSalesSetTask = db.StringSetAsync("top:sales", topSalesperson.sumSales, expiry: TimeSpan.FromMinutes(5));
-            var topNameSetTask = db.StringSetAsync("top:name", topSalesperson.Employee.Name, expiry: TimeSpan.FromMinutes(5));
-            await Task.WhenAll(topSalesSetTask, topNameSetTask);
+
             // End Section 3.3 step 4
 
             stopwatch.Stop();
