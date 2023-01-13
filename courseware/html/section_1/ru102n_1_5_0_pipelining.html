@@ -35,7 +35,7 @@
     you the results. 
 </p>
 <p>    
-    When you have all the commands that you want to pipelined dispatched,
+    When you have all the commands that you want pipelined dispatched,
     you can call <code>Execute</code> to run them all. This will pipeline all of your commands
     in one contiguous block to Redis. Using this method, no other commands will be interleaved
     with your batched commands from the client. However, if there are other clients sending
