@@ -21,7 +21,7 @@ namespace section3._3.Controllers
         public async Task<IHttpActionResult> GetAverage(int id)
         {
             var stopwatch = Stopwatch.StartNew();
-
+            // TODO Section 3.3 step 1
             // add cache check here
             var db = Redis.Database;
             var avg = (double?)await db.StringGetSetExpiryAsync($"average:{id}", TimeSpan.FromHours(1));
@@ -34,10 +34,14 @@ namespace section3._3.Controllers
                     {"elapsed", stopwatch.ElapsedMilliseconds }
                 });
             }
+            // End Section 3.3 step 1
 
             avg = await _salesContext.Employees.Include("Sales").Where(x => x.EmployeeId == id).Select(x => x.Sales.Average(s => s.Total)).FirstAsync();
+
+            // TODO Section 3.3 step 2
             // add cache set here
             await db.StringSetAsync($"average:{id}", avg, TimeSpan.FromHours(1));
+            // End Section 3.3 step 2
 
             return Ok(new Dictionary<string, double>
             {

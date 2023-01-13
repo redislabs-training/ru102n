@@ -1,6 +1,6 @@
 ﻿using StackExchange.Redis;
 
-var muxer =ConnectionMultiplexer.Connect("localhost");
+var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
 var person1 = "person:1";

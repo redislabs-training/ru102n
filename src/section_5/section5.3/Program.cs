@@ -12,7 +12,7 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
-// create a couple of employees
+// Create a couple of employees.
 var alice = new Employee
 {
     Name = "Alice",
@@ -54,13 +54,12 @@ await employees.InsertAsync(charlie);
 await employees.InsertAsync(dan);
 await employees.InsertAsync(yves);
 
-// Query by name
-
+// Query by name.
 Console.WriteLine($"----Employees Named Bob----");
 var alsoBob = await employees.FirstAsync(x=>x.Name == "Bob");
 Console.WriteLine($"Bob's age is: {alsoBob.Age} and his postal code is: {alsoBob.Address!.PostalCode}");
 
-// Query by age 
+// Query by age.
 var employeesUnderForty = employees.Where(x => x.Age < 40);
 
 Console.WriteLine("----Employees under 40----");
@@ -69,8 +68,7 @@ await foreach (var emp in employeesUnderForty)
     Console.WriteLine($"{emp.Name} is {emp.Age}");
 }
 
-// Query by proximity to Philadelphia
-
+// Query by proximity to Philadelphia.
 var employeesNearPhilly = await employees.GeoFilter(x=>x.Address!.Location, -75.159, 39.963, 1500, GeoLocDistanceUnit.Miles).ToListAsync();
 
 Console.WriteLine("----Employees near Philly----");

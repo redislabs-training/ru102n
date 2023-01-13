@@ -1,6 +1,6 @@
 # Section 1.2
 
-Welcome to Redis University RU102 section 1.2, in this module we're going to learn how to:
+Welcome to Redis University RU102N section 1.2, in this module we're going to learn how to:
 
 1. Add StackExchange.Redis to a project.
 2. Import StackExchange.Redis.
@@ -9,7 +9,7 @@ Welcome to Redis University RU102 section 1.2, in this module we're going to lea
 
 ## Add StackExchange.Redis to the project
 
-As you can see, we have a project file here `section1.2.csproj` we want to add StackExchange.Redis to this project. There's a number of ways you can accomplish this, [nuget enumerates many of them](https://www.nuget.org/packages/StackExchange.Redis). The simplest way however is to use the dotnet cli's `add package` command from this directory:
+As you can see, we have a project file here `section1.2.csproj`. We want to add StackExchange.Redis to this project. There's a number of ways you can accomplish this, [nuget enumerates many of them](https://www.nuget.org/packages/StackExchange.Redis). The simplest way however is to use the dotnet CLI's `add package` command from this directory:
 
 ```
 dotnet add package StackExchange.Redis
@@ -44,7 +44,7 @@ var muxer = ConnectionMultiplexer.Connect(options);
 
 ## Ping Redis
 
-Now that we've connected to Redis. All that's left to do is ping it. To ping Redis, pull an instance of an `IDatabase` from the Multiplexer using `GetDatabase`, then calling ping is as simple as calling `Ping`
+Now that we've connected to Redis. All that's left to do is ping it. To ping Redis, pull an instance of an `IDatabase` from the Multiplexer using `GetDatabase`, then pinging the Redis server is as simple as calling `Ping`:
 
 ```cs
 var db = muxer.GetDatabase();

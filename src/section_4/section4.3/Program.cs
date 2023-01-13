@@ -3,8 +3,6 @@
 using NRedisGraph;
 using StackExchange.Redis;
 
-Console.WriteLine("Hello, World!");
-
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 var graph = new RedisGraph(db);

@@ -30,7 +30,7 @@
 
 <p>
     After we've migrated the database, we'll need to make sure that we are adding Redis as a caching layer for
-    our app. To do this, you'll just need to open <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span>, and find the comment <span style="font-family: 'courier new', courier;"><i>// add Redis here</i></span>
+    our app. To do this, you'll just need to open <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span>, and find the comment <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 Step 1</i></span>
     below that you'll just have the builder add the StackExchange Redis Cache, passing in a function to configure
     StackExchange.Redis.
 </p>
@@ -57,7 +57,7 @@
     the database, we'll need to add some logic to have it clean up the cache as well. We have a scope factory
     already DI'd into this service, so we can pull out the <span style="font-family: 'courier new', courier;">IDistributedCache</span> fairly easily. Then,
     it's a matter of clearing out the relevant records for our app. Add The following code immediately below the
-    <span style="font-family: 'courier new', courier;">// add cache invalidation logic here</span> comment in <span style="font-family: 'courier new', courier;"><i>InitService.cs</i></span>:
+    <span style="font-family: 'courier new', courier;">// TODO Section 3.2 Step 2</span> comment in <span style="font-family: 'courier new', courier;"><i>InitService.cs</i></span>:
 </p>
 
 <pre>
@@ -156,12 +156,11 @@
 </p>
 
 <p>
-    Find the place marked <span style="font-family: 'courier new', courier;"><i>// add cache insert here</i></span>, and add the following code to it.
+    Find the place marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 3</i></span>, and add the following code to it.
 </p>
 
 <pre>
 <code>
-    // add cache insert here
     var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
     var topSalesInsertTask = _cache.SetStringAsync("top:sales", topSalesperson.sumSales.ToString(), cacheOptions);
     var topNameInsertTask = _cache.SetStringAsync("top:name", topSalesperson.Employee.Name, cacheOptions);
@@ -175,7 +174,7 @@
     exist.
 </p>
 <p>
-    If they do, then we can short circuit the rest of this process, and return those results. Find the mark <span style="font-family: 'courier new', courier;"><i>// add cache check above here</i></span>
+    If they do, then we can short circuit the rest of this process, and return those results. Find the mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 4</i></span>
     and add the following above it.
 </p>
 
@@ -213,18 +212,30 @@
 </pre>
 
 <p>
-    Again, we'll want to cache this by setting a key in Redis, find the spot marked <span style="font-family: 'courier new', courier;"><i>// add caching logic here</i></span>
+
+    Again, we'll want to cache this by setting a key in Redis, find the spot marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 5</i></span>
     and add:
 </p>
 
 <pre>
 <code>
     var key = $"employee:{id}:avg";
+    var cacheResult = await _cache.GetStringAsync(key);
+
+    if (cacheResult != null)
+    {
+        stopwatch.Stop();
+        return new Dictionary<string, double>
+        {
+            { "average", double.Parse(cacheResult) },
+            { "elapsed", stopwatch.ElapsedMilliseconds }
+        };
+    }
 </code>
 </pre>
 
 <p>
-    To create the key that we'll use. Then, underneath the mark <span style="font-family: 'courier new', courier;"><i>// add cache set here</i></span>, add the following
+    To create the key that we'll use. Then, underneath the mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 6</i></span>, add the following
     to set that key to the computed average. In this case, we'll set it to have a 30 minute sliding expiration,
     what that means is that the key will persist unless it is not touched for 30 minutes.
 </p>
@@ -235,34 +246,13 @@
 </code>
 </pre>
 
-<p>
-    With the cache setting logic complete, the only thing that's left to do is to check to see if the key already
-    exists, underneath where we created our key, add the check:
-</p>
-
-<pre>
-<code>
-    var cacheResult = await _cache.GetStringAsync(key);
-
-        if (cacheResult != null)
-        {
-            stopwatch.Stop();
-            return new Dictionary<string, double>
-            {
-                { "average", double.Parse(cacheResult) },
-                { "elapsed", stopwatch.ElapsedMilliseconds }
-            };
-        }
-</code>
-</pre>
-
 <h2>Cache Total Sales</h2>
 
 <p>
     Finally, we'll want to cache the total sales that the whole organization created, this is probably the simplest
     of the calculations we're performing as there's no logic beyond summing up all the sales. However this is still
     a linear complexity process, so it'd still behoove us to cache it. So, let's start out by adding our cache 
-    checking logic, find the section marked <span style="font-family: 'courier new', courier;"><i>// add caching logic here</i></span> and add the following:    
+    checking logic, find the section marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 7</i></span> and add the following:    
 </p>
 
 <pre>
@@ -282,7 +272,7 @@
 
 <p>
     This might be a metric that you run every day, so let's have it expire at midnight tomorrow morning, below
-    mark <span style="font-family: 'courier new', courier;"><i>// add cache set here</i></span>, add the following:
+    mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 8</i></span>, add the following:
 </p>
 
 <pre>

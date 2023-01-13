@@ -74,7 +74,7 @@
 
 <p>
     The Key Prefix is expressed as a collection of potential prefixes that keys inserted into Redis can hold. When the index is created
-    later. During key-generation at insertion time, if the <code>Prefixes</code> array is set, Redis OM will select the first prefix
+    later this will limit what redis will index to keys matching the given prefix. During key-generation at insertion time, if the <code>Prefixes</code> array is set, Redis OM will select the first prefix
     and use that as the prefix for all inserted keys. If no prefixes are set, Redis OM will use the fully qualified class name as the 
     prefix for keys when it inserts your documents into Redis.
 </p>

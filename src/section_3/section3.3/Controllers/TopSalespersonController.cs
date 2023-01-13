@@ -25,6 +25,7 @@ namespace section3._3.Controllers
 
             // add cache check here
             var db = Redis.Database;
+            // TODO Section 3.3 step 3
             var res = await db.StringGetAsync(new RedisKey[] { "top:sales", "top:name" });
             long? topSales = (long?)res[0];
             string topSalesName = res[1];
@@ -38,6 +39,7 @@ namespace section3._3.Controllers
                     { "time", stopwatch.ElapsedMilliseconds }
                 });
             }
+            // end Section 3.3 step 3
 
             var topSalesperson = await _salesContext.Employees
                 .Select(x => new { Employee = x, sumSales = x.Sales
@@ -45,11 +47,12 @@ namespace section3._3.Controllers
                 .OrderByDescending(a => a.sumSales)
                 .FirstAsync();
 
+            // TODO Section 3.3 step 4
             // add cache set logic here
             var topSalesSetTask = db.StringSetAsync("top:sales", topSalesperson.sumSales, expiry: TimeSpan.FromMinutes(5));
             var topNameSetTask = db.StringSetAsync("top:name", topSalesperson.Employee.Name, expiry: TimeSpan.FromMinutes(5));
             await Task.WhenAll(topSalesSetTask, topNameSetTask);
-            
+            // End Section 3.3 step 4
 
             stopwatch.Stop();
             return Ok(new Dictionary<string, object>

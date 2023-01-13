@@ -2,7 +2,6 @@
 
 namespace section5._1;
 
-//
 [Document(StorageType = StorageType.Json, Prefixes = new []{"Employee"}, IndexName = "employees")]
 public class Employee
 {
