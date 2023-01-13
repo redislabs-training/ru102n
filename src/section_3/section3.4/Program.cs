@@ -5,11 +5,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// TODO Section 3.4 Step 1
 // Add Redis Cache here.
 builder.Services.AddStackExchangeRedisCache(options => options.ConfigurationOptions = new ConfigurationOptions{
     EndPoints = { "localhost:6379" },
     Password = ""
 });
+// end Section 3.4 Step 1
 
 // add session service
 builder.Services.AddSession();

@@ -54,7 +54,7 @@
 <p>
     Unlike the ASP.NET Core example, we need to make use of the ConnectionMultiplexer and it's methods directly and leverage the core Redis
     API. We can approximate what behavior pretty easily using the <code>StringGet</code> and <code>StringSet</code> methods that we explored
-    earlier in this course. Find the <i>// add cache check here</i> mark in <i>AverageController.cs</i> and add the following bit.
+    earlier in this course. Find the <i>// TODO Section 3.3 step 1</i> mark in <i>AverageController.cs</i> and add the following bit.
 </p>
 
 <code>
@@ -78,7 +78,7 @@
 
 <p>
     Now, if we fail to find the average for the given employee, we'll need to compute it from our SQL database, just as we did in the previous
-    example. After computing that, we'll use a simple <code>StringSet</code> to set the key and the expiration. Find the <i>// add cache set here</i>
+    example. After computing that, we'll use a simple <code>StringSet</code> to set the key and the expiration. Find the <i>// TODO Section 3.3 step 2</i>
     mark, and add the following to set the field in the cache, along with an expiration of an hour.
 </p>
 
@@ -90,7 +90,7 @@
 
 <p>
     For our Top Salesperson aggregation we have two keys that we're working with so our gets/sets will look slightly different. For the StringGet
-    we will pass an array of keys, and unpack from the resultant <code>RedisValue[]</code> array. Find the <i>// add cache check here</i> mark
+    we will pass an array of keys, and unpack from the resultant <code>RedisValue[]</code> array. Find the <i>// TODO Section 3.3 step 3</i> mark
     and add the following to do just that.
 </p>
 
@@ -113,7 +113,7 @@
 <p>
     Now, if we haven't run this calculation in the last 5 minutes, we'll have had a cache-miss. In which case, we'll run the same calculation we
     did in the ASP.NET Core example, after which, we'll set the two relevant keys, along with a 5 minute expiration <code>TimeSpan</code>. We
-    don't want to make multiple round trips to Redis, so we'll collect the dispatched tasks and await them. Find the <i>// add cache set logic here</i>
+    don't want to make multiple round trips to Redis, so we'll collect the dispatched tasks and await them. Find the <i>// TODO Section 3.3 step 4</i>
     mark and add the following.
 </p>
 
@@ -127,7 +127,7 @@
 
 <p>
     The last aggregation we'll look at here is the Total Sales Aggregation, we want this to expire this at the same time everyday (local midnight)
-    of the next day. Thus we'll start off in the <i>Controllers/TotalSalesController.cs</i>'s <code>GetTotalSales</code> method's <i>// add cache check logic here</i>
+    of the next day. Thus we'll start off in the <i>Controllers/TotalSalesController.cs</i>'s <code>GetTotalSales</code> method's <i>// TODO Section 3.3 step 5</i>
     and add our normal check:
 </p>
 
@@ -144,7 +144,7 @@
 </code>
 
 <p>
-    Then, after the <i>// add cache set logic here</i> mark, you can add the following - to have it cache the result, and set an expiration of 
+    Then, after the <i>// TODO Section 3.3 step 6</i> mark, you can add the following - to have it cache the result, and set an expiration of
     the local midnight:
 </p>
 
