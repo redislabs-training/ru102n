@@ -3,6 +3,7 @@
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 var transaction = db.CreateTransaction();
 
 transaction.HashSetAsync("person:1", new HashEntry[]
@@ -35,3 +36,4 @@ transaction.SortedSetIncrementAsync("person:age", "person:1", 1);
 success = transaction.Execute();
 
 Console.WriteLine($"Transaction Successful: {success}");
+// end coding challenge

@@ -2,7 +2,7 @@
 
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
-
+// TODO for Coding Challenge Start here on starting-point branch
 // Strings are fundamentally the simplest of Redis Data Types
 // They are a single RedisKey mapping to a single Redis Value
 // In this exercise we'll go over how to use a variety of the 
@@ -86,3 +86,4 @@ wasSet = db.StringSet(conditionalKey, "we reset the key!");
 Console.WriteLine($"Key set: {wasSet}");
 
 db.KeyDelete(conditionalKey);
+// end coding challenge

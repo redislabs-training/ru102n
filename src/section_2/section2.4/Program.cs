@@ -6,6 +6,7 @@ Console.WriteLine("Hello, World!");
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
+// TODO for Coding Challenge Start here on starting-point branch
 var userAgeSet = "users:age";
 var userLastAccessSet = "users:lastAccess";
 var userHighScoreSet = "users:highScores";
@@ -82,3 +83,4 @@ Console.WriteLine($"Names between A and J: {string.Join(", ", namesBetweenAandJ)
 db.SortedSetRangeAndStore(userLastAccessSet,mostRecentlyActive,  0, 2, order: Order.Descending);
 var rankOrderMostRecentlyActive = db.SortedSetCombineWithScores(SetOperation.Intersect, new RedisKey[]{userHighScoreSet, mostRecentlyActive}, new double[]{1,0}).Reverse();
 Console.WriteLine($"Highest Scores Most Recently Active: {string.Join(", ", rankOrderMostRecentlyActive)}");
+// end coding challenge

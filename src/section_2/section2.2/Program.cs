@@ -2,7 +2,7 @@
 
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
-
+// TODO for Coding Challenge Start here on starting-point branch
 // We'll maintain two lists, fruits and vegetables.
 var fruitKey = "fruits";
 var vegetableKey = "vegetables";
@@ -68,3 +68,4 @@ Console.WriteLine($"Position of Mango: {db.ListPosition(fruitKey, "Mango")}");
 
 // And finally, you use the Length method to determine the size of a given List.
 Console.WriteLine($"There are {db.ListLength(fruitKey)} fruits in our Fruit List");
+// end coding challenge

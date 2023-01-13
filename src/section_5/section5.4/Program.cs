@@ -12,6 +12,8 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
+// TODO for Coding Challenge Start here on starting-point branch
+
 // Create a couple of employees.
 var alice = new Employee
 {
@@ -69,3 +71,4 @@ Console.WriteLine($"Alice's present in Redis: {await employees.AnyAsync(x=>x.Nam
 
 await provider.Connection.UnlinkAsync(bobKeyName);
 Console.WriteLine($"Bob's present in Redis: {await employees.AnyAsync(x=>x.Name == "Bob")}");
+// end coding challenge
