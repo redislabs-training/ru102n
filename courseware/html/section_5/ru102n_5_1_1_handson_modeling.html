@@ -104,9 +104,14 @@
 <h2>Indexing Embedded Documents</h2>
 
 <p>
-    There are two methods for indexing embedded documents with Redis OM, an embedded document is a complex object, e.g. our
-    <code>Employee</code> and <code>Sale</code> classes have a <code>Address</code> property.
+    An embedded document is a complex object, e.g. our <code>Employee</code> and <code>Sale</code> classes have a <code>Address</code> property.
+    There are two methods for indexing embedded documents with Redis OM.
 </p>
+
+<ul>
+    <li>Via JSON Path, explicitly listing the scalars within the object graph you want to index.</li>
+    <li>Cascading into the object graph to a certain depth.</li>
+</ul>
 
 <h3>Index Precisely by JSON Path</h3>
 
