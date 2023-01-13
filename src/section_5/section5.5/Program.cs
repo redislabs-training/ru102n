@@ -13,7 +13,7 @@ await provider.Connection.CreateIndexAsync(typeof(Employee));
 
 var employees = provider.RedisCollection<Employee>();
 
-// create a couple of employees
+// Create a couple of employees.
 var alice = new Employee
 {
     Name = "Alice",
@@ -72,7 +72,7 @@ foreach(var employee in adjustedSales)
     Console.WriteLine($"Adjusted Sales: {employee["ADJUSTED_SALES"]}");
 }
 
-// String functions
+// String functions:
 
 var birthdayMessage = employeeAggregations.Apply(x=>$"Happy Birthday {x.RecordShell.Name} you're now {x.RecordShell.Age} ","BIRTHDAY_MESSAGE");
 foreach (var employee in birthdayMessage)
@@ -81,7 +81,7 @@ foreach (var employee in birthdayMessage)
 }
 
 
-// Geo Distance
+// Geo Distance:
 var empireGeoLoc = new GeoLoc(-74.0031713,40.7484396);
 
 var distanceFromEmpireStateBuilding = employeeAggregations
@@ -93,7 +93,7 @@ foreach (var res in distanceFromEmpireStateBuilding)
     Console.WriteLine($"{employee.Name} is {res["DISTANCE_FROM_EMPIRE_STATE_BUILDING"]} meters from the Empire State Building");
 }
 
-// Top Salesperson
+// Top Salesperson:
 var topSalesId = saleAggregations
     .GroupBy(x=>x.RecordShell.EmployeeId)
     .Sum(x=>x.RecordShell.Total)
