@@ -2,7 +2,7 @@
 
 using StackExchange.Redis;
 
-var muxer = ConnectionMultiplexer.Connect("redis-12456.c251.east-us-mz.azure.cloud.redislabs.com:12456,password=Qfg0Zns0iXn4Kbq6RjKhNde7Rf0KzWHq");
+var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
 
