@@ -124,6 +124,62 @@ docker-compose down
 
 Redis Stack can be installed using popular package manager for both macOS and Linux. [Follow the instructions on redis.io](https://redis.io/docs/stack/get-started/install/) to install and start Redis Stack.
 
+## RedisInsight Setup 
+
+RedisInsight is a graphical interface allowing you to interact with data and configure Redis instances.
+
+### Option 1: Install and Configure the Desktop Application
+
+The preferred way to run RedisInsight is as a desktop application.  If you're using a Redis instance in the cloud, you'll need to install the RedisInsight desktop application.  If you chose the Docker or local install of Redis Stack option for your Redis instance, you can either install the RedisInsight desktop application or choose run it as a web application with no further software installation required (see option 2 below).
+
+To use the desktop application, first download and install it using the instructions on the [RedisInsight download page](https://redis.com/redis-enterprise/redis-insight/).  
+
+Once you have installed RedisInsight, start it up and agree to the terms and conditions of use. 
+
+Finally, configure RedisInsight to connect to your Redis Instance... Click the "ADD REDIS DATABASE" button and fill out the new database form with the following values.
+
+If your Redis instance is in the cloud:
+
+* **Host:** The host name for your cloud database
+* **Port:** The port number for your cloud database
+* **Database Alias:** RU102N
+* **Username:** default
+* **Password:** The password for your cloud database
+* **Select Logical Database:** [leave unchecked]
+* **Use TLS:** [leave unchecked]
+
+If you are using Docker or you have installed Redis Stack locally:
+
+* **Host:** localhost
+* **Port:** 6379
+* **Database Alias:** RU102N
+* **Username:** [leave blank]
+* **Password:** [leave blank]
+* **Select Logical Database:** [leave unchecked]
+* **Use TLS:** [leave unchecked]
+
+Then click the "Add Redis Database" button to connect to your Redis instance.  You should see "RU102N" in the list of Redis databases, and can click on it to open the Browser view.
+
+![Configuring RedisInsight Desktop](readme_images/insight_setup.gif)
+
+If you see an error while trying to connect to Redis, ensure that your Redis instance is running (make sure the Docker container is up or your locally installed Redis Stack is running) and try again.
+
+Your next step is to load the sample data...
+
+### Option 2: Use the Web Interface
+
+If you used the Docker or local install of Redis Stack options to get your Redis instance, you can choose to use RedisInsight as a web application with no further software to install.  If you're using a Redis instance in the cloud, this option is not currently available to you and you should download and install RedisInsight instead.
+
+First, ensure that the Docker container or your local Redis Stack installation is running.
+
+Now, point your browser at `http://localhost:8001/` and you should see the RedisInsight terms and conditions:
+
+![RedisInsight web terms and conditions](images_for_readme/insight_web_terms.png)
+
+Accept the terms and click "Submit".  RedisInsight will automatically connect to the local Redis Stack instance and display the key browser:
+
+![RedisInsight web interface](images_for_readme/insight_web.png)
+
 ## You're Ready!
 
 You're now ready to take the course! If you haven't already, [sign up here](https://university.redis.com/courses/ru102n/) to access the course materials.
