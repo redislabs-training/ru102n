@@ -3,7 +3,7 @@
 <p>
     In this Hands-On, we'll be exploring how to use Redis Transactions from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <code>/src/section_2/section2.8/section2.8.csproj</code> in your IDE.
+    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.8/section2.8.csproj</span> in your IDE.
 </p>
 
 <p>
@@ -12,21 +12,28 @@
 
 <ul>
     <li>All commands under a Redis Transaction will be sent to Redis at the same time, as opposed to traditional transactions where commands can be sent in multiple round trips.</li>
-    <li>You cannot watch keys in a StackExchange.Redis transactions. But: you can add conditions to the transaction that will prevent the transaction from moving forward in certain conditions.</li>
+    <li>You cannot watch keys in StackExchange.Redis transactions. But: you can add conditions to the transaction that will prevent the transaction from moving forward in certain conditions.</li>
 </ul>
 
 <h2>A Simple Transaction</h2>
 
 <p>
     Before we get into anything complex. Let's take a look at a simple transaction. Imagine we wanted to add a simple person hash to Redis.
-    But in addition to adding the simple person hash, we also wanted to add some secondary indexes to it, keep in mind that we will explore 
+    But in addition to adding the simple person hash, we also wanted to add some secondary indexes to it. Keep in mind that we will explore 
     in later sections <b>SIGNIFICANTLY</b> more effective ways to index your data in Redis, but old-style OSS secondary indexing provides a great
-    illustration of transactions. Anyway, we have a person hash with three fields, name, age, and postal code and we will index all three fields.
+    illustration of transactions.
+</p>
+<p>
+    Anyway, we have a person hash with three fields, name, age, and postal code and we will index all three fields.
     So that our data is consistent, we want to add the hash and update all the indexes at the same time. This is a perfect place for transactions
-    as all the commands will execute in isolation. We can do all this by initializing an <code>ITransaction</code> with <code>db.CreateTransaction</code>.
-    We can then execute commands against that transaction, and close it out with <code>Execute</code>.
+    as all the commands will execute in isolation.
+</p>
+<p>
+    We can do all this by initializing an <span style="font-family: 'courier new', courier;">ITransaction</span> with <span style="font-family: 'courier new', courier;">db.CreateTransaction</span>.
+    We can then execute commands against that transaction, and close it out with <span style="font-family: 'courier new', courier;">Execute</span>.
 </p>
 
+<pre>
 <code>
     var transaction = db.CreateTransaction();
 
@@ -43,23 +50,31 @@
     var success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
 </code>
+</pre>
 
 <h2>Add a Condition to a Transaction</h2>
 
 <p>
     Redis Transactions typically allow you to watch a key to see if the key has been touched at all while the transaction was being created
     and fleshed out. Due to the multiplexed nature of StackExchange.Redis, this isn't something that can be done practically as multiple
-    transaction's watches can be interleaved with each other. However, what StackExchange.Redis does allow is for is for you to add conditions
+    transaction's watches can be interleaved with each other.
+</p>
+<p>
+    However, what StackExchange.Redis does allow is for is for you to add conditions
     that must be satisfied in order for the transaction to complete. Let's try this out.
 </p>
 
 <p>
     Say that we want our person's age to be incremented to 33, but we want to confirm that the person's age before the transaction executes is
-    in fact what we think it is, 32, we can add a condition to the transaction. Then, when the transaction executes, it will set the watch on
+    in fact what we think it is: 32.
+</p>
+<p>
+    We can add a condition to the transaction. Then, when the transaction executes, it will set the watch on
     Redis, query the hash, check the condition, and only if the condition passes, execute the transaction. Naturally if the state changes in
     the interim, the key is being watched, so the transaction will simply fail to execute once dispatched.
 </p>
 
+<pre>
 <code>
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 32));
     transaction.HashIncrementAsync("person:1", "age");
@@ -68,17 +83,22 @@
     success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
 </code>
+</pre>
 
-<h2>Failed Transactions conditions</h2>
+<h2>Failed Transaction conditions</h2>
 
 <p>
-    There are a couple of reasons that a transaction could fail to complete. If between the watch was added, and the when the transaction is
-    transmitted to Redis, another command comes along and touches the watched key(s), then the transaction will fail to execute. Additionally
-    if you set a condition in the transaction, and the condition proves false, it will fail to execute. In both cases, the <code>transaction.Execute</code>
+    There are a couple of reasons that a transaction could fail to complete. If between the point where watch was added, and the point when the transaction is
+    transmitted to Redis, another command comes along and touches the watched key(s), then the transaction will fail to execute. 
+</p>
+<p>
+    Additionally
+    if you set a condition in the transaction, and the condition proves false, it will fail to execute. In both cases, the <span style="font-family: 'courier new', courier;">transaction.Execute</span>
     will respond with false to indicate that the transaction did not succeed. Let's try getting this to fail by setting the condition to something
     we know to be false, e.g. the age we just incremented to 33 is 31.
 </p>
 
+<pre>
 <code>
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 31));
     transaction.HashIncrementAsync("person:1", "age");
@@ -87,6 +107,7 @@
 
     Console.WriteLine($"Transaction Successful: {success}");
 </code>
+</pre>
 
 <p>
     In this case, the transaction will simply fail, and return false when executed.

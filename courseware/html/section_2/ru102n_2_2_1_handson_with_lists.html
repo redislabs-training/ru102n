@@ -3,27 +3,29 @@
 <p>
     In this Hands-On we'll be exploring how to use Redis Lists from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <code>/src/section_2/section2.2/section2.2.csproj</code> in your IDE.
+    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.2/section2.2.csproj</span> in your IDE.
 </p>
 
 <p>
     We'll be exploring lists using two lists of strings, fruits and vegetables. So, now that
-    we have our multiplexer initialized and we have a handle to the IDatabase, our first task
+    we have our multiplexer initialized and we have a handle to the <span style="font-family: 'courier new', courier;">IDatabase</span>, our first task
     is to clean out any prior list, so we start each program run with a clean slate.
 </p>
 
+<pre>
 <code>
     var fruitKey = "fruits";
     var vegetableKey = "vegetables";
     db.KeyDelete(new RedisKey[] { fruitKey, vegetableKey });
 </code>
+</pre>
 
 <h2>Pushing to Lists</h2>
 
 <p>
     Lists are doubly linked lists, meaning you can push or pop from 
     either side of the list. However, any sort of indexed access becomes
-    an O(N) operations where N is the the number of elements you need to
+    an O(N) operation where N is the the number of elements you need to
     traverse to reach the index. Let's start out by pushing.
 </p>
 
@@ -33,81 +35,97 @@
     to the left, we are adding that fruit to the head of the list.
 </p>
 
+<pre>
 <code>
     db.ListLeftPush(fruitKey, new RedisValue[]{"Banana", "Mango", "Apple", "Pepper", "Kiwi", "Grape"});
 </code>
+</pre>
 
 <p>
     Now let's try printing out the first element in this list. Lists are indexed left to right,
-    consequentially the last fruit that we pushed left, will be the 0th index 'Grape':
+    consequentially the last fruit that we pushed left, will be the 0th index "Grape":
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"The first fruit in the list is: {db.ListGetByIndex(fruitKey, 0)}");
 </code>
+</pre>
 
 <p>
     And if we accessed the tail of the list, with the index -1, we'd get the first element
-    we pushed into the left side of the list Banana:
+    we pushed into the left side of the list, "Banana":
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"The last fruit in the list is:  {db.ListGetByIndex(fruitKey, -1)}");
 </code>
+</pre>
 
 <h4>Push Right</h4>
 <p>
-    In our vegetable list, we'll now push right, since we are pushing right, the item in
+    In our vegetable list, we'll now push right. Since we are pushing right, the item in
     question is added to the tail of the list, making it the last element in the list if we
     iterate over the list.
 </p>
 
+<pre>
 <code>
     db.ListRightPush(vegetableKey, new RedisValue[]{"Potato", "Carrot", "Asparagus", "Beet", "Garlic", "Tomato"});
 </code>
+</pre>
 
 <p>
     Now if we try to access the first element in the vegetable list, we'll get the first
-    element that we pushed to the right, "Potato"
+    element that we pushed to the right, "Potato".
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"The first vegetable in the list is: {db.ListGetByIndex(vegetableKey, 0)}");
 </code>
+</pre>
 
 <p>
     Conversely if we access the last element, we'll get "Tomato" - which is not a vegetable at all!
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"The last vegetable in the list is:  {db.ListGetByIndex(vegetableKey, -1)}");
 </code>
+</pre>
 
 <h2>Enumerate a List</h2>
 
 <p>
-    To enumerate a list, you can use the <code>ListRange</code> method. If you pass in a start
+    To enumerate a list, you can use the <span style="font-family: 'courier new', courier;">ListRange</span> method. If you pass in a start
     index, the range will start from there, and if you pass in a stop index, it will stop there,
     if you pass in neither a start nor a stop, it will pull back the whole list.
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"Fruit indexes 0 to -1: {string.Join(", ", db.ListRange(fruitKey))}");
     Console.WriteLine($"Vegetables index 0 to -2: {string.Join(", ", db.ListRange(vegetableKey, 0, -2))}");
 </code>
+</pre>
 
 <h2>Move elements Between Lists</h2>
 
 <p>
-    You can also transfer elements between lists using the <code>ListMove</code> method
-    This accepts two list keys, as well as the source side and destination side, this is
-    the side of the list you will pop from and push to respectively. Let's transfer 'Tomato'
+    You can also transfer elements between lists using the <span style="font-family: 'courier new', courier;">ListMove</span> method
+    This accepts two list keys, as well as the source side and destination side. These are 
+    the sides of the list you will pop from and push to respectively. Let's transfer "Tomato"
     from our vegetable list to our fruit list, since it's in fact a fruit and not a vegetable.
 </p>
 
+<pre>
 <code>
     db.ListMove(vegetableKey, fruitKey, ListSide.Right, ListSide.Left);
 </code>
+</pre>
 
 <h2>List as a Queue</h2>
 
@@ -116,11 +134,13 @@
     different sides. Conventionally you'd push left, pop right:
 </p>
 
+<pre>
 <code>
     Console.WriteLine("Enqueuing Celery");
     db.ListLeftPush(vegetableKey, "Celery");
     Console.WriteLine($"Dequeued: {db.ListRightPop(vegetableKey)}");
 </code>
+</pre>
 
 <h2>List as a Stack</h2>
 
@@ -129,28 +149,34 @@
     by convention you'd typically use the left side.
 </p>
 
+<pre>
 <code>
     Console.WriteLine("Pushing Grapefruit");
     db.ListLeftPush(fruitKey, "Grapefruit");
     Console.WriteLine($"Popping Fruit: {string.Join(",", db.ListLeftPop(fruitKey, 2))}");
 </code>
+</pre>
 
 <h2>Searching Lists</h2>
 <p>
-    Redis Lists also allow you to find the index of a particular item using the <code>ListPosition</code>
+    Redis Lists also allow you to find the index of a particular item using the <span style="font-family: 'courier new', courier;">ListPosition</span>
     method.
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"Position of Mango: {db.ListPosition(fruitKey, "Mango")}");
 </code>
+</pre>
 
 <h2>List Size</h2>
 
 <p>
-    And finally, you use the Length method to determine the size of a given list.
+    And finally, you use the <span style="font-family: 'courier new', courier;">Length</span> method to determine the size of a given list.
 </p>
 
+<pre>
 <code>
     Console.WriteLine($"There are {db.ListLength(fruitKey)} fruits in our Fruit List");
 </code>
+</pre>

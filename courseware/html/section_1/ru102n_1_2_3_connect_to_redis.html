@@ -6,26 +6,26 @@
 </p>
 
 <p>
-    There are two methods that you can use to connect to Redis <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.Connect</span>
-    and <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.ConnectAsync</span> either will work. You'll need the parameters
+    There are two methods that you can use to connect to Redis: <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.Connect</span>
+    and <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.ConnectAsync</span> - either will work. You'll need the parameters
     that you collected at setup:
     <ul>
         <li>hostname</li>
         <li>port</li>
         <li>password (if on Redis Cloud or otherwise password protected)</li>
-        <li>username (if not default)</li>
+        <li>username (if not <span style="font-family: 'courier new', courier;">default</span>)</li>
     </ul>
 </p>
 
 <p>
-    There are essentially two overloads, one taking a connection string, and the other taking an instance of
+    There are essentially two overloads, one taking a connection string, and the other taking an instance of the 
     <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> class, which is definitely
-    easier to organize, but the connection string option is often easier for simple connection.
+    easier to organize, but the connection string option is often easier for a simple connection.
 </p>
 
 <h3>Connection String</h3>
 <p>
-    The Connection string is just a comma delimitate string of different configuration paramaters, any <code>hostname:port</code>
+    The Connection string is just a comma delimited string of different configuration paramaters, any <code>hostname:port</code>
     formatted argument in the connection string is treated as it's own endpoint, while any <code>param=val</code> formatted argument
     is treated as a parameter value. So the connection string:
 </p>
@@ -35,7 +35,7 @@
 </code>
 
 <p>
-    Equates to StackExchange.Redis connecting to the host  redis-1, port 6379, and using the password "foobar" as it's password.
+    Equates to StackExchange.Redis connecting to the host "redis-1", port 6379, and using the password "foobar" as it's password.
 </p>
 
 <h3>ConfigurationOptions</h3>
@@ -57,12 +57,17 @@
 
 <p>
     After you've established a connection to Redis. Let's send our very first interactive
-    command to Redis! We'll start off by sending the simplest of Redis commands, Ping. First,
+    command to Redis!
+</p>
+<p>
+    We'll start off by sending the simplest of Redis commands, Ping. First,
     you'll need to get a handle to an <span style="font-family: 'courier new', courier;">IDatabase</span>, 
     the <span style="font-family: 'courier new', courier;">IDatabase</span> is the main interactive
     command interface for Redis Commands. You can grab it from the Multiplexer
     by calling the <span style="font-family: 'courier new', courier;">GetDatabase</span> 
     method on the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>.
+</p>
+<p>
     With that done, all you need to do to ping Redis is call 
     <span style="font-family: 'courier new', courier;">Ping</span>, print the results, and your done!
 </p>

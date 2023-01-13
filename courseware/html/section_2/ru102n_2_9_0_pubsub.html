@@ -2,9 +2,14 @@
 
 <p>
     <a href="https://redis.io/docs/manual/pubsub/">Pub/Sub</a> allows for a subscriber to listen for events on channels in Redis using the
-    Publisher/Subscriber messaging pattern. Pub/Sub is unique in StackExchange.Redis as it is the only thing the library does that is not
+    Publisher/Subscriber messaging pattern. 
+</p>
+<p>
+    Pub/Sub is unique in StackExchange.Redis as it is the only thing the library does that is not
     on the main interactive connection. Earlier in the course I mentioned that StackExchange.Redis opens two connection to Redis at a time.
-    The first is the interactive connection that you use to send all of your interactive commands to Redis on. The other is the subscriber
+</p>
+<p>
+    The first of these is the interactive connection that you use to send all of your interactive commands to Redis on. The other is the subscriber
     connection. There's a really good reason for this, after subscribing to a channel in Redis, Redis flips the connection over to Subscriber
     mode which does not allow any non pub/sub related commands across, allowing it to send messages back to the client unhindered by other 
     traffic on the channel.

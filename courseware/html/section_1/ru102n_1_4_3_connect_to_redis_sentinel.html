@@ -2,15 +2,19 @@
 
 <p>
     Connecting to <a href="https://redis.io/docs/management/sentinel/">Redis Sentinel</a>
-    is a bit different than connecting to other instances of Redis. The key
+    is a bit different than connecting to other instances of Redis. 
+</p>
+<p>    
+    The key
     difference is that rather than connecting to the master server, you connect
     to one of the 'sentinels' - the instances of Redis responsible for monitoring
     your master and replicas, detecting fail-overs, and promoting new masters.
 
-    Additionally, you must specify the <code>ServiceName</code>, which corresponds
+    Additionally, you must specify the <span style="font-family: 'courier new', courier;">ServiceName</span>, which corresponds
     to the master name that you tell the sentinels to monitor when configuring them.
 </p>
 
+<pre>
 <code>
     var options = new ConfigurationOptions
     {
@@ -20,3 +24,4 @@
 
     var muxer = ConnectionMultiplexer.Connect(options);
 </code>
+</pre>

@@ -5,6 +5,7 @@
     look like this:
 </p>
 
+<pre>
 <code>    
     public class Employee
     {
@@ -22,10 +23,11 @@
         public Employee Employee { get; set; }
     }
 </code>
+</pre>
 
 <p>
     We'll use Entity Framework and a local SQLite database for our example. If you are using a remote Redis Database, keep in mind that you'll
     incur some latency over the network when going to Redis vs going to our SQLite database, so if you want to truly compare apples to apples
-    you can either run Redis locally (see setup instruction), or you can use a remote SQL Database by updating the adapter we're using in our
+    you can either run Redis locally (see the course setup instructions), or you can use a remote SQL Database by updating the adapter we're using in our
     example.
 </p>

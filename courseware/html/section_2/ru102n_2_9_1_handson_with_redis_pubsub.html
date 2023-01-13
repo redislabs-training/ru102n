@@ -3,21 +3,23 @@
 <p>
     In this Hands-On, we'll be exploring how to use Redis Pub/Sub from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <code>/src/section_2/section2.9/section2.9.csproj</code> in your IDE.
+    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.9/section2.9.csproj</span> in your IDE.
 </p>
 
 <h2>Get an ISubscriber</h2>
 <p>
-    In addition to the <code>IDatabase</code> instance that we've needed in most other examples in this course, we'll also need to grab an 
-    instance of an <code>ISubscriber</code>, to get one, we'll simply need to call <code>ConnectionMultiplexer.GetSubscriber</code>. We'll
+    In addition to the <span style="font-family: 'courier new', courier;">IDatabase</span> instance that we've needed in most other examples in this course, we'll also need to grab an 
+    instance of an <span style="font-family: 'courier new', courier;">ISubscriber</span>, to get one, we'll simply need to call <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.GetSubscriber</span>. We'll
     have a cancellation token source so we can cut off our producer tasks when it's time, so let's also initialize that.
 </p>
 
+<pre>
 <code>
     var subscriber = muxer.GetSubscriber();
     var cancellationTokenSource = new CancellationTokenSource();
     var token = cancellationTokenSource.Token;
 </code>
+</pre>
 
 <h2>Sequential vs Concurrent</h2>
 
@@ -25,9 +27,10 @@
 <p>
     When working with the subscriber, there's a decision you need to make, you can either process messages sequentially or concurrently.
     If you need your messages delivered in order, you're going to want to use the sequential delivery mechanism. If you do not pass a delegate
-    to the <code>Subscribe</code> method, it produces a channel object that you can listen to messages on.
+    to the <span style="font-family: 'courier new', courier;">Subscribe</span> method, it produces a channel object that you can listen to messages on.
 </p>
 
+<pre>
 <code>
     var channel = await subscriber.SubscribeAsync("test-channel");
 
@@ -36,29 +39,33 @@
         Console.WriteLine($"Sequentially received: {msg.Message} on channel: {msg.Channel}");
     });
 </code>
+</pre>
 
 <h2>Simple Concurrent</h2>
 
 <p>
-    To listen to messages concurrently, you need only pass a delegate into the <code>Subscribe</code> method. That delegate take two arguments,
+    To listen to messages concurrently, you need only pass a delegate into the <span style="font-family: 'courier new', courier;">Subscribe</span> method. That delegate take two arguments,
     the channel the message was sent to, and the message itself.
 </p>
 
+<pre>
 <code>
     await subscriber.SubscribeAsync("test-channel", (channel, value) =>
     {
         Console.WriteLine($"Received: {value} on channel: {channel}");
     });
 </code>
+</pre>
 
-<h3>Create Producer</h3>
+<h3>Create the Producer</h3>
 <p>
     After we've subscribed, we can set up a task to repeatedly send messages to our channel over and over again, and we'll throw a 
-    <code>Console.ReadKey</code> at the end, so that we can stop the app with any key. This will produce messages that will appear to both
+    <span style="font-family: 'courier new', courier;">Console.ReadKey</span> at the end, so that we can stop the app with any key. This will produce messages that will appear to both
     subscriptions, given that they are separate subscribers insofar as StackExchange.Redis is concerned. However because of the multiplexed
     nature of StackExchange.Redis, Redis will only see one subscriber.
 </p>
 
+<pre>
 <code>
     var basicSendTask = Task.Run(async () =>
     {
@@ -74,16 +81,21 @@
     Console.ReadKey();
     // put cancellation & unsubscribe down here.
 </code>
+</pre>
 
 <h2>Subscribe to Pattern</h2>
 
 <p>
-    The Pub/Sub API allows you to also subscribe to channel patterns, this uses simple glob patterns. This is basically the only difference
-    between subscribing to patterns vs not subscribing to patterns. If you wanted to subscribe to the prefix <i>pattern:</i>, you'd simply
-    need to make the pattern <i>pattern:*</i>, then whenever you send any message to a channel matching that pattern, it will be picked up.
+    The Pub/Sub API allows you to also subscribe to channel patterns, using simple glob patterns. This is basically the only difference
+    between subscribing to patterns vs not subscribing to patterns.
+</p>
+<p>
+    If you wanted to subscribe to the prefix <i>pattern:</i>, you'd simply
+    need to make the pattern <span style="font-family: 'courier new', courier;"><i>pattern:*</i></span>, then whenever you send any message to a channel matching that pattern, it will be picked up.
     So let's also add a producer that will publish to channels matching that pattern with random GUIDs.
 </p>
 
+<pre>
 <code>
     var patternSendTask = Task.Run(async () =>
     {
@@ -95,6 +107,7 @@
         }
     });
 </code>
+</pre>
 
 <h2>Unsubscribe</h2>
 
@@ -106,37 +119,43 @@
 
 <p>
     We can unsubscribe from the sequential channel we created earlier by calling Unsubscribe on the channel object. We'll add another
-    <code>Console.ReadKey</code> after this so that we can observe tha the channel stops producing messages.
+    <span style="font-family: 'courier new', courier;"><code>Console.ReadKey</code></span> after this so that we can observe tha the channel stops producing messages.
 </p>
 
+<pre>
 <code>
     Console.WriteLine("Unsubscribing to a single channel");
     await channel.UnsubscribeAsync();
     Console.ReadKey();
 </code>
+</pre>
 
 <h3>Unsubscribe Concurrent Subscriber</h3>
 
 <p>
-    To unsubscribe from the subscriber that was running concurrently, we just need to call <code>Unsubscribe</code> on the subscriber, this will
+    To unsubscribe from the subscriber that was running concurrently, we just need to call <span style="font-family: 'courier new', courier;">Unsubscribe</span> on the subscriber, this will
     unsubscribe for all channels and delegates listening to that channel, so if we had done this before our sequential unsubscribe it would
     have been unsubscribed as well.
 </p>
 
+<pre>
 <code>
     Console.WriteLine("Unsubscribing whole subscriber from test-channel");
     await subscriber.UnsubscribeAsync("test-channel");
     Console.ReadKey();
 </code>
+</pre>
 
 <h3>Unsubscribe from Everything</h3>
 
 <p>
-    If you need to Unsubscribe from everything, just call <code>UnsubscribeAll</code>, and it will cut off all subscriptions to Redis.
+    If you need to Unsubscribe from everything, just call <span style="font-family: 'courier new', courier;">UnsubscribeAll</pre>, and it will cut off all subscriptions to Redis.
 </p>
 
+<pre>
 <code>
     Console.WriteLine("Unsubscribing from all");
     await subscriber.UnsubscribeAllAsync();
     Console.ReadKey();
 </code>
+</pre>
