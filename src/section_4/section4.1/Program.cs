@@ -10,16 +10,16 @@ await db.KeyDeleteAsync("bf");
 await db.KeyDeleteAsync("cms");
 await db.KeyDeleteAsync("topk");
 
-// likely incomplete list of delimiting characters within the book
+// Likely incomplete list of delimiting characters within the book.
 char[] delimiterChars = { ' ', ',', '.', ':', '\t', '\n', '—', '?', '"', ';', '!', '’', '\r', '\'', '(', ')', '”' };
 
-// pull in text of Moby Dick
+// Pull in text of Moby Dick.
 var text = await File.ReadAllTextAsync("data/moby_dick.txt");
 
-// split words out from text
+// Split words out from text.
 var words = text.Split(delimiterChars).Where(s=>!string.IsNullOrWhiteSpace(s)).Select(s=>s.ToLower()).Select(x=>x).ToArray();
 
-// organize our words into a list to be pushed into the bloom filter in one shot, we could de-duplicate to make the transit shorter,
+// Organize our words into a list to be pushed into the bloom filter in one shot, we could de-duplicate to make the transit shorter,
 // but there's nothing inherently wrong with sending duplicates as the filter will filter them out.
 var bloomList = words.Aggregate(new HashSet<object> { "bf" }, (list, word) =>
 {
@@ -27,16 +27,16 @@ var bloomList = words.Aggregate(new HashSet<object> { "bf" }, (list, word) =>
     return list;
 });
 
-// reserve our bloom filter
+// Reserve our bloom filter.
 await db.ExecuteAsync("BF.RESERVE", "bf", 0.01, 20000);
 
-// Add All the Words to our bloom filter
+// Add All the Words to our bloom filter.
 await db.ExecuteAsync("BF.MADD", bloomList, CommandFlags.FireAndForget);
 
-// Reserve the Top-K
+// Reserve the Top-K.
 await db.ExecuteAsync("TOPK.RESERVE", "topk", 10, 20, 10, .925);
 
-// We need to organize the words into a list where each word is followed by the number of occurrences it has in moby dick
+// We need to organize the words into a list where each word is followed by the number of occurrences it has in Moby Dick.
 var topKList = words.Aggregate(new Dictionary<string, int>(), (dict, word) =>
 {
     if (!dict.ContainsKey(word))
@@ -53,9 +53,10 @@ var topKList = words.Aggregate(new Dictionary<string, int>(), (dict, word) =>
    return list;
 });
 
-// Add everything to the Top-K
+// Add everything to the Top-K.
 await db.ExecuteAsync("TOPK.INCRBY", topKList, CommandFlags.FireAndForget);
 
+// Ask the Bloom Filter and Top-K some questions...
 var doesTheExist = await db.ExecuteAsync("BF.EXISTS", "bf", "the");
 
 var doesTheExistAsInt = (int)doesTheExist;

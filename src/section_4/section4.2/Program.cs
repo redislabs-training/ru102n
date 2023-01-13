@@ -8,10 +8,10 @@ using StackExchange.Redis;
 var muxer = ConnectionMultiplexer.Connect("localhost");
 var db = muxer.GetDatabase();
 
-// delete keys
+// Delete keys.
 db.KeyDelete(new RedisKey[]{"sensor", "sensor:Max", "sensor:Avg", "sensor:Min"});
 
-// Create Time Series and Rules
+// Create Time Series and Rules.
 await db.TimeSeriesCreateAsync("sensor", 60000, new List<TimeSeriesLabel>{new TimeSeriesLabel("id", "sensor-1")});
 
 var aggregations = new TsAggregation[]{TsAggregation.Avg, TsAggregation.Min, TsAggregation.Max};
