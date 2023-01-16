@@ -7,7 +7,7 @@
 <p>
     In this Hands-On we'll be exploring how to Update and Delete Documents in Redis OM .NET.
     You can either create your own project to follow along with and connect a RedisConnectionProvider,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_5/section5.4/section5.4.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_5/section5.4/section5.4.csproj</span> in your IDE.
 </p>
 
 <h2>Setting up our Example</h2>
@@ -45,7 +45,7 @@
 <h2>Updating Documents with Redis OM</h2>
 
 <p>
-    Updating documents with Redis OM revolves around the <span style="font-family: 'courier new', courier;">IRedisCollection</span>, which exposes two methods for this behavior: update
+    Updating documents with Redis OM revolves around the <span class="code">IRedisCollection</span>, which exposes two methods for this behavior: update
     and save. To perform any updates it's critical that the documents you are trying to Update have an Id Field that has a value set, 
     this allows Redis OM to determine what the key that it is updating should be.
 </p>
@@ -53,8 +53,8 @@
 <h3>Update a single Document</h3>
 
 <p>
-    Using <span style="font-family: 'courier new', courier;">IRedisCollection.Update</span> allows you to run an update on a single record in Redis. So, if we wanted to add a bunch of
-    sales for Bob, we would simply update the Bob record, and call <span style="font-family: 'courier new', courier;">Update</span> on the Redis Collection:
+    Using <span class="code">IRedisCollection.Update</span> allows you to run an update on a single record in Redis. So, if we wanted to add a bunch of
+    sales for Bob, we would simply update the Bob record, and call <span class="code">Update</span> on the Redis Collection:
 </p>
 
 <pre>
@@ -86,9 +86,9 @@
 <h2>Updating Multiple Documents</h2>
 
 <p>
-    You can update multiple documents simultaneously by using the <span style="font-family: 'courier new', courier;">IRedisCollection.Save</span> method. When an <span style="font-family: 'courier new', courier;">IRedisCollection</span>
+    You can update multiple documents simultaneously by using the <span class="code">IRedisCollection.Save</span> method. When an <span class="code">IRedisCollection</span>
     is enumerated, it maintains a snapshot of each record that it enumerates. If you update those records after they've been enumerated, and call
-    <span style="font-family: 'courier new', courier;">IRedisCollection.Save</span> on the collection, the collection will diff each record's current state against it's snapshot, and update
+    <span class="code">IRedisCollection.Save</span> on the collection, the collection will diff each record's current state against it's snapshot, and update
     the relevant documents accordingly. 
 </p>
 <p>
@@ -112,7 +112,7 @@
 <h2>Deleting Documents</h2>
 
 <p>
-    There are two ways to delete Documents in Redis. If your model has an Id Field, you can use the <span style="font-family: 'courier new', courier;">IRedisCollection.Delete</span> method,
+    There are two ways to delete Documents in Redis. If your model has an Id Field, you can use the <span class="code">IRedisCollection.Delete</span> method,
     passing in the document you want to delete. Redis OM will then remove the document from Redis for you. 
 </p>
 <p>
@@ -127,7 +127,7 @@
 </pre>
 
 <p>
-    If our model does not have an Id field on it, we can also use the <span style="font-family: 'courier new', courier;">IRedisConnection.Unlink</span> method, passing in the key name that
+    If our model does not have an Id field on it, we can also use the <span class="code">IRedisConnection.Unlink</span> method, passing in the key name that
     you want to remove. When we inserted Bob before, we collected the key name from the insert, so let's use that to delete him from Redis:
 </p>
 

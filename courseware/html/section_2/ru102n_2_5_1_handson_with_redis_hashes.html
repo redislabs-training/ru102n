@@ -7,7 +7,7 @@
 <p>
     In this Hands-On, we'll be exploring how to use Redis Hashes from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.5/section2.5.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.5/section2.5.csproj</span> in your IDE.
 </p>
 
 <h2>Collect and Clean out Keys</h2>
@@ -18,9 +18,9 @@
 </p>
 
 <ul>
-    <li><span style="font-family: 'courier new', courier;">person:1</span></li>
-    <li><span style="font-family: 'courier new', courier;">person:2</span></li>
-    <li><span style="font-family: 'courier new', courier;">person:3</span></li>
+    <li><span class="code">person:1</span></li>
+    <li><span class="code">person:2</span></li>
+    <li><span class="code">person:3</span></li>
 </ul>
 
 <p>
@@ -41,8 +41,8 @@
 <h2>Create the Hashes</h2>
 
 <p>
-    Next, we'll want to create our three hashes, to create a hash, use the <span style="font-family: 'courier new', courier;">>HashSet</span> method, passing in an array of 
-    <span style="font-family: 'courier new', courier;">HashEntry</span> structs, which are simple key-value pairs.
+    Next, we'll want to create our three hashes, to create a hash, use the <span class="code">>HashSet</span> method, passing in an array of 
+    <span class="code">HashEntry</span> structs, which are simple key-value pairs.
 </p>
 
 <pre>
@@ -73,7 +73,7 @@
 <h2>Increment a Field in a Hash</h2>
 
 <p>
-    Much like Redis Strings, you can increment fields in hashes. To Do this, use the <span style="font-family: 'courier new', courier;">HashIncrement</span> method, passing in the incrementor
+    Much like Redis Strings, you can increment fields in hashes. To Do this, use the <span class="code">HashIncrement</span> method, passing in the incrementor
     you want to use. If you pass nothing in, it will increment by 1.
 </p>
 
@@ -88,7 +88,7 @@
 <h2>Retrieve a Field from a Hash</h2>
 
 <p>
-    Retrieving a field from a hash is simple. All you need to do is use the <span style="font-family: 'courier new', courier;">HashGet</span> method, passing in the key and 
+    Retrieving a field from a hash is simple. All you need to do is use the <span class="code">HashGet</span> method, passing in the key and 
     field you want to get.
 </p>
 
@@ -105,11 +105,11 @@
     There are two ways to retrieve all the fields from a hash. Which one is appropriate to use is dependent on how large your hash is.
 </p>
 <p>
-    If your hash is relatively small, in Redis Terms this means less than 1000 fields. You can use <span style="font-family: 'courier new', courier;">HashGetAll</span>.
+    If your hash is relatively small, in Redis Terms this means less than 1000 fields. You can use <span class="code">HashGetAll</span>.
 </p>
 <p>
     If you are working
-    with a very large hash with many thousands of fields, you may want to use <span style="font-family: 'courier new', courier;">HashScan</span> instead. <span style="font-family: 'courier new', courier;">HashScan</span> allows you to paginate over your hash.
+    with a very large hash with many thousands of fields, you may want to use <span class="code">HashScan</span> instead. <span class="code">HashScan</span> allows you to paginate over your hash.
     This will decrease the amount of time that Redis is busy servicing any one request, but will require multiple round trips to Redis.    
 </p>
 

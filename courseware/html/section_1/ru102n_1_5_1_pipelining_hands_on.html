@@ -18,17 +18,17 @@
 
 <p>
     The completed source is in the course's <a class="page-link" target="_blank" href="https://github.com/redislabs-training/ru102n">repository</a>
-    under <span style="font-family: 'courier new', courier;">/src/section_1/section1.5/section1.5.csproj</span>. We'll be using the <span style="font-family: 'courier new', courier;">ping</span>
+    under <span class="code">/src/section_1/section1.5/section1.5.csproj</span>. We'll be using the <span class="code">ping</span>
     command in this case, but this will extrapolate to any command, and any sequence of
-    commands where the intermediate results are not needed. If you'd like to start from the beginning you can checkout the <span style="font-family: 'courier new', courier;">starting-point</span> branch
-    and open the csproj file finding the <span style="font-family: 'courier new', courier;"></span>// TODO for Coding Challenge Start here on starting-point branch</span> in <span style="font-family: 'courier new', courier;">Program.cs</span>.
+    commands where the intermediate results are not needed. If you'd like to start from the beginning you can checkout the <span class="code">starting-point</span> branch
+    and open the csproj file finding the <span class="code"></span>// TODO for Coding Challenge Start here on starting-point branch</span> in <span class="code">Program.cs</span>.
 </p>
 
 <h2>Preamble</h2>
 
 <p>
-    Before we run our examples, let's initialize a Multiplexer, get an instance of an <span style="font-family: 'courier new', courier;">IDatabase</span>
-    and create and start a <span style="font-family: 'courier new', courier;">StopWatch</span>:
+    Before we run our examples, let's initialize a Multiplexer, get an instance of an <span class="code">IDatabase</span>
+    and create and start a <span class="code">StopWatch</span>:
 </p>
 
 <pre>
@@ -53,7 +53,7 @@
 <p>
     Sending a serial chain of commands that are not pipelined is pretty straight forward.
     For the sake of consistency with the other examples, we'll use the async version of
-    the <span style="font-family: 'courier new', courier;">Ping</span> Command. We'll just call and await the result 1000 times. This
+    the <span class="code">Ping</span> Command. We'll just call and await the result 1000 times. This
     will cause the Multiplexer to wait for the command to complete between runs, and prevent
     it from pipelining the commands automatically. 
 </p>
@@ -103,7 +103,7 @@
 <h2>Explicit Pipelining with IBatch</h2>
 
 <p>
-    Finally, let's explicitly pipeline all of our pings using an <span style="font-family: 'courier new', courier;">IBatch</span>. An <span style="font-family: 'courier new', courier;">IBatch</span> will
+    Finally, let's explicitly pipeline all of our pings using an <span class="code">IBatch</span>. An <span class="code">IBatch</span> will
     guarantee that the client sends the entire batch to Redis in one shot, with no other
     commands interleaved in the pipeline. This is slightly different behavior than our
     implicit pipelining as in the case of implicit pipelining, commands may
@@ -112,12 +112,12 @@
 
 <p>
     To explicitly pipeline these commands we'll follow a similar pattern, in this case,
-    however, we will use the <span style="font-family: 'courier new', courier;">IDatabase.CreateBatch()</span> method to create the
+    however, we will use the <span class="code">IDatabase.CreateBatch()</span> method to create the
     batch, and use the batch's async methods to 'dispatch' the the tasks. It's important
     to note here that unlike in our implicit case, the tasks will not be truly dispatched
-    until after the <span style="font-family: 'courier new', courier;">IBatch.Execute()</span> method is called, if you try awaiting
+    until after the <span class="code">IBatch.Execute()</span> method is called, if you try awaiting
     any of the tasks before then, you can accidentally deadlock your command. After calling
-    <span style="font-family: 'courier new', courier;">Execute</span>, you can then await all of the tasks.
+    <span class="code">Execute</span>, you can then await all of the tasks.
 
 </p>
 

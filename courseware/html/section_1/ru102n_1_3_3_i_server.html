@@ -5,14 +5,14 @@
 <h1>The IServer</h1>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IServer</span> is an abstraction to a single instance of a Redis Server. You can grab an instance of an <span style="font-family: 'courier new', courier;">IServer</span>
-    by using the <span style="font-family: 'courier new', courier;">IConnectionMultiplexer.GetServer</span> command, passing in the exact endpoint information you want to
+    The <span class="code">IServer</span> is an abstraction to a single instance of a Redis Server. You can grab an instance of an <span class="code">IServer</span>
+    by using the <span class="code">IConnectionMultiplexer.GetServer</span> command, passing in the exact endpoint information you want to
     retrieve. 
 </p>
 <p>
-    <span style="font-family: 'courier new', courier;">IServer</span> has a fundamentally different role than <span style="font-family: 'courier new', courier;">IDatabase</span> as you're going to use it to handle the server
+    <span class="code">IServer</span> has a fundamentally different role than <span class="code">IDatabase</span> as you're going to use it to handle the server
     level commands. That means that in general, data modeling commands are not appropriate to be used on a server. Rather
     operations like checking the server's info (the basic info of Redis), it's configuration, updating it's configuration,
-    checking memory statistics, and the like are <span style="font-family: 'courier new', courier;">IServer</span> operations. Even scanning for the keys of a Redis server should be
+    checking memory statistics, and the like are <span class="code">IServer</span> operations. Even scanning for the keys of a Redis server should be
     done at the server level.
 </p>

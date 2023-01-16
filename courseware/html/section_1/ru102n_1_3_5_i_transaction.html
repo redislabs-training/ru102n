@@ -5,22 +5,22 @@
 <h1>ITransaction</h1>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">ITransaction</span> provides an interface for Redis <a class="page-link" target="_blank" href="https://redis.io/docs/manual/transactions/">Transactions</a>.
+    The <span class="code">ITransaction</span> provides an interface for Redis <a class="page-link" target="_blank" href="https://redis.io/docs/manual/transactions/">Transactions</a>.
     Transactions in Redis differ from transactions in other databases, for a full
     description of transactions check out the transaction section of
     <a class="page-link" target="_blank" href="https://university.redis.com/courses/ru101/">RU101</a>.    
 </p>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">ITransaction</span> interface is fundamentally an async interface. It exposes 
-    a very similar command set to the <span style="font-family: 'courier new', courier;">IDatabase</span>, but it will only expose async
-    versions of each command. That is because each command in <span style="font-family: 'courier new', courier;">ITransaction</span> is
-    async, as they will not be competed until after <span style="font-family: 'courier new', courier;">Execute</span> is called.
-    Only after the <span style="font-family: 'courier new', courier;">Execute</span> is called can the underpinning tasks for the
+    The <span class="code">ITransaction</span> interface is fundamentally an async interface. It exposes 
+    a very similar command set to the <span class="code">IDatabase</span>, but it will only expose async
+    versions of each command. That is because each command in <span class="code">ITransaction</span> is
+    async, as they will not be competed until after <span class="code">Execute</span> is called.
+    Only after the <span class="code">Execute</span> is called can the underpinning tasks for the
     Transaction be awaited. 
 </p>
 
 <p>
-    You can get an instance of an <span style="font-family: 'courier new', courier;">ITransaction</span> by calling 
-    <span style="font-family: 'courier new', courier;">IDatabase.GetTransaction()</span> on your <span style="font-family: 'courier new', courier;">IDatabase</span> object.
+    You can get an instance of an <span class="code">ITransaction</span> by calling 
+    <span class="code">IDatabase.GetTransaction()</span> on your <span class="code">IDatabase</span> object.
 </p>

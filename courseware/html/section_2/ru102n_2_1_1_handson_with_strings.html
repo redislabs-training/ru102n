@@ -7,14 +7,14 @@
 <p>
     In this Hands-On we'll be exploring how to use Redis Strings from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
 </p>
 
 <h2>Simple Sets and Gets</h2>
 
 <p>
     The simplest things you can do with a string are to set it and get it, to do this all you
-    need to do is use the <span style="font-family: 'courier new', courier;">StringSet</span> and <span style="font-family: 'courier new', courier;">StringGet</span> methods:
+    need to do is use the <span class="code">StringSet</span> and <span class="code">StringGet</span> methods:
 </p>
 
 <pre>
@@ -29,7 +29,7 @@
 </pre>
 
 <p>
-    Now, if you want to append a string onto an existing string value, you can use the <span style="font-family: 'courier new', courier;">StringAppend</span> method:
+    Now, if you want to append a string onto an existing string value, you can use the <span class="code">StringAppend</span> method:
 </p>
 
 <pre>
@@ -44,11 +44,11 @@
 
 <p>
     There are alternative encodings of strings beyond a raw character string. If a string
-    is set to a numeric value, you can use the <span style="font-family: 'courier new', courier;">StringIncrement</span> methods on it.
+    is set to a numeric value, you can use the <span class="code">StringIncrement</span> methods on it.
 </p>
 
 <p>
-    There are two overloads of the <span style="font-family: 'courier new', courier;">StringIncrement</span> method, if you pass in a long, it will
+    There are two overloads of the <span class="code">StringIncrement</span> method, if you pass in a long, it will
     increment the key by a long value:
 </p>
 
@@ -100,8 +100,8 @@
 
 <p>
     You can set an expiration on a string when you set it by using the expiry option. The
-    expiry is a <span style="font-family: 'courier new', courier;">TimeSpan</span>, there are a variety of ways you can create them. In
-    this instance we'll just create a super short lived key by using the <span style="font-family: 'courier new', courier;">FromSeconds</span>
+    expiry is a <span class="code">TimeSpan</span>, there are a variety of ways you can create them. In
+    this instance we'll just create a super short lived key by using the <span class="code">FromSeconds</span>
     method to initialize a key that will live for 1 second.
 </p>
 
@@ -114,18 +114,18 @@
 <h3>Conditional Set</h3>
 
 <p>
-    You can also make your <span style="font-family: 'courier new', courier;">StringSet</span> conditional using the when option.
-    The when option uses the <span style="font-family: 'courier new', courier;">When</span> enum, and has three possible values.
+    You can also make your <span class="code">StringSet</span> conditional using the when option.
+    The when option uses the <span class="code">When</span> enum, and has three possible values.
 </p>
 
 <ul>
-    <li><b><span style="font-family: 'courier new', courier;">Always</span></b>: This is the default, always set the key.</li>
-    <li><b><span style="font-family: 'courier new', courier;">Exists</span></b>: Set only if the key exists</li>
-    <li><b><span style="font-family: 'courier new', courier;">NotExists</span></b>: Set only if the key does not exist.</li>    
+    <li><b><span class="code">Always</span></b>: This is the default, always set the key.</li>
+    <li><b><span class="code">Exists</span></b>: Set only if the key exists</li>
+    <li><b><span class="code">NotExists</span></b>: Set only if the key does not exist.</li>    
 </ul>
 
 <p>
-    Using them is as simple as passing in the <span style="font-family: 'courier new', courier;">when</span> option:
+    Using them is as simple as passing in the <span class="code">when</span> option:
 </p>
 
 <pre>

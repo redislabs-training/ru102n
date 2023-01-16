@@ -5,19 +5,19 @@
 <h1>IDatabase</h1>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IDatabase</span> can be thought of as the primary interactive interface to Redis.
+    The <span class="code">IDatabase</span> can be thought of as the primary interactive interface to Redis.
     It provides a single interface for your entire Redis Instance, and is the
     preferred interface when you are executing single commands that manipulate
     your application's data to Redis.    
 </p>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IDatabase</span>, unlike the <span style="font-family: 'courier new', courier;">IServer</span>, abstracts the particulars of your Redis
+    The <span class="code">IDatabase</span>, unlike the <span class="code">IServer</span>, abstracts the particulars of your Redis
     deployments away. Consequentially, if you are running in a cluster and are
-    preforming a write, the <span style="font-family: 'courier new', courier;">IDatabase</span> does not require you to know which server
+    preforming a write, the <span class="code">IDatabase</span> does not require you to know which server
     in particular you need to write to. Also, if you have many replicas per master
     shard in your <a class="page-link" target="_blank" href="https://redis.io/docs/management/scaling/">Cluster</a>
     or <a class="page-link" target="_blank" href="https://redis.io/docs/management/sentinel/">Sentinel</a> Redis
-    deployments, the <span style="font-family: 'courier new', courier;">IDatabase</span> will leverage the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> to
+    deployments, the <span class="code">IDatabase</span> will leverage the <span class="code">ConnectionMultiplexer</span> to
     automatically distribute your reads across your deployment.
 </p>

@@ -7,7 +7,7 @@
 <p>
     In this Hands-On, we'll be exploring how to use Prepared Lua Scripts from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.7/section2.7.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.7/section2.7.csproj</span> in your IDE.
 </p>
 
 <h2>Preparing Scripts</h2>
@@ -17,9 +17,9 @@
 </p>
 <p> 
     In a prepared
-    Lua script, you can use the <span style="font-family: 'courier new', courier;"><b>@</b></span> symbol to denote an identifier that will be substituted when the script is called. You can then
-    pass in objects with your named parameters. StackExchange.Redis will then differentiate what goes in through the <span style="font-family: 'courier new', courier;"><i>KEYS</i></span> array versus
-    the <span style="font-family: 'courier new', courier;"><i>ARGV</i></span> array based on the type provided for the parameter. All <span style="font-family: 'courier new', courier;"><i>RedisKey</i></span> values will be treated as keys, and thus used
+    Lua script, you can use the <span class="code"><b>@</b></span> symbol to denote an identifier that will be substituted when the script is called. You can then
+    pass in objects with your named parameters. StackExchange.Redis will then differentiate what goes in through the <span class="code"><i>KEYS</i></span> array versus
+    the <span class="code"><i>ARGV</i></span> array based on the type provided for the parameter. All <span class="code"><i>RedisKey</i></span> values will be treated as keys, and thus used
     to determine which shard to execute the script against. 
 </p>
 <p>
@@ -48,8 +48,8 @@
 </pre>
 
 <p>
-    Notice how in the anonymous constructor we're using to create the parameters <span style="font-family: 'courier new', courier;">id_key</span> is being cast to a <span style="font-family: 'courier new', courier;">RedisKey</span>.
-    This will make that key go through the <span style="font-family: 'courier new', courier;"><i>KEYS</i></span> array, and it will use that key when determining which shard to execute against. Keep in 
+    Notice how in the anonymous constructor we're using to create the parameters <span class="code">id_key</span> is being cast to a <span class="code">RedisKey</span>.
+    This will make that key go through the <span class="code"><i>KEYS</i></span> array, and it will use that key when determining which shard to execute against. Keep in 
     mind that in the context of this script we are dynamically creating a key in the script. In a clustered environment, you would want to make
     sure that you are using hashtags to ensure that the key belongs on the shard that the script is being run on, the script has been simplified
     for demonstration purposes.

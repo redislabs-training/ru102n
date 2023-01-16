@@ -12,7 +12,7 @@
 <ul>
     <li>Using The RedisCollection's LINQ API</li>
     <li>Directly using ID or Key Name</li>    
-    <li>Using the Low-Level <span style="font-family: 'courier new', courier;">IRedisConnection.Search</span> API</li>
+    <li>Using the Low-Level <span class="code">IRedisConnection.Search</span> API</li>
 </ul>
 
 <p>
@@ -22,8 +22,8 @@
 <h2>Querying with LINQ</h2>
 
 <p>
-    Querying with LINQ revolves around using the <span style="font-family: 'courier new', courier;">IRedisCollection&lt;T&gt;</span>, this works like most <span style="font-family: 'courier new', courier;">IQueryable</span> types where
-    it collects predicates to build out the query and then materializes when enumerated (e.g. a call to <span style="font-family: 'courier new', courier;">ToList</span> or <span style="font-family: 'courier new', courier;">ToArray</span>).
+    Querying with LINQ revolves around using the <span class="code">IRedisCollection&lt;T&gt;</span>, this works like most <span class="code">IQueryable</span> types where
+    it collects predicates to build out the query and then materializes when enumerated (e.g. a call to <span class="code">ToList</span> or <span class="code">ToArray</span>).
     Supported LINQ methods include:
 </p>
 
@@ -45,7 +45,7 @@
 <p>
     These methods work as you'd expect them to if you've ever used an IQueryable interface before. However, there are a couple of key
     caveats to make around the Selects and OrderBy predicates. Selects will work best with fields that have been indexed. OrderBy predicates
-    will only work on fields that have been marked sortable. So if we go into our <span style="font-family: 'courier new', courier;">Employee</span> model, we can update the <span style="font-family: 'courier new', courier;">IndexedAttribute</span>
+    will only work on fields that have been marked sortable. So if we go into our <span class="code">Employee</span> model, we can update the <span class="code">IndexedAttribute</span>
     above the Name property to set it to Sortable:
 </p>
 
@@ -60,15 +60,15 @@
 
 <p>
     Probably the simplest way to query a document in Redis is to use its Id or Key Name. You can use either just the Id, or the complete key name,
-    whichever is preferable for you. To query this you would just use the <span style="font-family: 'courier new', courier;">IRedisCollection&lt;T&gt;.FindById</span> methods, passing in
+    whichever is preferable for you. To query this you would just use the <span class="code">IRedisCollection&lt;T&gt;.FindById</span> methods, passing in
     either the Id or Key, the Collection is smart enough to construct a key regardless of which you end up using in your query.
 </p>
 
 <h3>Querying with the Raw Search API</h3>
 
 <p>
-    You can still perform strongly typed searches using the Raw Search API, to do this you would invoke <span style="font-family: 'courier new', courier;">IRedisConnection.Search&lt;T&gt;</span>
-    method, this takes a <span style="font-family: 'courier new', courier;">RedisQuery</span> object which you can initialize in line with the arguments in <a class="page-link" target="_blank" href="https://redis.io/commands/ft.search/"><span style="font-family: 'courier new', courier;">FT.SEARCH</span></a>.
+    You can still perform strongly typed searches using the Raw Search API, to do this you would invoke <span class="code">IRedisConnection.Search&lt;T&gt;</span>
+    method, this takes a <span class="code">RedisQuery</span> object which you can initialize in line with the arguments in <a class="page-link" target="_blank" href="https://redis.io/commands/ft.search/"><span class="code">FT.SEARCH</span></a>.
 </p>
 <p>
     By using the generic, you are able to pull back your results as strongly typed objects.

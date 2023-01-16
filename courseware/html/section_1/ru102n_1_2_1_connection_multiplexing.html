@@ -3,13 +3,13 @@
   </style>
 <p>
     The most fundamental architectural feature of StackExchange.Redis is Connection Multiplexing.
-    The library leans heavily on a class called the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>. This
+    The library leans heavily on a class called the <span class="code">ConnectionMultiplexer</span>. This
     class is responsible for arbitrating all connections to Redis, and routing all commands
     you want to send through the library through a single connection.
 </p>
 
 <p>
-    That's right, a single connection. The <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> opens exactly
+    That's right, a single connection. The <span class="code">ConnectionMultiplexer</span> opens exactly
     2 connections per Redis Server, one of which is the interactive command connection to Redis,
     the other being the subscription connection for the pub/sub API which we'll explore later.
 </p>

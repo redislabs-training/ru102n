@@ -7,12 +7,12 @@
 <p>
     In this Hands-On we'll be exploring how to use the Ad-Hoc API and Probabilistic Data Structures from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
 </p>
 
 <p>
     The Ad-Hoc Commands are relatively straight forward to work with, they center entirely around two methods in StackExchange.Redis: 
-    <span style="font-family: 'courier new', courier;">Execute</span> and  <span style="font-family: 'courier new', courier;">ExecuteAsync</span>. Naturally the primary differentiator between these two methods is whether or not they
+    <span class="code">Execute</span> and  <span class="code">ExecuteAsync</span>. Naturally the primary differentiator between these two methods is whether or not they
     execute asynchronously. These methods each take three parameters:
 </p>
 
@@ -62,7 +62,7 @@
 
 <p>
     Command Flags provide some useful operational features, particularly around server selection and performance tuning. For example, if you
-    are running a read-command, and do not want to hit your master shard, you can use the command flag  <span style="font-family: 'courier new', courier;">CommandFlags.DemandReplica</span>.
+    are running a read-command, and do not want to hit your master shard, you can use the command flag  <span class="code">CommandFlags.DemandReplica</span>.
     There are corresponding flags to demand a master shard, prefer a master shard, or prefer a replica shard.
 </p>
 <p>
@@ -116,7 +116,7 @@
 </pre>
 
 <p>
-    With the words aggregated together into a much larger argument list, all that's left to do is use the <span style="font-family: 'courier new', courier;">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
+    With the words aggregated together into a much larger argument list, all that's left to do is use the <span class="code">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
 </p>
 
 <pre>
@@ -126,7 +126,7 @@
 </pre>
 
 <p>
-    Now we use the <span style="font-family: 'courier new', courier;">BF.MADD</span> command to add everything to the Bloom Filter in one shot.
+    Now we use the <span class="code">BF.MADD</span> command to add everything to the Bloom Filter in one shot.
 </p>
 
 <pre>
@@ -139,7 +139,7 @@
 
 <p>
     The Top-K data structure lets us keep track of who the heavy hitters (most frequently seen items) are in enormous streams of data using the Heavy Keeper Data Structure. To Reserve a
-    heavy keeper, all we need to do run the <span style="font-family: 'courier new', courier;">TOPK.RESERVE</span> command:
+    heavy keeper, all we need to do run the <span class="code">TOPK.RESERVE</span> command:
 </p>
 
 <pre>
@@ -176,7 +176,7 @@
 </pre>
 
 <p>
-    Then we just need to call <span style="font-family: 'courier new', courier;">TOPK.INCRBY</span> passing in our list of word/count pairs:
+    Then we just need to call <span class="code">TOPK.INCRBY</span> passing in our list of word/count pairs:
 </p>
 
 <pre>
@@ -189,10 +189,10 @@
 <h2>Querying our Bloom Filter</h2>
 
 <p>
-    Querying the Bloom filter is really simple, you just need to call <span style="font-family: 'courier new', courier;">BF.EXISTS</span>. This will return a <span style="font-family: 'courier new', courier;">RedisResult</span>,
+    Querying the Bloom filter is really simple, you just need to call <span class="code">BF.EXISTS</span>. This will return a <span class="code">RedisResult</span>,
     which is a highly versatile class that StackExchange.Redis uses to abstract the complexity of how the RESP protocol works. Fundamentally
     what it does is pulls in the result, and those results can be converted explicitly (by casting) to whatever the pertinent result type is.
-    For <span style="font-family: 'courier new', courier;">BF.EXISTS</span>, Redis will return an integer result. So let's try to work with this a bit. Let's check if the word "the" appears
+    For <span class="code">BF.EXISTS</span>, Redis will return an integer result. So let's try to work with this a bit. Let's check if the word "the" appears
     in Moby Dick (hint: it does).
 </p>
 
@@ -203,7 +203,7 @@
 </pre>
 
 <p>
-    There's two things you can do with a <span style="font-family: 'courier new', courier;">RedisResult</span>, you can cast/use it as its appropriate type: supported types are basically
+    There's two things you can do with a <span class="code">RedisResult</span>, you can cast/use it as its appropriate type: supported types are basically
     any value type, arrays, and as a dictionary of strings and RedisResults. If the type is supported by what was returned, and you try to cast it to
     that type, the cast will be successful, so let's try casting it to a couple of different types:   
 </p>
@@ -219,20 +219,20 @@
 </pre>
 
 <p>
-    Both of these are Valid casts for our <span style="font-family: 'courier new', courier;">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
-    array of <span style="font-family: 'courier new', courier;">RedisResults</span>), it will fail with an <span style="font-family: 'courier new', courier;">InvalidCastException</span>.
+    Both of these are Valid casts for our <span class="code">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
+    array of <span class="code">RedisResults</span>), it will fail with an <span class="code">InvalidCastException</span>.
 </p>
 <p>
      The determination as to whether or not a cast is valid is
-    based off what Redis actually returned as a result of the command. You can check the <span style="font-family: 'courier new', courier;">RedisResult</span> to see what the appropriate
-    type is if you are unsure use the <span style="font-family: 'courier new', courier;">Type</span> property, but the results will follow the format laid out in the 
+    based off what Redis actually returned as a result of the command. You can check the <span class="code">RedisResult</span> to see what the appropriate
+    type is if you are unsure use the <span class="code">Type</span> property, but the results will follow the format laid out in the 
     <a class="page-link" target="_blank" href="https://redis.io/commands">Command Pages on redis.io</a> so you should have a pretty good idea ahead of time as to what you are looking for.
 </p>
 
 <h2>Enumerate the Top-K</h2>
 
 <p>
-    To Enumerate our Top-K, we just need to call <span style="font-family: 'courier new', courier;">TOPK.LIST</span>. The trick here however, is that we need to cast it to something useable,
+    To Enumerate our Top-K, we just need to call <span class="code">TOPK.LIST</span>. The trick here however, is that we need to cast it to something useable,
     like an array, preferably an array of strings.
 </p>
 <p>
@@ -250,7 +250,7 @@
 <p>
     Finally, if we wanted the counts as of our Top-K as well (which will come back as a dictionary of values), we can easily reduce it to a 
     dictionary, and convert that dictionary to an enumerable that we can use to print out a discernable list of values with their counts using
-    the <span style="font-family: 'courier new', courier;">ToDictionary</span> method.
+    the <span class="code">ToDictionary</span> method.
 </p>
 
 <pre>
