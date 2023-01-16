@@ -35,15 +35,15 @@
     setting it this way so we can run aggregations on our field:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(Aggregatable = true)]
     public string? EmployeeId { get; set; }
 
     [Indexed(Aggregatable = true)]
     public int Total { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>The <span class="code">AggregationSet&lt;T&gt;</span> and <span class="code">AggregationResult&lt;T&gt;</span></h2>
 
@@ -66,11 +66,11 @@
     We can do that by filtering the sales by those who's employee id is Bob's, and then running a summation on all those records.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var saleAggregations = provider.AggregationSet<Sale>(); // init aggregation set.
 
     var sumBobSales = saleAggregations.Filter(x=>x.RecordShell!.EmployeeId == bob.Id).Sum(x=>x.RecordShell!.Total);
     Console.WriteLine($"Bob's total sales: {sumBobSales}");
-</code>
 </pre>
+</p>

@@ -43,30 +43,30 @@
     with the Redis Server.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     configurationOptions.CertificateSelection += delegate 
     {
         var cert = new X509Certificate2(PATH_TO_CERT_FILE, "");
         return cert;
     };
-</code>
 </pre>
+</p>
 
 <p>
     The other event handler, <span class="code">ConfigurationOptions.CertificateValidation</span>, is used to check the validity of the Redis Server's certificates:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     configurationOptions.CertificateValidation += (sender, certificate, chain, errors) =>
     {
         var isValid = true;
         // insert check certificate logic here
         return isValid;
     };
-</code>
 </pre>
+</p>
 
 <h4>Environment Variables</h4>
 
@@ -112,5 +112,5 @@
     {
         EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
     });
- </code>
-</pre>
+ </pre>
+</p>

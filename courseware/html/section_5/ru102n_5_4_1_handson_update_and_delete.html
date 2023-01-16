@@ -19,8 +19,8 @@
     So let's start off by adding Alice and Bob to Redis, as we would any other document:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var alice = new Employee
     {
         Name = &quot;Alice&quot;,
@@ -39,8 +39,8 @@
 
     var bobKeyName = await employees.InsertAsync(bob);
     await employees.InsertAsync(alice);
-</code>
 </pre>
+</p>
 
 <h2>Updating Documents with Redis OM</h2>
 
@@ -57,8 +57,8 @@
     sales for Bob, we would simply update the Bob record, and call <span class="code">Update</span> on the Redis Collection:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var sales = provider.RedisCollection&lt;Sale&gt;();
     var saleInsertTasks = new List&lt;Task&lt;string&gt;&gt;();
     var random = new Random();
@@ -80,8 +80,8 @@
     
     var bobFromDb = employees.FindById(bob.Id!);
     Console.WriteLine($&quot;Bob has: {bobFromDb!.Sales!.Count} sales&quot;);
-</code>
 </pre>
+</p>
 
 <h2>Updating Multiple Documents</h2>
 
@@ -95,8 +95,8 @@
     So let's try this in practice, let's increment the age of each person whose name is "Alice":
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await foreach (var employee in employees.Where(x => x.Name == "Alice"))
     {
         Console.WriteLine($"Alice's old age: {employee.Age}");
@@ -106,8 +106,8 @@
     employees.Save();
 
     Console.WriteLine($"Alice's new age: {employees.First(x=>x.Name == "Alice").Age}");
-</code>
 </pre>
+</p>
 
 <h2>Deleting Documents</h2>
 
@@ -119,21 +119,21 @@
     So, let's just try removing Alice from Redis:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await employees.DeleteAsync(alice);
     Console.WriteLine($"Alice's present in Redis: {await employees.AnyAsync(x=>x.Name == "Alice")}");
-</code>
 </pre>
+</p>
 
 <p>
     If our model does not have an Id field on it, we can also use the <span class="code">IRedisConnection.Unlink</span> method, passing in the key name that
     you want to remove. When we inserted Bob before, we collected the key name from the insert, so let's use that to delete him from Redis:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await provider.Connection.UnlinkAsync(bobKeyName);
     Console.WriteLine($"Bob's present in Redis: {await employees.AnyAsync(x=>x.Name == "Bob")}");
-</code>
 </pre>
+</p>

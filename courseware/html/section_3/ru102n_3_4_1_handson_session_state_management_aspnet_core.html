@@ -31,41 +31,41 @@
     <span class="code">Index</span> method of <span class="code"><i>Controllers/HomeController.cs</i></span> you'll see that we are setting the session state to 42 with:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     HttpContext.Session.SetString("meaning of life", fourtyTwo.ToString());
-</code>
 </pre>
+</p>
 
 <p>
     Meanwhile, on the front-end, our view at <span class="code"><i>Views/Home/Index.cshtml</i></span> - is displaying the meaning of life key within the session with:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     @Context.Session.GetString("meaning of life")
-</code>
 </pre>
+</p>
 
 <p>
     Finally, In <span class="code"><i>Program.cs</i></span> we have two lines of code:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     builder.Services.AddSession();
-</code>
 </pre>
+</p>
 
 <p>
     The above line adds the Session Services to our available services.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     app.UseSession();
-</code>
 </pre>
+</p>
 
 <p>
     The above adds the Session State Middleware to acquire the session state to be passed to the controllers that will interact with the session.
@@ -81,13 +81,13 @@
     This part's really simple. Ahead of time, I've added:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.0" />
     </ItemGroup>
-</code>
 </pre>
+</p>
 
 <p>
     To the <span class="code"><i>section3.4.csproj</i></span> file, that's the exact same package we used earlier when we discussed using Redis as a Caching Layer for
@@ -98,14 +98,14 @@
     previous section. You only need to add the following to the services section of your <span class="code"><i>Program.cs</i></span> section at the mark <span class="code"><i>// TODO Section 3.4 Step 1</i></span>
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     builder.Services.AddStackExchangeRedisCache(options => options.ConfigurationOptions = new ConfigurationOptions{
         EndPoints = { "localhost:6379" },
         Password = ""
     });
-</code>
 </pre>
+</p>
 
 <p>
     And that's it, with that done, you can run the app again with <span class="code">dotnet run</span>, and when you launch the application's site at

@@ -28,15 +28,15 @@
     create keys for each of them and delete them.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var person1 = "person:1";
     var person2 = "person:2";
     var person3 = "person:3";
 
     db.KeyDelete(new RedisKey[]{person1, person2, person3});
-</code>
 </pre>
+</p>
 
 <h2>Create the Hashes</h2>
 
@@ -45,8 +45,8 @@
     <span class="code">HashEntry</span> structs, which are simple key-value pairs.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.HashSet(person1, new HashEntry[]
     {
         new("name","Alice"),
@@ -67,8 +67,8 @@
         new("age", 50),
         new("email","chuck@example.com")
     });
-</code>
 </pre>
+</p>
 
 <h2>Increment a Field in a Hash</h2>
 
@@ -77,12 +77,12 @@
     you want to use. If you pass nothing in, it will increment by 1.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var newAge = db.HashIncrement(person3, "age");
     Console.WriteLine($"person:3 new age: {newAge}");
-</code>
 </pre>
+</p>
 
 
 <h2>Retrieve a Field from a Hash</h2>
@@ -92,12 +92,12 @@
     field you want to get.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var person1Name = db.HashGet(person1, "name");
     Console.WriteLine($"person:1 name: {person1Name}");
-</code>
 </pre>
+</p>
 
 <h2>Get All Fields From a Hash</h2>
 
@@ -115,18 +115,18 @@
 
 <h3>HashGetAll</h3>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var person2Fields = db.HashGetAll(person2);
     Console.WriteLine($"person:2 fields: {string.Join(", ", person2Fields)}");
-</code>
 </pre>
+</p>
 
 <h3>HashScan</h3>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var person3Fields = db.HashScan(person3);
     Console.WriteLine($"person:3 fields: {string.Join(", ", person3Fields)}");
-</code>
 </pre>
+</p>

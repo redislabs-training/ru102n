@@ -17,8 +17,8 @@
     by purging all these sets, that way we can run this repeatedly without any other preamble.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var userAgeSet = "users:age";
     var userLastAccessSet = "users:lastAccess";
     var userHighScoreSet = "users:highScores";
@@ -26,8 +26,8 @@
     var mostRecentlyActive = "users:mostRecentlyActive";
 
     db.KeyDelete(new RedisKey[]{userAgeSet, userLastAccessSet, userHighScoreSet, namesSet, mostRecentlyActive});
-</code>
 </pre>
+</p>
 
 <h2>Populate Sets</h2>
 
@@ -41,8 +41,8 @@
     Which we intend to sort lexicographically, we will provide a score of 0.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SortedSetAdd(userAgeSet,
         new SortedSetEntry[]
         {
@@ -86,8 +86,8 @@
             new("Alice", 0),
             new("Tom", 0)
         });
-</code>
 </pre>
+</p>
 
 <h2>Check Score</h2>
 
@@ -96,12 +96,12 @@
     and the user id.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var user3HighScore = db.SortedSetScore(userHighScoreSet, "User:3");
     Console.WriteLine($"User:3 High Score: {user3HighScore}");  
-</code>
 </pre>
+</p>
 
 <h2>Check Rank</h2>
 
@@ -111,12 +111,12 @@
     we'll use the <span class="code">Descending</span> direction.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var user2Rank = db.SortedSetRank(userHighScoreSet, "User:2", Order.Descending);
     Console.WriteLine($"User:2 Rank: {user2Rank}");
-</code>
 </pre>
+</p>
 
 <h2>Range Queries</h2>
 
@@ -156,12 +156,12 @@
    order the sorted set descending:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topThreeScores = db.SortedSetRangeByRank(userHighScoreSet, 0, 2, Order.Descending);
     Console.WriteLine($"Top three: {string.Join(", ", topThreeScores)}");
-</code>
 </pre>
+</p>
 
 <h2>Range By Score</h2>
 
@@ -179,12 +179,12 @@
     18 and 30 inclusively with their ages, since we want to pull back the ages as well, we will use the <span class="code">SortedSetRangeByScoreWithScores</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var eighteenToThirty = db.SortedSetRangeByScoreWithScores(userAgeSet, 18, 30, Exclude.None);
     Console.WriteLine($"Users between 18 and 30: {string.Join(", ", eighteenToThirty)}");
-</code>
 </pre>
+</p>
 
 <h2>Lexicographic Ranges</h2>
 
@@ -194,12 +194,12 @@
     method:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var namesAlphabetized = db.SortedSetRangeByValue(namesSet);
     Console.WriteLine($"Names Alphabetized: {string.Join(",",namesAlphabetized)}");
-</code>
 </pre>
+</p>
 
 <p>
     If you wanted to find a proper alphabetic range, for example, all the names that start with between an "A" and "J", you can do that as well,
@@ -208,12 +208,12 @@
     we'd actually want to end with an exclusive "K" at the end like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var namesBetweenAandJ = db.SortedSetRangeByValue(namesSet, "A", "K", Exclude.Stop);
     Console.WriteLine($"Names between A and J: {string.Join(", ", namesBetweenAandJ)}");
-</code>
 </pre>
+</p>
 
 <h2>Combining Sorted Sets</h2>
 
@@ -223,11 +223,11 @@
     <span class="code"><i>users:mostRecentlyActive</i></span> that we can populate using the <span class="code">SortedSetRangeAndStore</span> method:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SortedSetRangeAndStore(userLastAccessSet,mostRecentlyActive,  0, 2, order: Order.Descending);
-</code>
 </pre>
+</p>
 
 <p>
     With that done, we can use the intersection sorted set operation to find the intersection between the most recently active players, and the
@@ -235,9 +235,9 @@
     the players and their scores in ascending order, but we can reverse this easily with a call to <span class="code">Reverse</span> at the end.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var rankOrderMostRecentlyActive = db.SortedSetCombineWithScores(SetOperation.Intersect, new RedisKey[]{userHighScoreSet, mostRecentlyActive}, new double[]{1,0}).Reverse();
     Console.WriteLine($"Highest Scores Most Recently Active: {string.Join(", ", rankOrderMostRecentlyActive)}");
-</code>
 </pre>
+</p>

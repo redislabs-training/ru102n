@@ -10,8 +10,8 @@
     the employee ID, then run a summation on the sales, then order by the result of that summation: 
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // Top Salesperson
     var topSalesId = saleAggregations
         .GroupBy(x=>x.RecordShell.EmployeeId)
@@ -22,8 +22,8 @@
         .ToString();
     var topSalesPerson = await employees.FindByIdAsync(topSalesId);
     Console.WriteLine($"Top seller: {topSalesPerson.Name}");
-</code>
 </pre>
+</p>
 
 <p>
     When running reductions, the name of the result in the aggregation pipeline is always the attribute's name that the reduction was being

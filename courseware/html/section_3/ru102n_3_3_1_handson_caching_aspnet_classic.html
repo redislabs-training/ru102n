@@ -21,11 +21,11 @@
     create the tables, and seed some data into the database. To do this, all you'll need to do is in the Package Manager Console run:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     update-database
-</code>
 </pre>
+</p>
 
 <h2>Create our Lazy Multiplexer</h2>
 
@@ -36,8 +36,8 @@
     To simplify our example we'll be using a Lazy Multiplexer. In the file <span class="code">Redis.cs</span>, add the following code to the Redis class:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     private static readonly Lazy<ConnectionMultiplexer> LazyMuxer;
 
     static Redis()
@@ -53,8 +53,8 @@
 
     public static ConnectionMultiplexer Muxer => LazyMuxer.Value;
     public static IDatabase Database => Muxer.GetDatabase();
-</code>
 </pre>
+</p>
 
 <p>
     This will create the Multiplexer the first time it's referenced in our app, and provides a static way of accessing a single multiplexer
@@ -69,8 +69,8 @@
     earlier in this course. Find the <span class="code"><i>// TODO Section 3.3 step 1</i></span> mark in <span class="code"><i>AverageController.cs</i></span> and add the following bit.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var db = Redis.Database;
     var avg = (double?)await db.StringGetSetExpiryAsync($"average:{id}", TimeSpan.FromHours(1));
     if(avg != null)
@@ -82,8 +82,8 @@
             {"elapsed", stopwatch.ElapsedMilliseconds }
         });
     }
-</code>
 </pre>
+</p>
 
 <p>
     This will check the cache, and if the average has already been computed, it will simply return the computed result. Using <span class="code">StringGetSetExpiry</span>
@@ -96,11 +96,11 @@
     mark, and add the following to set the field in the cache, along with an expiration of an hour.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.StringSetAsync($"average:{id}", avg, TimeSpan.FromHours(1));
-</code>
 </pre>
+</p>
 
 <h2>Caching our Top Salesperson</h2>
 
@@ -113,8 +113,8 @@
     and add the following to do just that.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var res = await db.StringGetAsync(new RedisKey[] { "top:sales", "top:name" });
     long? topSales = (long?)res[0];
     string topSalesName = res[1];
@@ -128,8 +128,8 @@
             { "time", stopwatch.ElapsedMilliseconds }
         });
     }
-</code>
 </pre>
+</p>
 
 <p>
     Now, if we haven't run this calculation in the last 5 minutes, we'll have had a cache miss. In which case, we'll run the same calculation we
@@ -141,13 +141,13 @@
     mark and add the following.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topSalesSetTask = db.StringSetAsync("top:sales", topSalesperson.sumSales, expiry: TimeSpan.FromMinutes(5));
     var topNameSetTask = db.StringSetAsync("top:name", topSalesperson.Employee.Name, expiry: TimeSpan.FromMinutes(5));
     await Task.WhenAll(topSalesSetTask, topNameSetTask);
-</code>
 </pre>
+</p>
 
 <h2>Cache Total Sales</h2>
 
@@ -160,8 +160,8 @@
     and add our normal check:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     long? totalSales = (long?) await db.StringGetAsync("totalSales");
     if(totalSales != null)
     {
@@ -171,20 +171,20 @@
             { "elapsed", stopwatch.ElapsedMilliseconds }
         });
     }
-</code>
 </pre>
+</p>
 
 <p>
     Then, after the <span class="code"><i>// TODO Section 3.3 step 6</i></span> mark, you can add the following - to have it cache the result, and set an expiration of 
     the local midnight:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var timeTillMidnight = DateTime.Today.AddDays(1) - DateTime.Now;
     await db.StringSetAsync("totalSales", totalSales, timeTillMidnight);
-</code>
 </pre>
+</p>
 
 <h2>Run the App</h2>
 

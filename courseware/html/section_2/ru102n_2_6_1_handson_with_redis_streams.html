@@ -17,14 +17,14 @@
     task, so that we can run this app repeatedly and predictably, will be to initialize those keys, to clear out those sensor's current stream state.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var sensor1 = "sensor:1";
     var sensor2 = "sensor:2";
 
     db.KeyDelete(new RedisKey[]{sensor1, sensor2});
-</code>
 </pre>
+</p>
 
 <h2>Adding Items to a Stream</h2>
 
@@ -42,8 +42,8 @@
     every five seconds we'll try to increment or decrement the temperature and humidity picked up by the sensor by 1.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var rnd = new Random();
     Task.Run(async () =>
     {
@@ -83,8 +83,8 @@
 
     //put all your future code above here!
     Console.ReadKey();
-</code>
 </pre>
+</p>
 
 <h2>Read from Stream</h2>
 
@@ -102,8 +102,8 @@
     To accomplish all of this, add the following to just above the <span class="code">Console.ReadKey()</span> at the bottom of the file.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Task.Run(async () =>
     {
         var positions = new Dictionary<string, StreamPosition>
@@ -130,8 +130,8 @@
             }
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Consumer Groups</h2>
 
@@ -147,12 +147,12 @@
     gotten from each sensor.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.StreamCreateConsumerGroup(sensor1, "average", "0-0");
     db.StreamCreateConsumerGroup(sensor2, "average", "0-0");
-</code>
 </pre>
+</p>
 
 <h3>Read from a Consumer Group</h3>
 
@@ -171,8 +171,8 @@
     remove the stream message from it's Pending Entries List (PEL).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var groupName = "tempAverage";
     db.StreamCreateConsumerGroup(sensor1, groupName, "0-0");
     db.StreamCreateConsumerGroup(sensor2, groupName, "0-0");
@@ -212,8 +212,8 @@
             }
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Run the App</h2>
 

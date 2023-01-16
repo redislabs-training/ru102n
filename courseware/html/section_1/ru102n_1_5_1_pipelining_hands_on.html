@@ -31,8 +31,8 @@
     and create and start a <span class="code">StopWatch</span>:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     using System.Diagnostics;
     using StackExchange.Redis;
 
@@ -45,8 +45,8 @@
     var db = muxer.GetDatabase();
 
     var stopwatch = Stopwatch.StartNew();
-</code>
 </pre>
+</p>
 
 <h2>Un-Pipelined</h2>
 
@@ -58,8 +58,8 @@
     it from pipelining the commands automatically. 
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // un-pipelined commands incur the added cost of an extra round trip
     for (var i = 0; i &lt; 1000; i++)
     {
@@ -67,8 +67,8 @@
     }
 
     Console.WriteLine($"1000 un-pipelined commands took: {stopwatch.ElapsedMilliseconds}ms to execute");
-</code>
 </pre>
+</p>
 
 <h2>Implicitly Pipelined</h2>
 
@@ -79,8 +79,8 @@
     the command completes:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // If we run out async tasks to StackExchange.Redis concurrently, the library
     // will automatically manage pipelining of these commands to Redis, making
     // them significantly more performant as we remove most of the round trips to Redis.
@@ -97,8 +97,8 @@
     await Task.WhenAll(pingTasks);
 
     Console.WriteLine($"1000 automatically pipelined tasks took: {stopwatch.ElapsedMilliseconds}ms to execute, first result: {pingTasks[0].Result}");
-</code>
 </pre>
+</p>
 
 <h2>Explicit Pipelining with IBatch</h2>
 
@@ -121,8 +121,8 @@
 
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // clear our ping tasks list.
     pingTasks.Clear();
 
@@ -143,5 +143,5 @@
     batch.Execute();
     await Task.WhenAll(pingTasks);
     Console.WriteLine($"1000 batched commands took: {stopwatch.ElapsedMilliseconds}ms to execute, first result: {pingTasks[0].Result}");
-</code>
 </pre>
+</p>

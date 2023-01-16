@@ -17,13 +17,13 @@
     have a cancellation token source so we can cut off our producer tasks when it's time, so let's also initialize that.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var subscriber = muxer.GetSubscriber();
     var cancellationTokenSource = new CancellationTokenSource();
     var token = cancellationTokenSource.Token;
-</code>
 </pre>
+</p>
 
 <h2>Sequential vs Concurrent</h2>
 
@@ -34,16 +34,16 @@
     to the <span class="code">Subscribe</span> method, it produces a channel object that you can listen to messages on.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var channel = await subscriber.SubscribeAsync("test-channel");
 
     channel.OnMessage(msg =>
     {
         Console.WriteLine($"Sequentially received: {msg.Message} on channel: {msg.Channel}");
     });
-</code>
 </pre>
+</p>
 
 <h2>Simple Concurrent</h2>
 
@@ -52,14 +52,14 @@
     the channel the message was sent to, and the message itself.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await subscriber.SubscribeAsync("test-channel", (channel, value) =>
     {
         Console.WriteLine($"Received: {value} on channel: {channel}");
     });
-</code>
 </pre>
+</p>
 
 <h3>Create the Producer</h3>
 <p>
@@ -69,8 +69,8 @@
     nature of StackExchange.Redis, Redis will only see one subscriber.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var basicSendTask = Task.Run(async () =>
     {
         var i = 0;
@@ -84,8 +84,8 @@
     // put all other producer/subscriber stuff above here.
     Console.ReadKey();
     // put cancellation & unsubscribe down here.
-</code>
 </pre>
+</p>
 
 <h2>Subscribe to Pattern</h2>
 
@@ -99,8 +99,8 @@
     So let's also add a producer that will publish to channels matching that pattern with random GUIDs.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var patternSendTask = Task.Run(async () =>
     {
         var i = 0;
@@ -110,8 +110,8 @@
             await Task.Delay(1000);
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Unsubscribe</h2>
 
@@ -126,13 +126,13 @@
     <span class="code"><code>Console.ReadKey</code></span> after this so that we can observe tha the channel stops producing messages.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Unsubscribing to a single channel");
     await channel.UnsubscribeAsync();
     Console.ReadKey();
-</code>
 </pre>
+</p>
 
 <h3>Unsubscribe Concurrent Subscriber</h3>
 
@@ -142,13 +142,13 @@
     have been unsubscribed as well.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Unsubscribing whole subscriber from test-channel");
     await subscriber.UnsubscribeAsync("test-channel");
     Console.ReadKey();
-</code>
 </pre>
+</p>
 
 <h3>Unsubscribe from Everything</h3>
 
@@ -156,10 +156,10 @@
     If you need to Unsubscribe from everything, just call <span class="code">UnsubscribeAll</pre>, and it will cut off all subscriptions to Redis.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Unsubscribing from all");
     await subscriber.UnsubscribeAllAsync();
     Console.ReadKey();
-</code>
 </pre>
+</p>

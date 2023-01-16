@@ -18,12 +18,12 @@
     <span class="code">/src/section_3/section3.2</span> directory run the following commands:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     dotnet tool install --global dotnet-ef
     dotnet ef database update
-</code>
 </pre>
+</p>
 
 <p>
     The first of these commands will install the dotnet-ef tool for the CLI, the second will create and migrate
@@ -39,15 +39,15 @@
     StackExchange.Redis.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     builder.Services.AddStackExchangeRedisCache(x => x.ConfigurationOptions = new ConfigurationOptions
     {
         EndPoints = { "localhost:6379" },
         Password = ""
     });
-</code>
 </pre>
+</p>
 
 <p>
     Adjust the cache settings to your endpoint/password.
@@ -64,8 +64,8 @@
     <span class="code">// TODO Section 3.2 Step 2</span> comment in <span class="code"><i>InitService.cs</i></span>:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
 
     var cachePipe = new List<Task>
@@ -77,8 +77,8 @@
     cachePipe.AddRange(salesDb.Employees.Select(employee => cache.RemoveAsync($"employee:{employee.EmployeeId}:avg", cancellationToken)));
 
     await Task.WhenAll(cachePipe);
-</code>
 </pre>
+</p>
 
 <h2>Dependency Inject IDistributedCache</h2>
 
@@ -87,26 +87,26 @@
     <span class="code"><i>Controllers/EmployeeController.cs</i></span> in there, add the <span class="code">IDistributedCache</span> as a readonly field.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     private readonly IDistributedCache _cache;
-</code>
 </pre>
+</p>
 
 <p>
     Then, modify the <span class="code">EmployeeController</span> constructor to accepted an <span class="code">IDistributedCache</span>, when you're
     done, it should look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     public EmployeeController(SalesContext salesDb, IDistributedCache cache)
     {
         _cache = cache;
         _salesDb = salesDb;
     }
-</code>
 </pre>
+</p>
 
 <h2>Employee Aggregations</h2>
 
@@ -141,13 +141,13 @@
     you can see it already in the <span class="code">GetTopSalesperson</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topSalesperson = await _salesDb.Employees.Select(x=>new {Employee = x, sumSales = x.Sales
         .Sum(x=>x.Total)}).OrderByDescending(x=>x.sumSales)
         .FirstAsync();
-</code>
 </pre>
+</p>
 
 <p>
     Now, realistically, this will take time to compute - somewhere on the order of 50-150 ms for our smallish sample
@@ -163,14 +163,14 @@
     Find the place marked <span class="code"><i>// TODO Section 3.2 step 3</i></span>, and add the following code to it.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
     var topSalesInsertTask = _cache.SetStringAsync("top:sales", topSalesperson.sumSales.ToString(), cacheOptions);
     var topNameInsertTask = _cache.SetStringAsync("top:name", topSalesperson.Employee.Name, cacheOptions);
     await Task.WhenAll(topSalesInsertTask, topNameInsertTask);
-</code>
 </pre>
+</p>
 
 <p>
     This will add the total sales of the top seller and the their name to the cache, and it will invalidate that
@@ -182,8 +182,8 @@
     and add the following above it.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topSalesTask = _cache.GetStringAsync("top:sales");
         var topNameTask = _cache.GetStringAsync("top:name");
 
@@ -199,8 +199,8 @@
                 { "time", stopwatch.ElapsedMilliseconds }
             };
         }
-</code>
 </pre>
+</p>
 
 <h2>Cache Individual Average Sale</h2>
 
@@ -209,11 +209,11 @@
     and endpoint that takes an Id, which we'll use to run a simple average on their sales like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x=>x.EmployeeId == id).Select(x=>x.Sales.Average(y=>y.Total)).FirstAsync();
-</code>
 </pre>
+</p>
 
 <p>
 
@@ -221,8 +221,8 @@
     and add:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var key = $"employee:{id}:avg";
     var cacheResult = await _cache.GetStringAsync(key);
 
@@ -235,8 +235,8 @@
             { "elapsed", stopwatch.ElapsedMilliseconds }
         };
     }
-</code>
 </pre>
+</p>
 
 <p>
     To create the key that we'll use. Then, underneath the mark <span class="code"><i>// TODO Section 3.2 step 6</i></span>, add the following
@@ -244,11 +244,11 @@
     what that means is that the key will persist unless it is not touched for 30 minutes.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await _cache.SetStringAsync(key, avg.ToString(CultureInfo.InvariantCulture), options: new DistributedCacheEntryOptions{SlidingExpiration = TimeSpan.FromMinutes(30)});
-</code>
 </pre>
+</p>
 
 <h2>Cache Total Sales</h2>
 
@@ -259,8 +259,8 @@
     checking logic, find the section marked <span class="code"><i>// TODO Section 3.2 step 7</i></span> and add the following:    
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cacheResult = await _cache.GetStringAsync("totalSales");
     if (cacheResult != null)
     {
@@ -271,19 +271,19 @@
             { "elapsed", stopwatch.ElapsedMilliseconds }
         };
     }
-</code>
 </pre>
+</p>
 
 <p>
     This might be a metric that you run every day, so let's have it expire at midnight tomorrow morning, below
     mark <span class="code"><i>// TODO Section 3.2 step 8</i></span>, add the following:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await _cache.SetStringAsync("totalSales", totalSales.ToString(CultureInfo.InvariantCulture), new DistributedCacheEntryOptions(){AbsoluteExpiration = DateTime.Today.AddDays(1)});
-</code>
 </pre>
+</p>
 
 <h2>Run the App</h2>
 

@@ -18,13 +18,13 @@
     use the NRedisTimeSeries bits:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     using NRedisTimeSeries;
     using NRedisTimeSeries.Commands.Enums;
     using NRedisTimeSeries.DataTypes;
-</code>
 </pre>
+</p>
 
 <p>
     NRedisTimeSeries is built as static extensions to IDatabase, so after you've gotten a handle to your IDatabase, you'll be able to execute
@@ -39,11 +39,11 @@
     rules that will find the average, min, and max that occurred in the Time Series during a given interval. First we'll create the Time Series.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.TimeSeriesCreateAsync("sensor", 60000, new List<TimeSeriesLabel>{new TimeSeriesLabel("id", "sensor-1")});
-</code>
 </pre>
+</p>
 
 <p>
     With the Time Series created, we'll then identify the three aggregations we want to run. We'll create a Time Series for each of our
@@ -54,16 +54,16 @@
     we just need to call <span class="code">TimeSeriesCreate</span> and <span class="code">TimeSeriesCreateRule</span> for each rule we want to create:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var aggregations = new TsAggregation[]{TsAggregation.Avg, TsAggregation.Min, TsAggregation.Max};
     foreach(var agg in aggregations)
     {
         await db.TimeSeriesCreateAsync($"sensor:{agg}", 60000, new List&lt;TimeSeriesLabel&gt;{new ("type", agg.ToString()), new("aggregation-for", "sensor-1")});
         await(db.TimeSeriesCreateRuleAsync("sensor", new TimeSeriesRule($"sensor:{agg}", 5000, agg)));
     }
-</code>
 </pre>
+</p>
 
 <h2>Produce Time Series Data</h2>
 
@@ -77,8 +77,8 @@
     or you can just pass in the string "<span class="code"><i>*</i></span>" - which will create the millisecond timestamp based on when the data reached Redis.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var producerTask = Task.Run(async()=>{
         while(true)
         {
@@ -86,8 +86,8 @@
             await Task.Delay(1000);
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Primary Consumer</h2>
 
@@ -96,8 +96,8 @@
     of these will use <span class="code">TimeSeriesGet</span> every second, to retrieve the most recent data from the Time Series.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var consumerTask = Task.Run(async()=>{
         while(true)
         {
@@ -106,8 +106,8 @@
             Console.WriteLine($"{result.Time.Value}: {result.Val}");
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Aggregation Consumer</h2>
 
@@ -117,8 +117,8 @@
     to query multiple Time Series with the relevant label.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var aggregationConsumerTask = Task.Run(async()=>
     {
         while(true)
@@ -132,8 +132,8 @@
 
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Add a ReadKey and Run</h2>
 

@@ -16,13 +16,13 @@
     is to clean out any prior list, so we start each program run with a clean slate.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var fruitKey = "fruits";
     var vegetableKey = "vegetables";
     db.KeyDelete(new RedisKey[] { fruitKey, vegetableKey });
-</code>
 </pre>
+</p>
 
 <h2>Pushing to Lists</h2>
 
@@ -39,33 +39,33 @@
     to the left, we are adding that fruit to the head of the list.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.ListLeftPush(fruitKey, new RedisValue[]{"Banana", "Mango", "Apple", "Pepper", "Kiwi", "Grape"});
-</code>
 </pre>
+</p>
 
 <p>
     Now let's try printing out the first element in this list. Lists are indexed left to right,
     consequentially the last fruit that we pushed left, will be the 0th index "Grape":
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"The first fruit in the list is: {db.ListGetByIndex(fruitKey, 0)}");
-</code>
 </pre>
+</p>
 
 <p>
     And if we accessed the tail of the list, with the index -1, we'd get the first element
     we pushed into the left side of the list, "Banana":
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"The last fruit in the list is:  {db.ListGetByIndex(fruitKey, -1)}");
-</code>
 </pre>
+</p>
 
 <h4>Push Right</h4>
 <p>
@@ -74,32 +74,32 @@
     iterate over the list.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.ListRightPush(vegetableKey, new RedisValue[]{"Potato", "Carrot", "Asparagus", "Beet", "Garlic", "Tomato"});
-</code>
 </pre>
+</p>
 
 <p>
     Now if we try to access the first element in the vegetable list, we'll get the first
     element that we pushed to the right, "Potato".
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"The first vegetable in the list is: {db.ListGetByIndex(vegetableKey, 0)}");
-</code>
 </pre>
+</p>
 
 <p>
     Conversely if we access the last element, we'll get "Tomato" - which is not a vegetable at all!
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"The last vegetable in the list is:  {db.ListGetByIndex(vegetableKey, -1)}");
-</code>
 </pre>
+</p>
 
 <h2>Enumerate a List</h2>
 
@@ -109,12 +109,12 @@
     if you pass in neither a start nor a stop, it will pull back the whole list.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"Fruit indexes 0 to -1: {string.Join(", ", db.ListRange(fruitKey))}");
     Console.WriteLine($"Vegetables index 0 to -2: {string.Join(", ", db.ListRange(vegetableKey, 0, -2))}");
-</code>
 </pre>
+</p>
 
 <h2>Move elements Between Lists</h2>
 
@@ -125,11 +125,11 @@
     from our vegetable list to our fruit list, since it's in fact a fruit and not a vegetable.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.ListMove(vegetableKey, fruitKey, ListSide.Right, ListSide.Left);
-</code>
 </pre>
+</p>
 
 <h2>List as a Queue</h2>
 
@@ -138,13 +138,13 @@
     different sides. Conventionally you'd push left, pop right:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Enqueuing Celery");
     db.ListLeftPush(vegetableKey, "Celery");
     Console.WriteLine($"Dequeued: {db.ListRightPop(vegetableKey)}");
-</code>
 </pre>
+</p>
 
 <h2>List as a Stack</h2>
 
@@ -153,13 +153,13 @@
     by convention you'd typically use the left side.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Pushing Grapefruit");
     db.ListLeftPush(fruitKey, "Grapefruit");
     Console.WriteLine($"Popping Fruit: {string.Join(",", db.ListLeftPop(fruitKey, 2))}");
-</code>
 </pre>
+</p>
 
 <h2>Searching Lists</h2>
 <p>
@@ -167,11 +167,11 @@
     method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"Position of Mango: {db.ListPosition(fruitKey, "Mango")}");
-</code>
 </pre>
+</p>
 
 <h2>List Size</h2>
 
@@ -179,8 +179,8 @@
     And finally, you use the <span class="code">Length</span> method to determine the size of a given list.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"There are {db.ListLength(fruitKey)} fruits in our Fruit List");
-</code>
 </pre>
+</p>

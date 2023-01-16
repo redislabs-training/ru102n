@@ -26,15 +26,15 @@
     Let's start out by clearing out the sets we'll be working with from Redis:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var allUsersSet = "users";
     var activeUsersSet = "users:state:active";
     var inactiveUsersSet = "users:state:inactive";
     var offlineUsersSet = "users:state:offline";
     db.KeyDelete(new RedisKey[]{allUsersSet, activeUsersSet,inactiveUsersSet, offlineUsersSet});
-</code>
 </pre>
+</p>
 
 <h2>Populate Sub Sets</h2>
 
@@ -43,13 +43,13 @@
     we'll use the <span class="code">SetAdd</span>Method. This method is variadic so we can do it in one command for each set.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SetAdd(activeUsersSet, new RedisValue[]{"User:1","User:2"});
     db.SetAdd(inactiveUsersSet, new RedisValue[]{"User:3", "User:4"});
     db.SetAdd(offlineUsersSet, new RedisValue[] {"User:5", "User:6", "User:7"});
-</code>
 </pre>
+</p>
 
 <h2>Combining sets to get all users</h2>
 
@@ -59,11 +59,11 @@
     set with all of our users. We can even use <span class="code">SetCombineAndStore</span> to store those combined users in our all users key.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SetCombineAndStore(SetOperation.Union, allUsersSet, new RedisKey[]{activeUsersSet, inactiveUsersSet, offlineUsersSet});
-</code>
 </pre>
+</p>
 
 <h2>Check Membership</h2>
 
@@ -72,12 +72,12 @@
     wanted to check to see if <span class="code">User:6</span> is offline we could do so very easily:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var user6Offline = db.SetContains(offlineUsersSet, "User:6");
     Console.WriteLine($"User:6 offline: {user6Offline}");
-</code>
 </pre>
+</p>
 
 <h2>Enumerate Set</h2>
 
@@ -96,11 +96,11 @@
     perfectly valid way to pull back all of your set members.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"All Users In one shot: {string.Join(", ", db.SetMembers(allUsersSet))}");
-</code>
 </pre>
+</p>
 
 <h3>Enumerate Set in Chunks</h3>
 
@@ -110,11 +110,11 @@
     the set is exhausted.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"All Users with scan  : {string.Join(", ", db.SetScan(allUsersSet))}");
-</code>
 </pre>
+</p>
 
 <h2>Move Elements Between Sets</h2>
 
@@ -124,10 +124,10 @@
     to move them from the active user set to the offline user set.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine("Moving User:1 from active to offline");
     var moved = db.SetMove(activeUsersSet, offlineUsersSet, "User:1");
     Console.WriteLine($"Move Successful: {moved}");
-</code>
 </pre>
+</p>

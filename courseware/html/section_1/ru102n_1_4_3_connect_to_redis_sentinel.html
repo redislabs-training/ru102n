@@ -18,8 +18,8 @@
     to the master name that you tell the sentinels to monitor when configuring them.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var options = new ConfigurationOptions
     {
         EndPoints = new EndPointCollection{"sentinel-1:26379"},
@@ -27,5 +27,5 @@
     };
 
     var muxer = ConnectionMultiplexer.Connect(options);
-</code>
 </pre>
+</p>

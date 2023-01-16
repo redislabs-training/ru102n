@@ -17,28 +17,28 @@
     need to do is use the <span class="code">StringSet</span> and <span class="code">StringGet</span> methods:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var instructorNameKey = new RedisKey("instructors:1:name");
 
     db.StringSet(instructorNameKey, "Steve"); 
     var instructor1Name = db.StringGet(instructorNameKey);
 
     Console.WriteLine($"Instructor 1's name is: {instructor1Name}");
-</code>
 </pre>
+</p>
 
 <p>
     Now, if you want to append a string onto an existing string value, you can use the <span class="code">StringAppend</span> method:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.StringAppend(instructorNameKey, " Lorello");
     instructor1Name = db.StringGet(instructorNameKey);
     Console.WriteLine($"Instructor 1's full name is: {instructor1Name}");
-</code>
 </pre>
+</p>
 
 <h2>String Numerics</h2>
 
@@ -52,38 +52,38 @@
     increment the key by a long value:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var tempKey = "temperature";
     db.StringSet(tempKey, 42);
     var tempAsLong = db.StringIncrement(tempKey, 5);
     Console.WriteLine($"New temperature: {tempAsLong}");
-</code>
 </pre>
+</p>
 
 <p>
     You can use that same overload, leaving the increment empty, and it will default to using
     an integer increment of 1.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     tempAsLong = db.StringIncrement(tempKey);
     Console.WriteLine($"New Temp: {tempAsLong}");
-</code>
 </pre>
+</p>
 
 <p>
     Now, if you need to increment by a floating point, you can pass in a double as the 
     increment like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var tempAsDouble = db.StringIncrement(tempKey, .5);
     Console.WriteLine($"New temperature: {tempAsDouble}");
-</code>
 </pre>
+</p>
 
 <p>
     Note that if you increment by a floating point, you will not be able to increment by 
@@ -105,11 +105,11 @@
     method to initialize a key that will live for 1 second.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.StringSet("temporaryKey", "hello world", expiry: TimeSpan.FromSeconds(1));
-</code>
 </pre>
+</p>
 
 <h3>Conditional Set</h3>
 
@@ -128,8 +128,8 @@
     Using them is as simple as passing in the <span class="code">when</span> option:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var conditionalKey = "ConditionalKey";
     var conditionalKeyText = "this has been set";
     // You can also specify a condition for when you want to set a key
@@ -146,5 +146,5 @@
     // You can also use When.Exists, to set the key only if the key already exists
     wasSet = db.StringSet(conditionalKey, "we reset the key!");
     Console.WriteLine($"Key set: {wasSet}");
-</code>
 </pre>
+</p>

@@ -27,8 +27,8 @@
     of an id key that's stored in Redis, and use that Id to create the key for the value that we're inserting.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var scriptText = @"
         local id = redis.call('incr', @id_key)
         local key = 'key:' .. id
@@ -44,8 +44,8 @@
     Console.WriteLine($"Key 1: {key1}");
     Console.WriteLine($"Key 2: {key2}");
 
-</code>
 </pre>
+</p>
 
 <p>
     Notice how in the anonymous constructor we're using to create the parameters <span class="code">id_key</span> is being cast to a <span class="code">RedisKey</span>.

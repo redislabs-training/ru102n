@@ -23,12 +23,12 @@
     Find the class definition for <span class="code">Employee</span> in <span class="code">Model.cs</span> and add the following above it:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json, Prefixes = new []{"Employee"}, IndexName = "employees")]
     public class Employee
-</code>
 </pre>
+</p>
 
 <p>
     This will tell Redis OM that we want the Employee stored as a JSON document, that we want the prefix that the key-generator uses to
@@ -39,12 +39,12 @@
     class, we will make our <span class="code">DocumentAttribute</span> declaration a bit simpler:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json)]
     public class Sale
-</code>
 </pre>
+</p>
 
 <p>
     This will make the Sale class be stored as JSON, however Redis OM will revert to it's defaults for Index Naming and Prefix generation.
@@ -64,12 +64,12 @@
     look like this after they are marked:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [RedisIdField]
     public string? Id { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Scalars</h2>
 
@@ -88,8 +88,8 @@
     After we've run through and indexed all our scalar fields, the model will look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json, Prefixes = new []{"Employee"}, IndexName = "employees")]
     public class Employee
     {
@@ -127,8 +127,8 @@
         public GeoLoc Location { get; set; }
         public Address? ForwardingAddress { get; set; }
     }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Embedded Documents</h2>
 
@@ -150,13 +150,13 @@
     marking their Address field like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(JsonPath = "$.Location")]
     [Indexed(JsonPath = "$.PostalCode")]
     public Address? Address { get; set; }
-</code>
 </pre>
+</p>
 
 <h3>Indexing By Cascading</h3>
 
@@ -169,24 +169,24 @@
     depth on that field to 1. This will prevent it from cascading deeper than just the scalar attributes beneath the address field:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(CascadeDepth = 1)]
     public Address? ForwardingAddress { get; set; }
-</code>
 </pre>
+</p>
 
 <p>
     Of course, we aren't actually indexing the <span class="code">Address</span> directly, so we will need to set a cascade depth on the <span class="code">Sale</span>
     class's <span class="code">Address</span> field to 2 for it to fully propogate down.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(CascadeDepth = 2)]
     public Address? Address { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Collections</h2>
 
@@ -195,12 +195,12 @@
     <span class="code">Sales</span> field in <span class="code">Employee</span> - you just need to mark the field as Indexed. This will work on both arrays and lists.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed]
     public List<string>? Sales { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Connect to Redis</h2>
 
@@ -220,11 +220,11 @@
     instance. You'll see the following in <span class="code"><i>Program.cs</i></span>, which is a provider connected to a local instance of Redis:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var provider = new RedisConnectionProvider("redis://localhost:6379");
-</code>
 </pre>
+</p>
 
 <h2>Create our Index</h2>
 
@@ -233,12 +233,12 @@
     in the type that you want to create the index for.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await provider.Connection.CreateIndexAsync(typeof(Sale));
     await provider.Connection.CreateIndexAsync(typeof(Employee));
-</code>
 </pre>
+</p>
 
 <h2>A note on the Index Deletions</h2>
 

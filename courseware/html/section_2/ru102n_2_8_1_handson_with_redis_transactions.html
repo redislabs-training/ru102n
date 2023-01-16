@@ -37,8 +37,8 @@
     We can then execute commands against that transaction, and close it out with <span class="code">Execute</span>.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var transaction = db.CreateTransaction();
 
     transaction.HashSetAsync("person:1", new HashEntry[]
@@ -53,8 +53,8 @@
 
     var success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <h2>Add a Condition to a Transaction</h2>
 
@@ -78,16 +78,16 @@
     the interim, the key is being watched, so the transaction will simply fail to execute once dispatched.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 32));
     transaction.HashIncrementAsync("person:1", "age");
     transaction.SortedSetIncrementAsync("person:age", "person:1", 1);
 
     success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <h2>Failed Transaction conditions</h2>
 
@@ -102,16 +102,16 @@
     we know to be false, e.g. the age we just incremented to 33 is 31.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 31));
     transaction.HashIncrementAsync("person:1", "age");
     transaction.SortedSetIncrementAsync("person:age", "person:1", 1);
     success = transaction.Execute();
 
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <p>
     In this case, the transaction will simply fail, and return false when executed.

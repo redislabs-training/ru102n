@@ -18,11 +18,11 @@
     they look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(Sortable = true)]
-</code>
 </pre>
+</p>
 
 <h2>Insert some records</h2>
 
@@ -31,8 +31,8 @@
     now because they have some extra fields, e.g. Age and Address (with a geoloc!)
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var alice = new Employee
     {
         Name = "Alice",
@@ -73,8 +73,8 @@
     await employees.InsertAsync(charlie);
     await employees.InsertAsync(dan);
     await employees.InsertAsync(yves);
-</code>
 </pre>
+</p>
 
 <h2>Our First Query with a String</h2>
 
@@ -83,13 +83,13 @@
     works exactly how you would expect it would if you've used LINQ in the past:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"Employees Named Bob");
     var alsoBob = await employees.FirstAsync(x=>x.Name == "Bob");
     Console.WriteLine($"Bob's age is: {alsoBob.Age} and his postal code is: {alsoBob.Address!.PostalCode}");
-</code>
 </pre>
+</p>
 
 <p>
     The <span class="code">FirstAsync</span> method materializes immediately serializing the query in the pipeline and sending it onto Redis.
@@ -102,8 +102,8 @@
     context. Since we are querying multiple records here, we will use a <span class="code">Where</span> predicate. Let's try querying all the people under forty:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // Query by age 
     var employeesUnderForty = employees.Where(x => x.Age &lt; 40);
 
@@ -112,8 +112,8 @@
     {
         Console.WriteLine($"{emp.Name} is {emp.Age}");
     }
-</code>
 </pre>
+</p>
 
 <h2>Proximity Geo Queries</h2>
 
@@ -131,8 +131,8 @@
     of Philadelphia, we can do so like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var employeesNearPhilly = await employees.GeoFilter(x=>x.Address!.Location, -75.159, 39.963, 1500, GeoLocDistanceUnit.Miles).ToListAsync();
 
     Console.WriteLine("----Employees near Philly----");
@@ -141,8 +141,8 @@
     {
         Console.WriteLine($"{emp.Name} lives in the postal code: {emp.Address!.PostalCode}");
     }
-</code>
 </pre>
+</p>
 
 <h2>Sorting</h2>
 
@@ -152,20 +152,20 @@
     the names of of our employees in Ascending order, we could do so with an <span class="code">OrderBy</span> and <span class="code">Select</span>:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var employeesByAge = await employees.OrderBy(x=>x.Age).Select(x=>x.Name!).ToListAsync();
     Console.WriteLine($"In Ascending order: {string.Join(", ", employeesByAge)}");
-</code>
 </pre>
+</p>
 
 <p>
     Conversely, if we wanted to order employees names in reverse alphabetical order we could do so with an <span class="code">OrderByDescending</span>:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var employeesInReverseAlphabeticalOrder = await employees.OrderByDescending(x=>x.Name).Select(x=>x.Name!).ToListAsync();
     Console.WriteLine($"In Reverse Alphabetical Order: {string.Join(", ", employeesInReverseAlphabeticalOrder)}");
-</code>
 </pre>
+</p>

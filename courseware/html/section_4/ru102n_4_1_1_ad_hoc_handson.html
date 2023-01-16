@@ -36,22 +36,22 @@
     The arguments parameter can be passed one of two ways. Either using the params macro:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("SET", "foo", "bar");
-</code>
 </pre>
+</p>
 
 <p>
     Or, you can pass them in as a collection:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var arguments = new object[] { "foo", "bar" };
     await db.ExecuteAsync("SET", arguments);
-</code>
 </pre>
+</p>
 
 <p>
     Both work, the first way requires less code of course, but if you use it, you cannot pass any command flags in, since the params macro must
@@ -105,35 +105,35 @@
      A simple aggregation will take care of this pretty after we've parsed out our words from a text document (this work is already done for you in the example).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var bloomList = words.Aggregate(new List&lt;object&gt; { "bf" }, (list, word) =>
     {
         list.Add(word);
         return list;
     });
-</code>
 </pre>
+</p>
 
 <p>
     With the words aggregated together into a much larger argument list, all that's left to do is use the <span class="code">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("BF.RESERVE", "bf", 0.01, 20000);
-</code>
 </pre>
+</p>
 
 <p>
     Now we use the <span class="code">BF.MADD</span> command to add everything to the Bloom Filter in one shot.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("BF.MADD", bloomList, CommandFlags.FireAndForget);
-</code>
 </pre>
+</p>
 
 <h2>Reserve and Add to Top-K</h2>
 
@@ -142,11 +142,11 @@
     heavy keeper, all we need to do run the <span class="code">TOPK.RESERVE</span> command:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("TOPK.RESERVE", "topk", 10, 20, 10, .925);
-</code>
 </pre>
+</p>
 
 <p>
     And then we need to arrange all of our words so that they are not duplicated (this isn't absolutely necessary, but if you are using a cloud
@@ -154,8 +154,8 @@
     word list to do this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // We need to organize the words into a list where each word is followed by the number of occurrences it has in Moby Dick
     var topKList = words.Aggregate(new Dictionary&lt;string, int&gt;(), (dict, word) =>
     {
@@ -172,19 +172,19 @@
         list.Add(kvp.Value);
         return list;
     });
-</code>
 </pre>
+</p>
 
 <p>
     Then we just need to call <span class="code">TOPK.INCRBY</span> passing in our list of word/count pairs:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // Add everything to the Top-K
     await db.ExecuteAsync("TOPK.INCRBY", topKList, CommandFlags.FireAndForget);
-</code>
 </pre>
+</p>
 
 <h2>Querying our Bloom Filter</h2>
 
@@ -196,11 +196,11 @@
     in Moby Dick (hint: it does).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var doesTheExist = await db.ExecuteAsync("BF.EXISTS", "bf", "the");
-</code>
 </pre>
+</p>
 
 <p>
     There's two things you can do with a <span class="code">RedisResult</span>, you can cast/use it as its appropriate type: supported types are basically
@@ -208,15 +208,15 @@
     that type, the cast will be successful, so let's try casting it to a couple of different types:   
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var doesTheExistAsInt = (int)doesTheExist;
     Console.WriteLine($"Typeof {nameof(doesTheExistAsInt)}: {doesTheExistAsInt.GetType()}");
 
     var doesTheExistAsDouble = (double)doesTheExist;
     Console.WriteLine($"Typeof {nameof(doesTheExistAsDouble)}: {doesTheExistAsDouble.GetType()}");
-</code>
 </pre>
+</p>
 
 <p>
     Both of these are Valid casts for our <span class="code">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
@@ -239,13 +239,13 @@
      To do that, we just need to perform an explicit cast, and then select each as a string.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var res = await db.ExecuteAsync("TOPK.LIST", "topk");
     var arr = ((RedisResult[])res!).Select(x=>x.ToString());
     Console.WriteLine($"Top 10: {string.Join(", ", arr)}");
-</code>
 </pre>
+</p>
 
 <p>
     Finally, if we wanted the counts as of our Top-K as well (which will come back as a dictionary of values), we can easily reduce it to a 
@@ -253,9 +253,9 @@
     the <span class="code">ToDictionary</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var withCounts = (await db.ExecuteAsync("TOPK.LIST", "topk", "WITHCOUNT")).ToDictionary().Select(x=>$"{x.Key}: {x.Value}");
     Console.WriteLine($"Top 10, with counts: {string.Join(", ", withCounts)}");
-</code>
 </pre>
+</p>
