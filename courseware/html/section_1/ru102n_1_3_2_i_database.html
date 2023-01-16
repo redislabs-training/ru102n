@@ -12,8 +12,8 @@
     deployments away. Consequentially, if you are running in a cluster and are
     preforming a write, the <span style="font-family: 'courier new', courier;">IDatabase</span> does not require you to know which server
     in particular you need to write to. Also, if you have many replicas per master
-    shard in your <a href="https://redis.io/docs/management/scaling/">Cluster</a>
-    or <a href="https://redis.io/docs/management/sentinel/">Sentinel</a> Redis
+    shard in your <a class="page-link" target="_blank" href="https://redis.io/docs/management/scaling/">Cluster</a>
+    or <a class="page-link" target="_blank" href="https://redis.io/docs/management/sentinel/">Sentinel</a> Redis
     deployments, the <span style="font-family: 'courier new', courier;">IDatabase</span> will leverage the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> to
     automatically distribute your reads across your deployment.
 </p>

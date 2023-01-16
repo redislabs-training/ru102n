@@ -1,7 +1,7 @@
 <h1>Redis Transactions</h1>
 
 <p>
-    <a href="https://redis.io/docs/manual/transactions/">Transactions</a> in Redis allow you to apply multiple commands in in isolation to Redis
+    <a class="page-link" target="_blank" href="https://redis.io/docs/manual/transactions/">Transactions</a> in Redis allow you to apply multiple commands in in isolation to Redis
     sequentially. StackExchange.Redis exposes the <span style="font-family: 'courier new', courier;">ITransaction</span> which operationally is similar to the <span style="font-family: 'courier new', courier;">IBatch</span>
     in that it allows you to dispatch a series of tasks, which you can then await after calling the <<span style="font-family: 'courier new', courier;">>Execute</span> method
     to run the transaction.
