@@ -1,10 +1,14 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Connect to Redis with TLS</h1>
 
 <p>
     An important feature of Redis Cloud, Redis Enterprise, and more recently with 
     Redis 6, is Transportation Layer Security (TLS). To learn more about how to use
-    use TLS with Redis, see <a href="https://university.redis.com/courses/ru330/">RU330: Redis Security</a>
-    or the TLS article on <a href="https://redis.io/docs/manual/security/encryption/">redis.io</a>.
+    use TLS with Redis, see <a class="page-link" target="_blank" href="https://university.redis.com/courses/ru330/">RU330: Redis Security</a>
+    or the TLS article on <a class="page-link" target="_blank" href="https://redis.io/docs/manual/security/encryption/">redis.io</a>.
 </p>
 
 <h2>.NET Framework vs .NET Core</h2>
@@ -12,7 +16,7 @@
 <p>
     When it comes to connecting to Redis with TLS it's important that we differentiate
     between .NET Framework and .NET Core. Because of the difference in the 
-    <a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslstream">SSLStream</a>
+    <a class="page-link" target="_blank" href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslstream">SSLStream</a>
     API in Framework vs Core, Core is substantially more configurable.
 </p>
 
@@ -27,66 +31,66 @@
 
 <h4>Event Handlers</h4>
 <p>
-    There are two event handlers that you can use with the <span style="font-family: 'courier new', courier;">ConfigurationOptions</span>
+    There are two event handlers that you can use with the <span class="code">ConfigurationOptions</span>
     object to configure TLS. Neither of these can be used from a connection string
-    so you must use the <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> if you need to use them.
+    so you must use the <span class="code">ConfigurationOptions</span> if you need to use them.
     
 </p>
 
 <p>
-    The first of these is the <span style="font-family: 'courier new', courier;">ConfigurationOptions.CertificateSelection</span> event handler.
+    The first of these is the <span class="code">ConfigurationOptions.CertificateSelection</span> event handler.
     This event handler selects the certificate that you will use to authenticate
     with the Redis Server.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     configurationOptions.CertificateSelection += delegate 
     {
         var cert = new X509Certificate2(PATH_TO_CERT_FILE, "");
         return cert;
     };
-</code>
 </pre>
-
-<p>
-    The other event handler, <span style="font-family: 'courier new', courier;">ConfigurationOptions.CertificateValidation</span>, is used to check the validity of the Redis Server's certificates:
 </p>
 
-<pre>
-<code>
+<p>
+    The other event handler, <span class="code">ConfigurationOptions.CertificateValidation</span>, is used to check the validity of the Redis Server's certificates:
+</p>
+
+<p>
+<pre class="code">
     configurationOptions.CertificateValidation += (sender, certificate, chain, errors) =>
     {
         var isValid = true;
         // insert check certificate logic here
         return isValid;
     };
-</code>
 </pre>
+</p>
 
 <h4>Environment Variables</h4>
 
 <p>
-    There are also two environment variables that the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> will
+    There are also two environment variables that the <span class="code">ConnectionMultiplexer</span> will
     check if there is no certificate selection delegate set. This is useful if
     you are using a derivative library of StackExchange.Redis that does not provide
-    direct access to the <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> object.
+    direct access to the <span class="code">ConfigurationOptions</span> object.
 </p>
 
 <ul>
-    <li><span style="font-family: 'courier new', courier;">SERedis_ClientCertPfxPath</span>: provides the multiplexer the path to the certificate file.</li>
-    <li><span style="font-family: 'courier new', courier;">SERedis_ClientCertPassword</span>: Is the password for the certificate file if applicable.</li>
+    <li><span class="code">SERedis_ClientCertPfxPath</span>: provides the multiplexer the path to the certificate file.</li>
+    <li><span class="code">SERedis_ClientCertPassword</span>: Is the password for the certificate file if applicable.</li>
 </ul>
 
  <h3>Connecting in .NET Core</h3>
 
  <p>
-    In .NET Core (3.1, 5, 6, 7+) <span style="font-family: 'courier new', courier;"><a href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslclientauthenticationoptions">SslClientAuthenticationOptions</a></span>
-    was added as an optional way of configuring an <span style="font-family: 'courier new', courier;">SslStream</span>. This provides a great
+    In .NET Core (3.1, 5, 6, 7+) <span class="code"><a class="page-link" target="_blank" href="https://learn.microsoft.com/en-us/dotnet/api/system.net.security.sslclientauthenticationoptions">SslClientAuthenticationOptions</a></span>
+    was added as an optional way of configuring an <span class="code">SslStream</span>. This provides a great
     deal of extra flexibility when it comes to configuring TLS settings Redis.
  </p>
  <p>
-    Using the <span style="font-family: 'courier new', courier;">SslClientAuthenticationOptions</span> delegate in <span style="font-family: 'courier new', courier;">ConfigurationOptions</span>
+    Using the <span class="code">SslClientAuthenticationOptions</span> delegate in <span class="code">ConfigurationOptions</span>
     you can configure:
 
     <ul>
@@ -108,5 +112,5 @@
     {
         EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
     });
- </code>
-</pre>
+ </pre>
+</p>

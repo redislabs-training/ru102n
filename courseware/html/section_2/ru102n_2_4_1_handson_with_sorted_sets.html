@@ -1,20 +1,24 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On with Redis Sorted Sets in .NET</h1>
 
 <p>
     In this Hands-On we'll be exploring how to use Redis Sorted Sets from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.4/section2.4.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.4/section2.4.csproj</span> in your IDE.
 </p>
 
 <p>
     To illustrate the usage of Sorted Sets, we'll be using five sets. Four of them will be
-    connected under the same domain, <span style="font-family: 'courier new', courier;"><i>users:age</i></span>, <span style="font-family: 'courier new', courier;"><i>users:lastAccess</i></span>, <span style="font-family: 'courier new', courier;"><i>users:highScores</i></span>, <span style="font-family: 'courier new', courier;"><i>users:mostRecentlyActive</i></span>,
-    and we'll have one set <span style="font-family: 'courier new', courier;"><i>names</i></span> to demonstrate lexicographic ordering. First let's start
+    connected under the same domain, <span class="code"><i>users:age</i></span>, <span class="code"><i>users:lastAccess</i></span>, <span class="code"><i>users:highScores</i></span>, <span class="code"><i>users:mostRecentlyActive</i></span>,
+    and we'll have one set <span class="code"><i>names</i></span> to demonstrate lexicographic ordering. First let's start
     by purging all these sets, that way we can run this repeatedly without any other preamble.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var userAgeSet = "users:age";
     var userLastAccessSet = "users:lastAccess";
     var userHighScoreSet = "users:highScores";
@@ -22,23 +26,23 @@
     var mostRecentlyActive = "users:mostRecentlyActive";
 
     db.KeyDelete(new RedisKey[]{userAgeSet, userLastAccessSet, userHighScoreSet, namesSet, mostRecentlyActive});
-</code>
 </pre>
+</p>
 
 <h2>Populate Sets</h2>
 
 <p>
     Now that we've cleared everything out, we can populate the sets. We'll add six members
-    to each set. To add an item to a set you will add a <span style="font-family: 'courier new', courier;">SortedSetEntry</span>, which
+    to each set. To add an item to a set you will add a <span class="code">SortedSetEntry</span>, which
     is a member name and score. Because these commands are variadic, we will be passing in
-    arrays of <span style="font-family: 'courier new', courier;">SortedSetEntry</span>.For our purposes, we will set users with Id 1-6, for our users
+    arrays of <span class="code">SortedSetEntry</span>.For our purposes, we will set users with Id 1-6, for our users
     sets, and then for our names set, we will add an arbitrary set of names. For our user sets
     we'll provide scores that are relevant for the key, and importantly for the names set.
     Which we intend to sort lexicographically, we will provide a score of 0.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SortedSetAdd(userAgeSet,
         new SortedSetEntry[]
         {
@@ -82,37 +86,37 @@
             new("Alice", 0),
             new("Tom", 0)
         });
-</code>
 </pre>
+</p>
 
 <h2>Check Score</h2>
 
 <p>
-    To check a score of a member, simply use <span style="font-family: 'courier new', courier;">SortedSetScore</span> passing in the key name
+    To check a score of a member, simply use <span class="code">SortedSetScore</span> passing in the key name
     and the user id.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var user3HighScore = db.SortedSetScore(userHighScoreSet, "User:3");
     Console.WriteLine($"User:3 High Score: {user3HighScore}");  
-</code>
 </pre>
+</p>
 
 <h2>Check Rank</h2>
 
 <p>
-    To check a users rank, you can use the <span style="font-family: 'courier new', courier;">SortedSetRank</span> method. With this method you can pass in the key, the User Id, and a 
+    To check a users rank, you can use the <span class="code">SortedSetRank</span> method. With this method you can pass in the key, the User Id, and a 
     direction that you want the sorting to be done in. In this case, when we say "Rank" we mean we want the high score coming up first. Hence
-    we'll use the <span style="font-family: 'courier new', courier;">Descending</span> direction.
+    we'll use the <span class="code">Descending</span> direction.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var user2Rank = db.SortedSetRank(userHighScoreSet, "User:2", Order.Descending);
     Console.WriteLine($"User:2 Rank: {user2Rank}");
-</code>
 </pre>
+</p>
 
 <h2>Range Queries</h2>
 
@@ -147,17 +151,17 @@
 </ol>
 
 <p>
-   With this information it's straightforward to start ranging over your sorted sets by rank, just use the <span style="font-family: 'courier new', courier;">SortedSetRange</span> command
+   With this information it's straightforward to start ranging over your sorted sets by rank, just use the <span class="code">SortedSetRange</span> command
    passing in the relevant arguments. Let's try printing out the three highest scorers. To do this, we'll just go from index zero to two, and
    order the sorted set descending:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topThreeScores = db.SortedSetRangeByRank(userHighScoreSet, 0, 2, Order.Descending);
     Console.WriteLine($"Top three: {string.Join(", ", topThreeScores)}");
-</code>
 </pre>
+</p>
 
 <h2>Range By Score</h2>
 
@@ -171,69 +175,69 @@
 </ul>
 
 <p>
-    With that decided, you can use the <span style="font-family: 'courier new', courier;">SortedSetRangeByScore</span> method to range over your sorted set. Let's find all the users between
-    18 and 30 inclusively with their ages, since we want to pull back the ages as well, we will use the <span style="font-family: 'courier new', courier;">SortedSetRangeByScoreWithScores</span> method.
+    With that decided, you can use the <span class="code">SortedSetRangeByScore</span> method to range over your sorted set. Let's find all the users between
+    18 and 30 inclusively with their ages, since we want to pull back the ages as well, we will use the <span class="code">SortedSetRangeByScoreWithScores</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var eighteenToThirty = db.SortedSetRangeByScoreWithScores(userAgeSet, 18, 30, Exclude.None);
     Console.WriteLine($"Users between 18 and 30: {string.Join(", ", eighteenToThirty)}");
-</code>
 </pre>
+</p>
 
 <h2>Lexicographic Ranges</h2>
 
 <p>
     When all the scores within a sorted set are set to the same score, traditionally 0, there is a lexicographic ordering mechanic available.
-    If you wanted to alphabetize all of the names in our names sorted set, all you would have to do is use the <span style="font-family: 'courier new', courier;">SortedSetRangeByValue</span> 
+    If you wanted to alphabetize all of the names in our names sorted set, all you would have to do is use the <span class="code">SortedSetRangeByValue</span> 
     method:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var namesAlphabetized = db.SortedSetRangeByValue(namesSet);
     Console.WriteLine($"Names Alphabetized: {string.Join(",",namesAlphabetized)}");
-</code>
 </pre>
+</p>
 
 <p>
     If you wanted to find a proper alphabetic range, for example, all the names that start with between an "A" and "J", you can do that as well,
-    these comparisons will be based off ASCII encoding and will be based off what <span style="font-family: 'courier new', courier;">memcmp</span> returns. The Sorted Sets section of RU101 has a rich,
+    these comparisons will be based off ASCII encoding and will be based off what <span class="code">memcmp</span> returns. The Sorted Sets section of RU101 has a rich,
     detailed view as to how this works exactly. But for our purposes here, if we want to find all the names that start with between "A" and "J",
     we'd actually want to end with an exclusive "K" at the end like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var namesBetweenAandJ = db.SortedSetRangeByValue(namesSet, "A", "K", Exclude.Stop);
     Console.WriteLine($"Names between A and J: {string.Join(", ", namesBetweenAandJ)}");
-</code>
 </pre>
+</p>
 
 <h2>Combining Sorted Sets</h2>
 
 <p>
     We can also combine sorted sets together to help us answer more interesting questions. Say for example we wanted to find the three most
     recently active players, and then determine the rank order of those three by high score. Well, we have an unpopulated as of yet sorted set
-    <span style="font-family: 'courier new', courier;"><i>users:mostRecentlyActive</i></span> that we can populate using the <span style="font-family: 'courier new', courier;">SortedSetRangeAndStore</span> method:
+    <span class="code"><i>users:mostRecentlyActive</i></span> that we can populate using the <span class="code">SortedSetRangeAndStore</span> method:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     db.SortedSetRangeAndStore(userLastAccessSet,mostRecentlyActive,  0, 2, order: Order.Descending);
-</code>
 </pre>
+</p>
 
 <p>
     With that done, we can use the intersection sorted set operation to find the intersection between the most recently active players, and the
     player scores set. We can then weight the high score to 1, and the last access time to 0, producing only the high score. This will return
-    the players and their scores in ascending order, but we can reverse this easily with a call to <span style="font-family: 'courier new', courier;">Reverse</span> at the end.
+    the players and their scores in ascending order, but we can reverse this easily with a call to <span class="code">Reverse</span> at the end.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var rankOrderMostRecentlyActive = db.SortedSetCombineWithScores(SetOperation.Intersect, new RedisKey[]{userHighScoreSet, mostRecentlyActive}, new double[]{1,0}).Reverse();
     Console.WriteLine($"Highest Scores Most Recently Active: {string.Join(", ", rankOrderMostRecentlyActive)}");
-</code>
 </pre>
+</p>

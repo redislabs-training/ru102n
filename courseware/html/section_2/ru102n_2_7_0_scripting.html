@@ -1,7 +1,11 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Scripting in StackExchange.Redis</h1>
 
 <p>
-    StackExchange.Redis exposes the Redis <a href="https://redis.io/docs/manual/programmability/eval-intro/">Lua Scripting</a> API. This allows
+    StackExchange.Redis exposes the Redis <a class="page-link" target="_blank" href="https://redis.io/docs/manual/programmability/eval-intro/">Lua Scripting</a> API. This allows
     you to run multiple commands on the Redis server in sequence, and use the intermediate results of those commands within the context of the script.
 </p>
 <p> Since
@@ -11,7 +15,7 @@
 
 <p>
     Getting fully into the weeds of Lua Scripting is outside the scope of this course. There's good coverage of this topic in 
-    <a href="https://university.redis.com/courses/ru101/">RU101 Introduction to Redis Data Structures</a> if you want to learn more. But for
+    <a class="page-link" target="_blank" href="https://university.redis.com/courses/ru101/">RU101 Introduction to Redis Data Structures</a> if you want to learn more. But for
     the purposes of this course. We'll simply be discussing how to work with the Lua Scripts in the context of StackExchange.Redis.
 </p>
 
@@ -19,7 +23,7 @@
 
 <p>
     Prepared scripts are the preferred way to interact with scripting in StackExchange.Redis. Prepared scripts tend to be more readable than
-    their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the <span style="font-family: 'courier new', courier;"><i>ARGV</i></span> and <span style="font-family: 'courier new', courier;"><i>KEYS</i></span> 
+    their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the <span class="code"><i>ARGV</i></span> and <span class="code"><i>KEYS</i></span> 
     arrays to pass in arguments and keys to the script. 
 </p>
 <p>

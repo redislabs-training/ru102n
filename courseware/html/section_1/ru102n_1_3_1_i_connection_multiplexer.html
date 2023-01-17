@@ -1,7 +1,10 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
 <h1>IConnectionMultiplexer</h1>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IConnectionMultiplexer</span> is responsible for maintaining all of the
+    The <span class="code">IConnectionMultiplexer</span> is responsible for maintaining all of the
     connections to Redis. As I described in the previous section. It routes
     all the commands to Redis through a single connection for interactive commands,
     and a separate connection for subscription, which we'll discuss more in
@@ -9,7 +12,7 @@
 </p>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IConnectionMultiplexer</span> is responsible for exposing a simple interface
-    to get other critical interfaces of the library. Including the <span style="font-family: 'courier new', courier;">IDatabase</span>,
-    <span style="font-family: 'courier new', courier;">ISubscriber</span>, and <span style="font-family: 'courier new', courier;">IServer</span>.
+    The <span class="code">IConnectionMultiplexer</span> is responsible for exposing a simple interface
+    to get other critical interfaces of the library. Including the <span class="code">IDatabase</span>,
+    <span class="code">ISubscriber</span>, and <span class="code">IServer</span>.
 </p>

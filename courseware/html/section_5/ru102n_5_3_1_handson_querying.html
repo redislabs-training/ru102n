@@ -1,24 +1,28 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On Querying Redis with Redis OM</h1>
 
 <p>
     In this Hands-On we'll be exploring how to query your documents in Redis with Redis OM .NET.
     You can either create your own project to follow along with and connect a RedisConnectionProvider,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_5/section5.3/section5.3.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_5/section5.3/section5.3.csproj</span> in your IDE.
 </p>
 
 <h2>Make Age and Name Sortable</h2>
 
 <p>
     In this section we'll only be working with Employees, the first thing we need to do is to make a minor update to the model making 
-    the name and age sortable, to do this, open <i><span style="font-family: 'courier new', courier;">Model.cs</span></i> and change the <span style="font-family: 'courier new', courier;">IndexedAttribute</span> in the Age and Name property so
+    the name and age sortable, to do this, open <i><span class="code">Model.cs</span></i> and change the <span class="code">IndexedAttribute</span> in the Age and Name property so
     they look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(Sortable = true)]
-</code>
 </pre>
+</p>
 
 <h2>Insert some records</h2>
 
@@ -27,8 +31,8 @@
     now because they have some extra fields, e.g. Age and Address (with a geoloc!)
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var alice = new Employee
     {
         Name = "Alice",
@@ -69,37 +73,37 @@
     await employees.InsertAsync(charlie);
     await employees.InsertAsync(dan);
     await employees.InsertAsync(yves);
-</code>
 </pre>
+</p>
 
 <h2>Our First Query with a String</h2>
 
 <p>
-    For our first query, we'll be using the <span style="font-family: 'courier new', courier;">First</span> method to find the first employee in Redis named "Bob", This operation
+    For our first query, we'll be using the <span class="code">First</span> method to find the first employee in Redis named "Bob", This operation
     works exactly how you would expect it would if you've used LINQ in the past:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     Console.WriteLine($"Employees Named Bob");
     var alsoBob = await employees.FirstAsync(x=>x.Name == "Bob");
     Console.WriteLine($"Bob's age is: {alsoBob.Age} and his postal code is: {alsoBob.Address!.PostalCode}");
-</code>
 </pre>
+</p>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">FirstAsync</span> method materializes immediately serializing the query in the pipeline and sending it onto Redis.
+    The <span class="code">FirstAsync</span> method materializes immediately serializing the query in the pipeline and sending it onto Redis.
 </p>
 
 <h2>Numeric Range Queries</h2>
 
 <p>
     To query a range, you simply need to use the greater than or less than operators against numeric values, as you would in any other LINQ
-    context. Since we are querying multiple records here, we will use a <span style="font-family: 'courier new', courier;">Where</span> predicate. Let's try querying all the people under forty:
+    context. Since we are querying multiple records here, we will use a <span class="code">Where</span> predicate. Let's try querying all the people under forty:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // Query by age 
     var employeesUnderForty = employees.Where(x => x.Age &lt; 40);
 
@@ -108,8 +112,8 @@
     {
         Console.WriteLine($"{emp.Name} is {emp.Age}");
     }
-</code>
 </pre>
+</p>
 
 <h2>Proximity Geo Queries</h2>
 
@@ -119,7 +123,7 @@
 </p>
 <p>
     You can express a Geo Filter in terms of one of your model's attributes, for example the 
-    <span style="font-family: 'courier new', courier;">Address.Location</span> attribute, which is a <span style="font-family: 'courier new', courier;">GeoLoc</span>, a special type within Redis for holding a geographic position.
+    <span class="code">Address.Location</span> attribute, which is a <span class="code">GeoLoc</span>, a special type within Redis for holding a geographic position.
 </p>
 <p>
     To run a Geo filter, simply provide the attribute as well as the desired center-point of your geo filter, the radius from the center point
@@ -127,8 +131,8 @@
     of Philadelphia, we can do so like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var employeesNearPhilly = await employees.GeoFilter(x=>x.Address!.Location, -75.159, 39.963, 1500, GeoLocDistanceUnit.Miles).ToListAsync();
 
     Console.WriteLine("----Employees near Philly----");
@@ -137,31 +141,31 @@
     {
         Console.WriteLine($"{emp.Name} lives in the postal code: {emp.Address!.PostalCode}");
     }
-</code>
 </pre>
+</p>
 
 <h2>Sorting</h2>
 
 <p>
-    Any property that has been marked <span style="font-family: 'courier new', courier;">Sortable = true</span> in the model definition can be sorted on, to sort on a field, you will use
-    an <span style="font-family: 'courier new', courier;">OrderBy</span> and <span style="font-family: 'courier new', courier;">OrderByDescending</span> predicate in constructing your query, consequentially, if we wanted to select
-    the names of of our employees in Ascending order, we could do so with an <span style="font-family: 'courier new', courier;">OrderBy</span> and <span style="font-family: 'courier new', courier;">Select</span>:
+    Any property that has been marked <span class="code">Sortable = true</span> in the model definition can be sorted on, to sort on a field, you will use
+    an <span class="code">OrderBy</span> and <span class="code">OrderByDescending</span> predicate in constructing your query, consequentially, if we wanted to select
+    the names of of our employees in Ascending order, we could do so with an <span class="code">OrderBy</span> and <span class="code">Select</span>:
 </p>
-
-<pre>
-<code>
-    var employeesByAge = await employees.OrderBy(x=>x.Age).Select(x=>x.Name!).ToListAsync();
-    Console.WriteLine($"In Ascending order: {string.Join(", ", employeesByAge)}");
-</code>
-</pre>
 
 <p>
-    Conversely, if we wanted to order employees names in reverse alphabetical order we could do so with an <span style="font-family: 'courier new', courier;">OrderByDescending</span>:
+<pre class="code">
+    var employeesByAge = await employees.OrderBy(x=>x.Age).Select(x=>x.Name!).ToListAsync();
+    Console.WriteLine($"In Ascending order: {string.Join(", ", employeesByAge)}");
+</pre>
 </p>
 
-<pre>
-<code>
+<p>
+    Conversely, if we wanted to order employees names in reverse alphabetical order we could do so with an <span class="code">OrderByDescending</span>:
+</p>
+
+<p>
+<pre class="code">
     var employeesInReverseAlphabeticalOrder = await employees.OrderByDescending(x=>x.Name).Select(x=>x.Name!).ToListAsync();
     Console.WriteLine($"In Reverse Alphabetical Order: {string.Join(", ", employeesInReverseAlphabeticalOrder)}");
-</code>
 </pre>
+</p>

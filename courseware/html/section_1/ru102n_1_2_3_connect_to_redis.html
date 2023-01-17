@@ -1,3 +1,6 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
 <h1>Connect to Redis!</h1>
 <p>
     Now that we've added StackExchange.Redis to the project, we can move into our first
@@ -6,20 +9,20 @@
 </p>
 
 <p>
-    There are two methods that you can use to connect to Redis: <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.Connect</span>
-    and <span style="font-family: 'courier new', courier;">ConnectionMultiplexer.ConnectAsync</span> - either will work. You'll need the parameters
+    There are two methods that you can use to connect to Redis: <span class="code">ConnectionMultiplexer.Connect</span>
+    and <span class="code">ConnectionMultiplexer.ConnectAsync</span> - either will work. You'll need the parameters
     that you collected at setup:
     <ul>
         <li>hostname</li>
         <li>port</li>
         <li>password (if on Redis Cloud or otherwise password protected)</li>
-        <li>username (if not <span style="font-family: 'courier new', courier;">default</span>)</li>
+        <li>username (if not <span class="code">default</span>)</li>
     </ul>
 </p>
 
 <p>
     There are essentially two overloads, one taking a connection string, and the other taking an instance of the 
-    <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> class, which is definitely
+    <span class="code">ConfigurationOptions</span> class, which is definitely
     easier to organize, but the connection string option is often easier for a simple connection.
 </p>
 
@@ -61,13 +64,13 @@
 </p>
 <p>
     We'll start off by sending the simplest of Redis commands, Ping. First,
-    you'll need to get a handle to an <span style="font-family: 'courier new', courier;">IDatabase</span>, 
-    the <span style="font-family: 'courier new', courier;">IDatabase</span> is the main interactive
+    you'll need to get a handle to an <span class="code">IDatabase</span>, 
+    the <span class="code">IDatabase</span> is the main interactive
     command interface for Redis Commands. You can grab it from the Multiplexer
-    by calling the <span style="font-family: 'courier new', courier;">GetDatabase</span> 
-    method on the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span>.
+    by calling the <span class="code">GetDatabase</span> 
+    method on the <span class="code">ConnectionMultiplexer</span>.
 </p>
 <p>
     With that done, all you need to do to ping Redis is call 
-    <span style="font-family: 'courier new', courier;">Ping</span>, print the results, and your done!
+    <span class="code">Ping</span>, print the results, and your done!
 </p>

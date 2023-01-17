@@ -1,10 +1,14 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Caching in ASP.NET Core</h1>
 
 <p>
     Using Redis as a Cache in ASP.NET Core is as simple as using the Distributed Cache API that's available for any manner of cache that you
     might use in ASP.NET Core. The only change that occurs when you add Redis to your caches in ASP.NET Core is that ASP.NET core will
     use Redis as its cache provider. The remainder of the operations are abstracted away from us so we don't have to think about them. That
-    means that fundamentally, the feature set provided by the Redis Cache Provider is limited to the <span style="font-family: 'courier new', courier;">IDistributedCache</span> API.
+    means that fundamentally, the feature set provided by the Redis Cache Provider is limited to the <span class="code">IDistributedCache</span> API.
 </p>
 
 <p>

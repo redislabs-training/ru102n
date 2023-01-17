@@ -1,7 +1,11 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On with Aggregations in Redis OM</h1>
 
 <p>
-    In this hands-on we'll learn how to use aggregations with Redis OM .NET. This section will revolve around the <span style="font-family: 'courier new', courier;">AggregationSet&lt;T&gt;</span>
+    In this hands-on we'll learn how to use aggregations with Redis OM .NET. This section will revolve around the <span class="code">AggregationSet&lt;T&gt;</span>
     which is a construct of Redis OM meant to make Aggregations operate fluently.
 </p>
 <p>
@@ -27,32 +31,32 @@
 </p>
 <p>
     Specifically in the Sale class, we'll mark both the Total and
-    EmployeeId fields as <span style="font-family: 'courier new', courier;">Aggregatable</span> - this is an alias of <span style="font-family: 'courier new', courier;">Sortable</span> - I like to use it because it makes it explicit that we're 
+    EmployeeId fields as <span class="code">Aggregatable</span> - this is an alias of <span class="code">Sortable</span> - I like to use it because it makes it explicit that we're 
     setting it this way so we can run aggregations on our field:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(Aggregatable = true)]
     public string? EmployeeId { get; set; }
 
     [Indexed(Aggregatable = true)]
     public int Total { get; set; }
-</code>
 </pre>
+</p>
 
-<h2>The <span style="font-family: 'courier new', courier;">AggregationSet&lt;T&gt;</span> and <span style="font-family: 'courier new', courier;">AggregationResult&lt;T&gt;</span></h2>
+<h2>The <span class="code">AggregationSet&lt;T&gt;</span> and <span class="code">AggregationResult&lt;T&gt;</span></h2>
 
 <p>
-    The Aggregations pipeline is all built around the <span style="font-family: 'courier new', courier;">AggregationSet&lt;T&gt;</span>, which is of course a generic that you can apply
-    whatever your model is to. However, you'll notice that the return type of all the queries from the <span style="font-family: 'courier new', courier;">AggregationSet&lt;T&gt;</span>
-    is <span style="font-family: 'courier new', courier;">AggregationResult&lt;T&gt;</span> rather than whatever the type <code>&lt;T&gt;</code> was that you passed into it. 
+    The Aggregations pipeline is all built around the <span class="code">AggregationSet&lt;T&gt;</span>, which is of course a generic that you can apply
+    whatever your model is to. However, you'll notice that the return type of all the queries from the <span class="code">AggregationSet&lt;T&gt;</span>
+    is <span class="code">AggregationResult&lt;T&gt;</span> rather than whatever the type <code>&lt;T&gt;</code> was that you passed into it. 
 </p>
 <p>This is critical
-    to understanding how to construct queries within the <span style="font-family: 'courier new', courier;">AggregationSet</span>. Aggregations are not meant to pull out model data from your 
+    to understanding how to construct queries within the <span class="code">AggregationSet</span>. Aggregations are not meant to pull out model data from your 
     database, rather they are meant to allow you to combine your document data within Redis, and reduce it down to some outputs of your pipeline.
-    The <span style="font-family: 'courier new', courier;">AggregationResult&lt;T&gt;</span> contains a <span style="font-family: 'courier new', courier;">RecordShell</span>, which is always null when not in the pipeline, that 
-    <span style="font-family: 'courier new', courier;">RecordShell</span> can be used to build expressions for our pipeline.
+    The <span class="code">AggregationResult&lt;T&gt;</span> contains a <span class="code">RecordShell</span>, which is always null when not in the pipeline, that 
+    <span class="code">RecordShell</span> can be used to build expressions for our pipeline.
 </p>
 
 <h2>Simple Aggregations: Find Bob's Sales</h2>
@@ -62,11 +66,11 @@
     We can do that by filtering the sales by those who's employee id is Bob's, and then running a summation on all those records.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var saleAggregations = provider.AggregationSet<Sale>(); // init aggregation set.
 
     var sumBobSales = saleAggregations.Filter(x=>x.RecordShell!.EmployeeId == bob.Id).Sum(x=>x.RecordShell!.Total);
     Console.WriteLine($"Bob's total sales: {sumBobSales}");
-</code>
 </pre>
+</p>

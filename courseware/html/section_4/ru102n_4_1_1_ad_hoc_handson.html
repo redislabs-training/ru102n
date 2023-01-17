@@ -1,14 +1,18 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On with Ad-Hoc Commands and Probabilistic Data Structures</h1>
 
 <p>
     In this Hands-On we'll be exploring how to use the Ad-Hoc API and Probabilistic Data Structures from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
 </p>
 
 <p>
     The Ad-Hoc Commands are relatively straight forward to work with, they center entirely around two methods in StackExchange.Redis: 
-    <span style="font-family: 'courier new', courier;">Execute</span> and  <span style="font-family: 'courier new', courier;">ExecuteAsync</span>. Naturally the primary differentiator between these two methods is whether or not they
+    <span class="code">Execute</span> and  <span class="code">ExecuteAsync</span>. Naturally the primary differentiator between these two methods is whether or not they
     execute asynchronously. These methods each take three parameters:
 </p>
 
@@ -21,7 +25,7 @@
 <h2>Command Name</h2>
 
 <p>
-    The Command Name is the name of the main command to be executed. If you look at the commands on the <a href="https://redis.io/commands/">Command Page of redis.io</a>
+    The Command Name is the name of the main command to be executed. If you look at the commands on the <a class="page-link" target="_blank" href="https://redis.io/commands/">Command Page of redis.io</a>
     the Command Name is the first word preceding a space in the bold block, for any command with two or more words, only the first is a name, the
     remainder are technically options which must be passed in as arguments.
 </p>
@@ -32,22 +36,22 @@
     The arguments parameter can be passed one of two ways. Either using the params macro:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("SET", "foo", "bar");
-</code>
 </pre>
+</p>
 
 <p>
     Or, you can pass them in as a collection:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var arguments = new object[] { "foo", "bar" };
     await db.ExecuteAsync("SET", arguments);
-</code>
 </pre>
+</p>
 
 <p>
     Both work, the first way requires less code of course, but if you use it, you cannot pass any command flags in, since the params macro must
@@ -58,7 +62,7 @@
 
 <p>
     Command Flags provide some useful operational features, particularly around server selection and performance tuning. For example, if you
-    are running a read-command, and do not want to hit your master shard, you can use the command flag  <span style="font-family: 'courier new', courier;">CommandFlags.DemandReplica</span>.
+    are running a read-command, and do not want to hit your master shard, you can use the command flag  <span class="code">CommandFlags.DemandReplica</span>.
     There are corresponding flags to demand a master shard, prefer a master shard, or prefer a replica shard.
 </p>
 <p>
@@ -101,48 +105,48 @@
      A simple aggregation will take care of this pretty after we've parsed out our words from a text document (this work is already done for you in the example).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var bloomList = words.Aggregate(new List&lt;object&gt; { "bf" }, (list, word) =>
     {
         list.Add(word);
         return list;
     });
-</code>
 </pre>
-
-<p>
-    With the words aggregated together into a much larger argument list, all that's left to do is use the <span style="font-family: 'courier new', courier;">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
 </p>
 
-<pre>
-<code>
+<p>
+    With the words aggregated together into a much larger argument list, all that's left to do is use the <span class="code">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
+</p>
+
+<p>
+<pre class="code">
     await db.ExecuteAsync("BF.RESERVE", "bf", 0.01, 20000);
-</code>
 </pre>
-
-<p>
-    Now we use the <span style="font-family: 'courier new', courier;">BF.MADD</span> command to add everything to the Bloom Filter in one shot.
 </p>
 
-<pre>
-<code>
+<p>
+    Now we use the <span class="code">BF.MADD</span> command to add everything to the Bloom Filter in one shot.
+</p>
+
+<p>
+<pre class="code">
     await db.ExecuteAsync("BF.MADD", bloomList, CommandFlags.FireAndForget);
-</code>
 </pre>
+</p>
 
 <h2>Reserve and Add to Top-K</h2>
 
 <p>
     The Top-K data structure lets us keep track of who the heavy hitters (most frequently seen items) are in enormous streams of data using the Heavy Keeper Data Structure. To Reserve a
-    heavy keeper, all we need to do run the <span style="font-family: 'courier new', courier;">TOPK.RESERVE</span> command:
+    heavy keeper, all we need to do run the <span class="code">TOPK.RESERVE</span> command:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.ExecuteAsync("TOPK.RESERVE", "topk", 10, 20, 10, .925);
-</code>
 </pre>
+</p>
 
 <p>
     And then we need to arrange all of our words so that they are not duplicated (this isn't absolutely necessary, but if you are using a cloud
@@ -150,8 +154,8 @@
     word list to do this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     // We need to organize the words into a list where each word is followed by the number of occurrences it has in Moby Dick
     var topKList = words.Aggregate(new Dictionary&lt;string, int&gt;(), (dict, word) =>
     {
@@ -168,90 +172,90 @@
         list.Add(kvp.Value);
         return list;
     });
-</code>
 </pre>
-
-<p>
-    Then we just need to call <span style="font-family: 'courier new', courier;">TOPK.INCRBY</span> passing in our list of word/count pairs:
 </p>
 
-<pre>
-<code>
+<p>
+    Then we just need to call <span class="code">TOPK.INCRBY</span> passing in our list of word/count pairs:
+</p>
+
+<p>
+<pre class="code">
     // Add everything to the Top-K
     await db.ExecuteAsync("TOPK.INCRBY", topKList, CommandFlags.FireAndForget);
-</code>
 </pre>
+</p>
 
 <h2>Querying our Bloom Filter</h2>
 
 <p>
-    Querying the Bloom filter is really simple, you just need to call <span style="font-family: 'courier new', courier;">BF.EXISTS</span>. This will return a <span style="font-family: 'courier new', courier;">RedisResult</span>,
+    Querying the Bloom filter is really simple, you just need to call <span class="code">BF.EXISTS</span>. This will return a <span class="code">RedisResult</span>,
     which is a highly versatile class that StackExchange.Redis uses to abstract the complexity of how the RESP protocol works. Fundamentally
     what it does is pulls in the result, and those results can be converted explicitly (by casting) to whatever the pertinent result type is.
-    For <span style="font-family: 'courier new', courier;">BF.EXISTS</span>, Redis will return an integer result. So let's try to work with this a bit. Let's check if the word "the" appears
+    For <span class="code">BF.EXISTS</span>, Redis will return an integer result. So let's try to work with this a bit. Let's check if the word "the" appears
     in Moby Dick (hint: it does).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var doesTheExist = await db.ExecuteAsync("BF.EXISTS", "bf", "the");
-</code>
 </pre>
+</p>
 
 <p>
-    There's two things you can do with a <span style="font-family: 'courier new', courier;">RedisResult</span>, you can cast/use it as its appropriate type: supported types are basically
+    There's two things you can do with a <span class="code">RedisResult</span>, you can cast/use it as its appropriate type: supported types are basically
     any value type, arrays, and as a dictionary of strings and RedisResults. If the type is supported by what was returned, and you try to cast it to
     that type, the cast will be successful, so let's try casting it to a couple of different types:   
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var doesTheExistAsInt = (int)doesTheExist;
     Console.WriteLine($"Typeof {nameof(doesTheExistAsInt)}: {doesTheExistAsInt.GetType()}");
 
     var doesTheExistAsDouble = (double)doesTheExist;
     Console.WriteLine($"Typeof {nameof(doesTheExistAsDouble)}: {doesTheExistAsDouble.GetType()}");
-</code>
 </pre>
+</p>
 
 <p>
-    Both of these are Valid casts for our <span style="font-family: 'courier new', courier;">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
-    array of <span style="font-family: 'courier new', courier;">RedisResults</span>), it will fail with an <span style="font-family: 'courier new', courier;">InvalidCastException</span>.
+    Both of these are Valid casts for our <span class="code">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
+    array of <span class="code">RedisResults</span>), it will fail with an <span class="code">InvalidCastException</span>.
 </p>
 <p>
      The determination as to whether or not a cast is valid is
-    based off what Redis actually returned as a result of the command. You can check the <span style="font-family: 'courier new', courier;">RedisResult</span> to see what the appropriate
-    type is if you are unsure use the <span style="font-family: 'courier new', courier;">Type</span> property, but the results will follow the format laid out in the 
-    <a href="https://redis.io/commands">Command Pages on redis.io</a> so you should have a pretty good idea ahead of time as to what you are looking for.
+    based off what Redis actually returned as a result of the command. You can check the <span class="code">RedisResult</span> to see what the appropriate
+    type is if you are unsure use the <span class="code">Type</span> property, but the results will follow the format laid out in the 
+    <a class="page-link" target="_blank" href="https://redis.io/commands">Command Pages on redis.io</a> so you should have a pretty good idea ahead of time as to what you are looking for.
 </p>
 
 <h2>Enumerate the Top-K</h2>
 
 <p>
-    To Enumerate our Top-K, we just need to call <span style="font-family: 'courier new', courier;">TOPK.LIST</span>. The trick here however, is that we need to cast it to something useable,
+    To Enumerate our Top-K, we just need to call <span class="code">TOPK.LIST</span>. The trick here however, is that we need to cast it to something useable,
     like an array, preferably an array of strings.
 </p>
 <p>
      To do that, we just need to perform an explicit cast, and then select each as a string.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var res = await db.ExecuteAsync("TOPK.LIST", "topk");
     var arr = ((RedisResult[])res!).Select(x=>x.ToString());
     Console.WriteLine($"Top 10: {string.Join(", ", arr)}");
-</code>
 </pre>
+</p>
 
 <p>
     Finally, if we wanted the counts as of our Top-K as well (which will come back as a dictionary of values), we can easily reduce it to a 
     dictionary, and convert that dictionary to an enumerable that we can use to print out a discernable list of values with their counts using
-    the <span style="font-family: 'courier new', courier;">ToDictionary</span> method.
+    the <span class="code">ToDictionary</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var withCounts = (await db.ExecuteAsync("TOPK.LIST", "topk", "WITHCOUNT")).ToDictionary().Select(x=>$"{x.Key}: {x.Value}");
     Console.WriteLine($"Top 10, with counts: {string.Join(", ", withCounts)}");
-</code>
 </pre>
+</p>

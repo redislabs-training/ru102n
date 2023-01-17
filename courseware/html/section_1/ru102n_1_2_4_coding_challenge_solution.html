@@ -1,12 +1,15 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
 <p>
     The following is what my code looked like after the previous exercise, yours might
     be slightly different, and that's ok! but fundamentally, you should have:
 </p>
 
 <ul>
-    <li>Connected to the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span></li>
-    <li>Grabbed an <span style="font-family: 'courier new', courier;">IDatabase</span> from the Multiplexer</li>
-    <li>Called <span style="font-family: 'courier new', courier;">Ping</span> on the <span style="font-family: 'courier new', courier;">IDatabase</span></li>
+    <li>Connected to the <span class="code">ConnectionMultiplexer</span></li>
+    <li>Grabbed an <span class="code">IDatabase</span> from the Multiplexer</li>
+    <li>Called <span class="code">Ping</span> on the <span class="code">IDatabase</span></li>
     <li>Printed the results from that ping.</li>
 </ul>
 
@@ -25,5 +28,5 @@
         var res = db.Ping();
         Console.WriteLine($"The ping took: {res.TotalMilliseconds} ms");
         //End Programming Challenge 
-    </code>
-</pre>
+    </pre>
+</p>

@@ -1,9 +1,13 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Redis Streams</h1>
 
 <p>
     Redis Streams are an append-only log like data structure that allows you to enqueue messages from producers to be consumed by consumers in
     your application. They are a powerful data structure with a rich feature set, and for a full explanation as to how and why to use Redis Streams,
-    you can checkout <a href="https://university.redis.com/courses/ru202/">RU202: Redis Streams.</a>
+    you can checkout <a class="page-link" target="_blank" href="https://university.redis.com/courses/ru202/">RU202: Redis Streams.</a>
 </p>
 
 <p>
@@ -23,6 +27,6 @@
     paradigms available within the stream reading operations. 
 </p>
 <p>
-    This means that the Stream Read operations, <span style="font-family: 'courier new', courier;">StreamRead</span> & <span style="font-family: 'courier new', courier;">StreamReadGroup</span>, will
-    not be able to use the <span style="font-family: 'courier new', courier;">XREAD</span> and <span style="font-family: 'courier new', courier;">XREADGROUP</span> block timer or the special <span style="font-family: 'courier new', courier;"><i>$</i></span> id to read only new messages. 
+    This means that the Stream Read operations, <span class="code">StreamRead</span> & <span class="code">StreamReadGroup</span>, will
+    not be able to use the <span class="code">XREAD</span> and <span class="code">XREADGROUP</span> block timer or the special <span class="code"><i>$</i></span> id to read only new messages. 
 </p>

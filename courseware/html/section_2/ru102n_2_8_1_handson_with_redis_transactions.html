@@ -1,9 +1,13 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands on With Redis Transactions</h1>
 
 <p>
     In this Hands-On, we'll be exploring how to use Redis Transactions from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_2/section2.8/section2.8.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_2/section2.8/section2.8.csproj</span> in your IDE.
 </p>
 
 <p>
@@ -29,12 +33,12 @@
     as all the commands will execute in isolation.
 </p>
 <p>
-    We can do all this by initializing an <span style="font-family: 'courier new', courier;">ITransaction</span> with <span style="font-family: 'courier new', courier;">db.CreateTransaction</span>.
-    We can then execute commands against that transaction, and close it out with <span style="font-family: 'courier new', courier;">Execute</span>.
+    We can do all this by initializing an <span class="code">ITransaction</span> with <span class="code">db.CreateTransaction</span>.
+    We can then execute commands against that transaction, and close it out with <span class="code">Execute</span>.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var transaction = db.CreateTransaction();
 
     transaction.HashSetAsync("person:1", new HashEntry[]
@@ -49,8 +53,8 @@
 
     var success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <h2>Add a Condition to a Transaction</h2>
 
@@ -74,16 +78,16 @@
     the interim, the key is being watched, so the transaction will simply fail to execute once dispatched.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 32));
     transaction.HashIncrementAsync("person:1", "age");
     transaction.SortedSetIncrementAsync("person:age", "person:1", 1);
 
     success = transaction.Execute();
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <h2>Failed Transaction conditions</h2>
 
@@ -93,21 +97,21 @@
 </p>
 <p>
     Additionally
-    if you set a condition in the transaction, and the condition proves false, it will fail to execute. In both cases, the <span style="font-family: 'courier new', courier;">transaction.Execute</span>
+    if you set a condition in the transaction, and the condition proves false, it will fail to execute. In both cases, the <span class="code">transaction.Execute</span>
     will respond with false to indicate that the transaction did not succeed. Let's try getting this to fail by setting the condition to something
     we know to be false, e.g. the age we just incremented to 33 is 31.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     transaction.AddCondition(Condition.HashEqual("person:1", "age", 31));
     transaction.HashIncrementAsync("person:1", "age");
     transaction.SortedSetIncrementAsync("person:age", "person:1", 1);
     success = transaction.Execute();
 
     Console.WriteLine($"Transaction Successful: {success}");
-</code>
 </pre>
+</p>
 
 <p>
     In this case, the transaction will simply fail, and return false when executed.

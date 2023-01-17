@@ -1,7 +1,11 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Connect to Redis Sentinel</h1>
 
 <p>
-    Connecting to <a href="https://redis.io/docs/management/sentinel/">Redis Sentinel</a>
+    Connecting to <a class="page-link" target="_blank" href="https://redis.io/docs/management/sentinel/">Redis Sentinel</a>
     is a bit different than connecting to other instances of Redis. 
 </p>
 <p>    
@@ -10,12 +14,12 @@
     to one of the 'sentinels' - the instances of Redis responsible for monitoring
     your master and replicas, detecting fail-overs, and promoting new masters.
 
-    Additionally, you must specify the <span style="font-family: 'courier new', courier;">ServiceName</span>, which corresponds
+    Additionally, you must specify the <span class="code">ServiceName</span>, which corresponds
     to the master name that you tell the sentinels to monitor when configuring them.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var options = new ConfigurationOptions
     {
         EndPoints = new EndPointCollection{"sentinel-1:26379"},
@@ -23,5 +27,5 @@
     };
 
     var muxer = ConnectionMultiplexer.Connect(options);
-</code>
 </pre>
+</p>

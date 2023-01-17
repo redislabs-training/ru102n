@@ -1,3 +1,7 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Modeling Objects with Redis OM</h1>
 
 <p>
@@ -5,8 +9,8 @@
     remainder of this course. It will look very similar to the model that we used in Unit 3, but with some important changes:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     public class Employee
     {
         public string? Id { get; set; }
@@ -30,11 +34,11 @@
         public GeoLoc Location { get; set; }
         public Address? ForwardingAddress { get; set; }
     }
-</code>
 </pre>
+</p>
 
 <p>
-    In the examples for the remainder of this course, this model will be found in <span style="font-family: 'courier new', courier;"><i>Model.cs</i></span>, and will need to be imported into <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span>
+    In the examples for the remainder of this course, this model will be found in <span class="code"><i>Model.cs</i></span>, and will need to be imported into <span class="code"><i>Program.cs</i></span>
     before being used. 
 </p>
 <p>
@@ -45,14 +49,14 @@
 <h2>The Document Attribute</h2>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">DocumentAttribute</span> is the primary attribute for a class, it's meant to decorate the class definition directly.
-    It defines a few things with regards to how Redis OM will store and index a document inserted into Redis. The <span style="font-family: 'courier new', courier;">DocumentAttribute</span>
+    The <span class="code">DocumentAttribute</span> is the primary attribute for a class, it's meant to decorate the class definition directly.
+    It defines a few things with regards to how Redis OM will store and index a document inserted into Redis. The <span class="code">DocumentAttribute</span>
     need only decorate a class that will be inserted into Redis, it does not need to decorate classes that will be embedded within the
     documents that we are inserting.
 </p>
 <p>
-    In our example, the only classes we'll be inserting are the <span style="font-family: 'courier new', courier;">Employee</span> and <span style="font-family: 'courier new', courier;">Sale</span> class, the
-    <span style="font-family: 'courier new', courier;">Address</span> will be embedded within it. With the <span style="font-family: 'courier new', courier;">DocumentAttribute</span> we define the parameters of the class. This includes the
+    In our example, the only classes we'll be inserting are the <span class="code">Employee</span> and <span class="code">Sale</span> class, the
+    <span class="code">Address</span> will be embedded within it. With the <span class="code">DocumentAttribute</span> we define the parameters of the class. This includes the
     following:
 </p>
 
@@ -83,29 +87,29 @@
 
 <p>
     The Index Name is the name of the index in Redis. An index is the construct that will allow us to query records by their values later
-    with LINQ. The Index Name has an easily computable name if not set (<span style="font-family: 'courier new', courier;">&lt;lowercaseclassname&gt;-idx</span>). While it's not critical at all that
+    with LINQ. The Index Name has an easily computable name if not set (<span class="code">&lt;lowercaseclassname&gt;-idx</span>). While it's not critical at all that
     this be set, you should set it if you want to give your index a specific name.
 </p>
 
 <h2>The Redis Id Field Attribute</h2>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">RedisIdFieldAttribute</span> marks the Id Field for the model. There should only be one of these per class, on the top level
+    The <span class="code">RedisIdFieldAttribute</span> marks the Id Field for the model. There should only be one of these per class, on the top level
     class being stored. This Id Field is attached to at storage time. If there is an ID present, then the Id that's in that field is respected
     and used during key generation, if it's empty, then Redis OM sets it based off the Id Generation Strategy, which can be changed in
-    the <span style="font-family: 'courier new', courier;">DocumentAttribute</span>, and by default will use a ULID. It's recommended that the Id Field be either a <span style="font-family: 'courier new', courier;">string</span>, 
-    <span style="font-family: 'courier new', courier;">Ulid</span>, or <span style="font-family: 'courier new', courier;">Guid</span>, unless you provide a generation strategy, or supply the ID itself when creating the classes for insertion.
+    the <span class="code">DocumentAttribute</span>, and by default will use a ULID. It's recommended that the Id Field be either a <span class="code">string</span>, 
+    <span class="code">Ulid</span>, or <span class="code">Guid</span>, unless you provide a generation strategy, or supply the ID itself when creating the classes for insertion.
 </p>
 
 <h2>The Indexed Attribute</h2>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">IndexedAttribute</span> is the workhorse attribute of Redis OM, it can be applied to most types, strings, enums, numerics,
-    <span style="font-family: 'courier new', courier;">GeoLoc</span>, and even other classes. The <span style="font-family: 'courier new', courier;">IndexedAttribute</span> tells Redis OM that you want to be able to query the field, or
+    The <span class="code">IndexedAttribute</span> is the workhorse attribute of Redis OM, it can be applied to most types, strings, enums, numerics,
+    <span class="code">GeoLoc</span>, and even other classes. The <span class="code">IndexedAttribute</span> tells Redis OM that you want to be able to query the field, or
     in the case of other classes - sub-fields of those classes.
 </p>
 <p>
-    The <span style="font-family: 'courier new', courier;">IndexedAttribute</span> allows you to mark fields as sortable,
+    The <span class="code">IndexedAttribute</span> allows you to mark fields as sortable,
     and for more complex documents allows you to specify either how far down the object tree the indexing will cascade, or the exact paths
     you want to search on.
 </p>
@@ -114,6 +118,6 @@
 <h2>The Searchable Attribute</h2>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">SearchableAttribute</span> enables full-text search on a string field stored in Redis. If an attribute is marked as searchable,
-    <span style="font-family: 'courier new', courier;"><i>==</i></span> operations in LINQ will be tantamount to asking for a match against the Full Text Search field rather than an exact match.
+    The <span class="code">SearchableAttribute</span> enables full-text search on a string field stored in Redis. If an attribute is marked as searchable,
+    <span class="code"><i>==</i></span> operations in LINQ will be tantamount to asking for a match against the Full Text Search field rather than an exact match.
 </p>

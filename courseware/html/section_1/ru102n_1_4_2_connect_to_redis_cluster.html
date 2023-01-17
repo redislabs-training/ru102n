@@ -1,3 +1,7 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Connecting to a Redis Cluster</h1>
 
 <p>
@@ -10,17 +14,17 @@
 </p>
 
 <p>
-    An example <span style="font-family: 'courier new', courier;">ConfigurationOptions</span> for a cluster instance might look something along the lines of this, notice
-    how the Endpoints collection takes multiple endpoints which the <span style="font-family: 'courier new', courier;">ConnectionMultiplexer</span> can use as backups if
+    An example <span class="code">ConfigurationOptions</span> for a cluster instance might look something along the lines of this, notice
+    how the Endpoints collection takes multiple endpoints which the <span class="code">ConnectionMultiplexer</span> can use as backups if
     one of the endpoints should fail to respond (possibly because it's failed over).
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var options = new ConfigurationOptions
     {
         // add and update parameters as needed
         EndPoints = new EndPointCollection{"redis-1:6379", "redis-2:6379", "redis-3:6379"}
     };
-</code>
 </pre>
+</p>

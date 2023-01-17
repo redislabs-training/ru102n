@@ -1,25 +1,29 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands On with Caching in ASP.NET Core</h1>
 
 <p>
     In this Hands-On, we'll be exploring how to use Caching in ASP.NET Core.
     You'll likely want to open up the csproj file and checkout the <i>starting-point</i>
     before proceeding, unless of course you'd prefer to build everything from scratch :)
-    the csproj file is located at  <span style="font-family: 'courier new', courier;">/src/section_3/section3.2/section3.2.csproj</span> 
+    the csproj file is located at  <span class="code">/src/section_3/section3.2/section3.2.csproj</span> 
     it's highly recommended that you use Visual Studio or Rider for this Hands-On.
 </p>
 <p>
     Much of the sinew for this is already built, even if you are starting from the start point, we have a
-    <span style="font-family: 'courier new', courier;">SalesContext</span> that contains our model, as well as the <span style="font-family: 'courier new', courier;">EntityFramework</span> bits to migrate the database correctly.
+    <span class="code">SalesContext</span> that contains our model, as well as the <span class="code">EntityFramework</span> bits to migrate the database correctly.
     All you need to do to migrate the database to where we need it for this example, is to from the
-    <span style="font-family: 'courier new', courier;">/src/section_3/section3.2</span> directory run the following commands:
+    <span class="code">/src/section_3/section3.2</span> directory run the following commands:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     dotnet tool install --global dotnet-ef
     dotnet ef database update
-</code>
 </pre>
+</p>
 
 <p>
     The first of these commands will install the dotnet-ef tool for the CLI, the second will create and migrate
@@ -30,20 +34,20 @@
 
 <p>
     After we've migrated the database, we'll need to make sure that we are adding Redis as a caching layer for
-    our app. To do this, you'll just need to open <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span>, and find the comment <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 Step 1</i></span>
+    our app. To do this, you'll just need to open <span class="code"><i>Program.cs</i></span>, and find the comment <span class="code"><i>// TODO Section 3.2 Step 1</i></span>
     below that you'll just have the builder add the StackExchange Redis Cache, passing in a function to configure
     StackExchange.Redis.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     builder.Services.AddStackExchangeRedisCache(x => x.ConfigurationOptions = new ConfigurationOptions
     {
         EndPoints = { "localhost:6379" },
         Password = ""
     });
-</code>
 </pre>
+</p>
 
 <p>
     Adjust the cache settings to your endpoint/password.
@@ -53,15 +57,15 @@
 
 <p>
     When the application restarts, we want to reset the items that we are going to cache, as part of this,
-    we'll need to open the <span style="font-family: 'courier new', courier;"><i>InitService.cs</i></span>, a hosted service that runs at startup to clean up and re-seed
+    we'll need to open the <span class="code"><i>InitService.cs</i></span>, a hosted service that runs at startup to clean up and re-seed
     the database, we'll need to add some logic to have it clean up the cache as well. We have a scope factory
-    already DI'd into this service, so we can pull out the <span style="font-family: 'courier new', courier;">IDistributedCache</span> fairly easily. Then,
+    already DI'd into this service, so we can pull out the <span class="code">IDistributedCache</span> fairly easily. Then,
     it's a matter of clearing out the relevant records for our app. Add The following code immediately below the
-    <span style="font-family: 'courier new', courier;">// TODO Section 3.2 Step 2</span> comment in <span style="font-family: 'courier new', courier;"><i>InitService.cs</i></span>:
+    <span class="code">// TODO Section 3.2 Step 2</span> comment in <span class="code"><i>InitService.cs</i></span>:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
 
     var cachePipe = new List<Task>
@@ -73,36 +77,36 @@
     cachePipe.AddRange(salesDb.Employees.Select(employee => cache.RemoveAsync($"employee:{employee.EmployeeId}:avg", cancellationToken)));
 
     await Task.WhenAll(cachePipe);
-</code>
 </pre>
+</p>
 
 <h2>Dependency Inject IDistributedCache</h2>
 
 <p>
     With the cache added to our DI container, we will need to inject it into our controller. Open up
-    <span style="font-family: 'courier new', courier;"><i>Controllers/EmployeeController.cs</i></span> in there, add the <span style="font-family: 'courier new', courier;">IDistributedCache</span> as a readonly field.
+    <span class="code"><i>Controllers/EmployeeController.cs</i></span> in there, add the <span class="code">IDistributedCache</span> as a readonly field.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     private readonly IDistributedCache _cache;
-</code>
 </pre>
+</p>
 
 <p>
-    Then, modify the <span style="font-family: 'courier new', courier;">EmployeeController</span> constructor to accepted an <span style="font-family: 'courier new', courier;">IDistributedCache</span>, when you're
+    Then, modify the <span class="code">EmployeeController</span> constructor to accepted an <span class="code">IDistributedCache</span>, when you're
     done, it should look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     public EmployeeController(SalesContext salesDb, IDistributedCache cache)
     {
         _cache = cache;
         _salesDb = salesDb;
     }
-</code>
 </pre>
+</p>
 
 <h2>Employee Aggregations</h2>
 
@@ -126,7 +130,7 @@
     However, keep in mind that if we need access to
     these types of values repeatedly, we're going to be performing a lot of extra work, and of course, if we're 
     doing anything that involves a UI, even this relatively small latency is pretty rough. That's where Redis comes
-    in, we're going to be storing these records in our Redis Cache using the <span style="font-family: 'courier new', courier;">IDistributedCache</span> abstraction.
+    in, we're going to be storing these records in our Redis Cache using the <span class="code">IDistributedCache</span> abstraction.
 </p>
 
 <h3>Caching Top Salesperson</h3>
@@ -134,16 +138,16 @@
 <p>
     Our first task here will be caching the top sales-person. This is a relatively straight forward LINQ query to
     go to SQLite, compute the top sales-person and their sales, and to get the information for our application,
-    you can see it already in the <span style="font-family: 'courier new', courier;">GetTopSalesperson</span> method.
+    you can see it already in the <span class="code">GetTopSalesperson</span> method.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topSalesperson = await _salesDb.Employees.Select(x=>new {Employee = x, sumSales = x.Sales
         .Sum(x=>x.Total)}).OrderByDescending(x=>x.sumSales)
         .FirstAsync();
-</code>
 </pre>
+</p>
 
 <p>
     Now, realistically, this will take time to compute - somewhere on the order of 50-150 ms for our smallish sample
@@ -152,21 +156,21 @@
 </p>
 <p>
     So, we'll cache it using our
-    <span style="font-family: 'courier new', courier;">IDistributedCache</span>.
+    <span class="code">IDistributedCache</span>.
 </p>
 
 <p>
-    Find the place marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 3</i></span>, and add the following code to it.
+    Find the place marked <span class="code"><i>// TODO Section 3.2 step 3</i></span>, and add the following code to it.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cacheOptions = new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5) };
     var topSalesInsertTask = _cache.SetStringAsync("top:sales", topSalesperson.sumSales.ToString(), cacheOptions);
     var topNameInsertTask = _cache.SetStringAsync("top:name", topSalesperson.Employee.Name, cacheOptions);
     await Task.WhenAll(topSalesInsertTask, topNameInsertTask);
-</code>
 </pre>
+</p>
 
 <p>
     This will add the total sales of the top seller and the their name to the cache, and it will invalidate that
@@ -174,12 +178,12 @@
     exist.
 </p>
 <p>
-    If they do, then we can short circuit the rest of this process, and return those results. Find the mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 4</i></span>
+    If they do, then we can short circuit the rest of this process, and return those results. Find the mark <span class="code"><i>// TODO Section 3.2 step 4</i></span>
     and add the following above it.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var topSalesTask = _cache.GetStringAsync("top:sales");
         var topNameTask = _cache.GetStringAsync("top:name");
 
@@ -195,8 +199,8 @@
                 { "time", stopwatch.ElapsedMilliseconds }
             };
         }
-</code>
 </pre>
+</p>
 
 <h2>Cache Individual Average Sale</h2>
 
@@ -205,20 +209,20 @@
     and endpoint that takes an Id, which we'll use to run a simple average on their sales like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x=>x.EmployeeId == id).Select(x=>x.Sales.Average(y=>y.Total)).FirstAsync();
-</code>
 </pre>
+</p>
 
 <p>
 
-    Again, we'll want to cache this by setting a key in Redis, find the spot marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 5</i></span>
+    Again, we'll want to cache this by setting a key in Redis, find the spot marked <span class="code"><i>// TODO Section 3.2 step 5</i></span>
     and add:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var key = $"employee:{id}:avg";
     var cacheResult = await _cache.GetStringAsync(key);
 
@@ -231,20 +235,20 @@
             { "elapsed", stopwatch.ElapsedMilliseconds }
         };
     }
-</code>
 </pre>
+</p>
 
 <p>
-    To create the key that we'll use. Then, underneath the mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 6</i></span>, add the following
+    To create the key that we'll use. Then, underneath the mark <span class="code"><i>// TODO Section 3.2 step 6</i></span>, add the following
     to set that key to the computed average. In this case, we'll set it to have a 30 minute sliding expiration,
     what that means is that the key will persist unless it is not touched for 30 minutes.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await _cache.SetStringAsync(key, avg.ToString(CultureInfo.InvariantCulture), options: new DistributedCacheEntryOptions{SlidingExpiration = TimeSpan.FromMinutes(30)});
-</code>
 </pre>
+</p>
 
 <h2>Cache Total Sales</h2>
 
@@ -252,11 +256,11 @@
     Finally, we'll want to cache the total sales that the whole organization created, this is probably the simplest
     of the calculations we're performing as there's no logic beyond summing up all the sales. However this is still
     a linear complexity process, so it'd still behoove us to cache it. So, let's start out by adding our cache 
-    checking logic, find the section marked <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 7</i></span> and add the following:    
+    checking logic, find the section marked <span class="code"><i>// TODO Section 3.2 step 7</i></span> and add the following:    
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var cacheResult = await _cache.GetStringAsync("totalSales");
     if (cacheResult != null)
     {
@@ -267,29 +271,29 @@
             { "elapsed", stopwatch.ElapsedMilliseconds }
         };
     }
-</code>
 </pre>
+</p>
 
 <p>
     This might be a metric that you run every day, so let's have it expire at midnight tomorrow morning, below
-    mark <span style="font-family: 'courier new', courier;"><i>// TODO Section 3.2 step 8</i></span>, add the following:
+    mark <span class="code"><i>// TODO Section 3.2 step 8</i></span>, add the following:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await _cache.SetStringAsync("totalSales", totalSales.ToString(CultureInfo.InvariantCulture), new DistributedCacheEntryOptions(){AbsoluteExpiration = DateTime.Today.AddDays(1)});
-</code>
 </pre>
+</p>
 
 <h2>Run the App</h2>
 
 <p>
-    All That's left to do now is run the app. To do this, all you need to do that is run <span style="font-family: 'courier new', courier;">dotnet run</span> 
-    from the console in the same project as the <span style="font-family: 'courier new', courier;"><i>.csproj</i></span> file. 
+    All That's left to do now is run the app. To do this, all you need to do that is run <span class="code">dotnet run</span> 
+    from the console in the same project as the <span class="code"><i>.csproj</i></span> file. 
 </p>
 <p>
     Then you can navigate to 
-    <a href="http://localhost:5053/swagger/index.html">http://localhost:5053/swagger/index.html</a> in your browser
+    <a class="page-link" target="_blank" href="http://localhost:5053/swagger/index.html">http://localhost:5053/swagger/index.html</a> in your browser
     and you can play with the API.
 </p>
 <p>

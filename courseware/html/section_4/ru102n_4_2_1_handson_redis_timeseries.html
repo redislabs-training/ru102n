@@ -1,26 +1,30 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On with Redis Time Series</h1>
 
 <p>
     In this Hands-On we'll be exploring how to use the Time Series data structure in Redis using NRedisTimeSeries.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_4/section4.2/section4.2.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_4/section4.2/section4.2.csproj</span> in your IDE.
 </p>
 
 <h2>Connecting to Redis</h2>
 
 <p>
     NRedisTimeSeries is an extension of StackExchange.Redis, consequentially connecting to Redis is exactly the same with NRedisTimeSeries 
-    as with StackExchange.Redis. The key difference, is that at the top of your <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span> file, you need to add a few imports to
+    as with StackExchange.Redis. The key difference, is that at the top of your <span class="code"><i>Program.cs</i></span> file, you need to add a few imports to
     use the NRedisTimeSeries bits:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     using NRedisTimeSeries;
     using NRedisTimeSeries.Commands.Enums;
     using NRedisTimeSeries.DataTypes;
-</code>
 </pre>
+</p>
 
 <p>
     NRedisTimeSeries is built as static extensions to IDatabase, so after you've gotten a handle to your IDatabase, you'll be able to execute
@@ -31,15 +35,15 @@
 
 <p>
     A Time Series is a time-tagged sequence of numbers that flow into the same key. For our example here, we'll be working with a very simple
-    Time Series <span style="font-family: 'courier new', courier;"><i>sensor</i></span>. We'll have a producer task to add random data to the Time Series continually, we'll then have compaction 
+    Time Series <span class="code"><i>sensor</i></span>. We'll have a producer task to add random data to the Time Series continually, we'll then have compaction 
     rules that will find the average, min, and max that occurred in the Time Series during a given interval. First we'll create the Time Series.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await db.TimeSeriesCreateAsync("sensor", 60000, new List<TimeSeriesLabel>{new TimeSeriesLabel("id", "sensor-1")});
-</code>
 </pre>
+</p>
 
 <p>
     With the Time Series created, we'll then identify the three aggregations we want to run. We'll create a Time Series for each of our
@@ -47,19 +51,19 @@
 </p>
 <p>
     After the Time Series are created, we'll then bind a rule to our primary Time Series, to run the compaction into the relevant Time Series. To do that
-    we just need to call <span style="font-family: 'courier new', courier;">TimeSeriesCreate</span> and <span style="font-family: 'courier new', courier;">TimeSeriesCreateRule</span> for each rule we want to create:
+    we just need to call <span class="code">TimeSeriesCreate</span> and <span class="code">TimeSeriesCreateRule</span> for each rule we want to create:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var aggregations = new TsAggregation[]{TsAggregation.Avg, TsAggregation.Min, TsAggregation.Max};
     foreach(var agg in aggregations)
     {
         await db.TimeSeriesCreateAsync($"sensor:{agg}", 60000, new List&lt;TimeSeriesLabel&gt;{new ("type", agg.ToString()), new("aggregation-for", "sensor-1")});
         await(db.TimeSeriesCreateRuleAsync("sensor", new TimeSeriesRule($"sensor:{agg}", 5000, agg)));
     }
-</code>
 </pre>
+</p>
 
 <h2>Produce Time Series Data</h2>
 
@@ -69,12 +73,12 @@
     second. 
 </p>
 <p>
-    To do this, all you need to do is use the <span style="font-family: 'courier new', courier;">TimeSeriesAdd</span> method, you can either pass in a <span style="font-family: 'courier new', courier;">Timestamp</span>
-    or you can just pass in the string "<span style="font-family: 'courier new', courier;"><i>*</i></span>" - which will create the millisecond timestamp based on when the data reached Redis.
+    To do this, all you need to do is use the <span class="code">TimeSeriesAdd</span> method, you can either pass in a <span class="code">Timestamp</span>
+    or you can just pass in the string "<span class="code"><i>*</i></span>" - which will create the millisecond timestamp based on when the data reached Redis.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var producerTask = Task.Run(async()=>{
         while(true)
         {
@@ -82,18 +86,18 @@
             await Task.Delay(1000);
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Primary Consumer</h2>
 
 <p>
     Because we have the primary Time Series, and the extra compaction Time Series running in parallel, we will have two consumer tasks. The first
-    of these will use <span style="font-family: 'courier new', courier;">TimeSeriesGet</span> every second, to retrieve the most recent data from the Time Series.
+    of these will use <span class="code">TimeSeriesGet</span> every second, to retrieve the most recent data from the Time Series.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var consumerTask = Task.Run(async()=>{
         while(true)
         {
@@ -102,19 +106,19 @@
             Console.WriteLine($"{result.Time.Value}: {result.Val}");
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Aggregation Consumer</h2>
 
 <p>
     The second Consumer will retrieve the aggregated data across our compacted Time Series. This will run every 5 seconds to coincide with
-    our compaction rules. In this case we'll use <span style="font-family: 'courier new', courier;">TimeSeriesMGet</span>. In this case however we'll be using the label that we created earlier
+    our compaction rules. In this case we'll use <span class="code">TimeSeriesMGet</span>. In this case however we'll be using the label that we created earlier
     to query multiple Time Series with the relevant label.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var aggregationConsumerTask = Task.Run(async()=>
     {
         while(true)
@@ -128,13 +132,13 @@
 
         }
     });
-</code>
 </pre>
+</p>
 
 <h2>Add a ReadKey and Run</h2>
 
 <p>
-    The last thing we need to do for this sample is to add a <span style="font-family: 'courier new', courier;">Console.ReadKey()</span> at the bottom of our file. This will
-    cause the tasks we spun up earlier to run endlessly until you press any key to exit. To run the example, just use <span style="font-family: 'courier new', courier;">dotnet run</span>
+    The last thing we need to do for this sample is to add a <span class="code">Console.ReadKey()</span> at the bottom of our file. This will
+    cause the tasks we spun up earlier to run endlessly until you press any key to exit. To run the example, just use <span class="code">dotnet run</span>
     from your terminal.
 </p>

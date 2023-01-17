@@ -1,3 +1,7 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>Hands-On Modeling with Redis OM .NET</h1>
 
 <p>
@@ -5,47 +9,47 @@
 </p>
 <p>
     You can either create your own project to follow along with and connect a RedisConnectionProvider,
-    or you can open <span style="font-family: 'courier new', courier;">/src/section_5/section5.1/section5.1.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_5/section5.1/section5.1.csproj</span> in your IDE.
 </p>
 
 <h2>Declare Indexes with DocumentAttribute</h2>
 
 <p>
     After we've written out the model for our class, we need to start decorating it. The first attribute we will decorate our classes
-    with is the <span style="font-family: 'courier new', courier;">DocumentAttribute</span> where we can set the class level attributes for the index such as the prefix, index name,
+    with is the <span class="code">DocumentAttribute</span> where we can set the class level attributes for the index such as the prefix, index name,
     and storage type. 
 </p>
 <p>
-    Find the class definition for <span style="font-family: 'courier new', courier;">Employee</span> in <span style="font-family: 'courier new', courier;">Model.cs</span> and add the following above it:
+    Find the class definition for <span class="code">Employee</span> in <span class="code">Model.cs</span> and add the following above it:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json, Prefixes = new []{"Employee"}, IndexName = "employees")]
     public class Employee
-</code>
 </pre>
+</p>
 
 <p>
     This will tell Redis OM that we want the Employee stored as a JSON document, that we want the prefix that the key-generator uses to
-    be "<span style="font-family: 'courier new', courier;">Employee</span>", and that the index name that Redis OM will use to index the employees will be simply "<span style="font-family: 'courier new', courier;">employees</spam>".
+    be "<span class="code">Employee</span>", and that the index name that Redis OM will use to index the employees will be simply "<span class="code">employees</spam>".
 </p>
 <p>
-    Now with the <span style="font-family: 'courier new', courier;">Sale</span>
-    class, we will make our <span style="font-family: 'courier new', courier;">DocumentAttribute</span> declaration a bit simpler:
+    Now with the <span class="code">Sale</span>
+    class, we will make our <span class="code">DocumentAttribute</span> declaration a bit simpler:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json)]
     public class Sale
-</code>
 </pre>
+</p>
 
 <p>
     This will make the Sale class be stored as JSON, however Redis OM will revert to it's defaults for Index Naming and Prefix generation.
-    In this case, the Index Name will simply be "<span style="font-family: 'courier new', courier;">sale-idx</span>", and the prefix used will be the fully qualified class name of the model class.
-    In this case that will be <span style="font-family: 'courier new', courier;"><i>section5._1.Sale:</i></span> but this will vary based on your namespace.
+    In this case, the Index Name will simply be "<span class="code">sale-idx</span>", and the prefix used will be the fully qualified class name of the model class.
+    In this case that will be <span class="code"><i>section5._1.Sale:</i></span> but this will vary based on your namespace.
 </p>
 
 <h2>Add Id Fields</h2>
@@ -56,27 +60,27 @@
 </p>
 <p>
     To Add an Id field to a class just mark the field with the 
-    <span style="font-family: 'courier new', courier;">RedisIdFieldAttribute</span>. In our case, both our Employee and Sale classes have a field called <span style="font-family: 'courier new', courier;">Id</span> so each should
+    <span class="code">RedisIdFieldAttribute</span>. In our case, both our Employee and Sale classes have a field called <span class="code">Id</span> so each should
     look like this after they are marked:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [RedisIdField]
     public string? Id { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Scalars</h2>
 
 <p>
-    Indexing Scalar Values with Redis OM is really simple, all you need to do is mark the value as <span style="font-family: 'courier new', courier;">Indexed</span> or <span style="font-family: 'courier new', courier;">Searchable</span>
+    Indexing Scalar Values with Redis OM is really simple, all you need to do is mark the value as <span class="code">Indexed</span> or <span class="code">Searchable</span>
     depending on what kind of matching you want to do on the value. Basically, as long as you aren't looking to do full-text search on
-    a field, marking it as <span style="font-family: 'courier new', courier;">Indexed</span> will be sufficient. 
+    a field, marking it as <span class="code">Indexed</span> will be sufficient. 
 </p>
 <p>
     In our model, the only field we'll mark as full-text searchable will
-    be the <span style="font-family: 'courier new', courier;">StreetAddress</span> field, we'll mark all the other fields as indexed. Keep in mind, that you do not actually have to
+    be the <span class="code">StreetAddress</span> field, we'll mark all the other fields as indexed. Keep in mind, that you do not actually have to
     mark fields as Indexed to store them, it's just that if you do not mark them as indexed, you will not be able to run searches on
     those fields.
 </p>
@@ -84,8 +88,8 @@
     After we've run through and indexed all our scalar fields, the model will look like this:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Document(StorageType = StorageType.Json, Prefixes = new []{"Employee"}, IndexName = "employees")]
     public class Employee
     {
@@ -123,13 +127,13 @@
         public GeoLoc Location { get; set; }
         public Address? ForwardingAddress { get; set; }
     }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Embedded Documents</h2>
 
 <p>
-    An embedded document is a complex object, e.g. our <span style="font-family: 'courier new', courier;">Employee</span> and <span style="font-family: 'courier new', courier;">Sale</span> classes have a <span style="font-family: 'courier new', courier;">Address</span> property.
+    An embedded document is a complex object, e.g. our <span class="code">Employee</span> and <span class="code">Sale</span> classes have a <span class="code">Address</span> property.
     There are two methods for indexing embedded documents with Redis OM.
 </p>
 
@@ -141,112 +145,112 @@
 <h3>Index Precisely by JSON Path</h3>
 
 <p>
-    You can index fields precisely by their JSON path by using the <span style="font-family: 'courier new', courier;">JsonPath</span> property of the <span style="font-family: 'courier new', courier;">IndexedAttribute</span>.
-    So for example, if we only wanted to index the <span style="font-family: 'courier new', courier;">Location</span> and <span style="font-family: 'courier new', courier;">PostalCode</span> of our employees, we can do so by
+    You can index fields precisely by their JSON path by using the <span class="code">JsonPath</span> property of the <span class="code">IndexedAttribute</span>.
+    So for example, if we only wanted to index the <span class="code">Location</span> and <span class="code">PostalCode</span> of our employees, we can do so by
     marking their Address field like so:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(JsonPath = "$.Location")]
     [Indexed(JsonPath = "$.PostalCode")]
     public Address? Address { get; set; }
-</code>
 </pre>
+</p>
 
 <h3>Indexing By Cascading</h3>
 
 <p>
     If you want to have your embedded documents more or less indexed as if they would be if they were the top-level Item, you can set a
-    <span style="font-family: 'courier new', courier;">CascadeDepth</span> on each field. This will traverse the object graph to the specified depth, and index everything accordingly.
+    <span class="code">CascadeDepth</span> on each field. This will traverse the object graph to the specified depth, and index everything accordingly.
 </p>
 <p>
-    For instance, if we wanted to index the <span style="font-family: 'courier new', courier;">ForwardingAddress</span> in our <span style="font-family: 'courier new', courier;">Address</span> field, we can by setting a cascade
+    For instance, if we wanted to index the <span class="code">ForwardingAddress</span> in our <span class="code">Address</span> field, we can by setting a cascade
     depth on that field to 1. This will prevent it from cascading deeper than just the scalar attributes beneath the address field:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed(CascadeDepth = 1)]
     public Address? ForwardingAddress { get; set; }
-</code>
 </pre>
-
-<p>
-    Of course, we aren't actually indexing the <span style="font-family: 'courier new', courier;">Address</span> directly, so we will need to set a cascade depth on the <span style="font-family: 'courier new', courier;">Sale</span>
-    class's <span style="font-family: 'courier new', courier;">Address</span> field to 2 for it to fully propogate down.
 </p>
 
-<pre>
-<code>
+<p>
+    Of course, we aren't actually indexing the <span class="code">Address</span> directly, so we will need to set a cascade depth on the <span class="code">Sale</span>
+    class's <span class="code">Address</span> field to 2 for it to fully propogate down.
+</p>
+
+<p>
+<pre class="code">
     [Indexed(CascadeDepth = 2)]
     public Address? Address { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Indexing Collections</h2>
 
 <p>
     Arrays of scalar strings can be indexed with Redis OM (support for other types of scalars is coming shortly), to index them - e.g. the
-    <span style="font-family: 'courier new', courier;">Sales</span> field in <span style="font-family: 'courier new', courier;">Employee</span> - you just need to mark the field as Indexed. This will work on both arrays and lists.
+    <span class="code">Sales</span> field in <span class="code">Employee</span> - you just need to mark the field as Indexed. This will work on both arrays and lists.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     [Indexed]
     public List<string>? Sales { get; set; }
-</code>
 </pre>
+</p>
 
 <h2>Connect to Redis</h2>
 
 <p>
     Now that we've modeled our data and how we want it indexed, the last thing we need to do is create our indexes in Redis. To do that,
-    we'll first need to initialize a <span style="font-family: 'courier new', courier;">RedisConnectionProvider</span>. 
+    we'll first need to initialize a <span class="code">RedisConnectionProvider</span>. 
 </p>
 <p>
-    The <span style="font-family: 'courier new', courier;">RedisConnectionProvider</span> provides connected
-    objects to Redis, specifically a <span style="font-family: 'courier new', courier;">RedisConnection</span> (somewhat lower-level command interface), as well as the <span style="font-family: 'courier new', courier;">RedisCollection&lt;T&gt;</span>  
-    and <span style="font-family: 'courier new', courier;">AggregationSet&lt;T&gt;</span> which we will explore more in depth in later sections. 
+    The <span class="code">RedisConnectionProvider</span> provides connected
+    objects to Redis, specifically a <span class="code">RedisConnection</span> (somewhat lower-level command interface), as well as the <span class="code">RedisCollection&lt;T&gt;</span>  
+    and <span class="code">AggregationSet&lt;T&gt;</span> which we will explore more in depth in later sections. 
 </p>
 <p>
     To connect to Redis, you simply need a
-    <a href="https://github.com/redis-developer/Redis-Developer-URI-Spec/blob/main/spec.md">Redis URI</a>, which looks something along the lines
-    of <span style="font-family: 'courier new', courier;"><i>redis://localhost:6379</i></span> if you are connecting locally, or <span style="font-family: 'courier new', courier;"><i>redis://:password@host:port</i></span> if you are connecting to a cloud
-    instance. You'll see the following in <span style="font-family: 'courier new', courier;"><i>Program.cs</i></span>, which is a provider connected to a local instance of Redis:
+    <a class="page-link" target="_blank" href="https://github.com/redis-developer/Redis-Developer-URI-Spec/blob/main/spec.md">Redis URI</a>, which looks something along the lines
+    of <span class="code"><i>redis://localhost:6379</i></span> if you are connecting locally, or <span class="code"><i>redis://:password@host:port</i></span> if you are connecting to a cloud
+    instance. You'll see the following in <span class="code"><i>Program.cs</i></span>, which is a provider connected to a local instance of Redis:
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     var provider = new RedisConnectionProvider("redis://localhost:6379");
-</code>
 </pre>
+</p>
 
 <h2>Create our Index</h2>
 
 <p>
-    Creating an index is very simple, you just need to call the <span style="font-family: 'courier new', courier;">IRedisConnection</span> <span style="font-family: 'courier new', courier;">CreateIndex</span> method, passing
+    Creating an index is very simple, you just need to call the <span class="code">IRedisConnection</span> <span class="code">CreateIndex</span> method, passing
     in the type that you want to create the index for.
 </p>
 
-<pre>
-<code>
+<p>
+<pre class="code">
     await provider.Connection.CreateIndexAsync(typeof(Sale));
     await provider.Connection.CreateIndexAsync(typeof(Employee));
-</code>
 </pre>
+</p>
 
 <h2>A note on the Index Deletions</h2>
 
 <p>
-    In our example we also have a call to <span style="font-family: 'courier new', courier;">DropIndexAndAssociatedRecords</span>, which is a method that deletes the index and deletes
+    In our example we also have a call to <span class="code">DropIndexAndAssociatedRecords</span>, which is a method that deletes the index and deletes
     all the Records associated with it. This is purely for the sake of consistency between our demos and should only be done if necessary
-    in your own code. In general, if you want to drop an index, you can do so with <span style="font-family: 'courier new', courier;">DropIndex</span>, which will not delete the indexed records.
+    in your own code. In general, if you want to drop an index, you can do so with <span class="code">DropIndex</span>, which will not delete the indexed records.
 </p>
 
 <h2>Run our example</h2>
 
 <p>
-    All you need to do to run this example now that you've updated the connection logic for your use case is call <span style="font-family: 'courier new', courier;">dotnet run</span>
+    All you need to do to run this example now that you've updated the connection logic for your use case is call <span class="code">dotnet run</span>
     in your terminal. This will create the indexes in Redis for you.
 </p>

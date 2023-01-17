@@ -1,7 +1,11 @@
+<style type= text/css>
+    .code {font-family: 'courier new', courier; font-weight: bold; font-size: 18px !important;}
+</style>
+
 <h1>ISubscriber</h1>
 
 <p>
-    The <span style="font-family: 'courier new', courier;">ISubscriber</span> is the interface responsible for maintaining subscriptions
+    The <span class="code">ISubscriber</span> is the interface responsible for maintaining subscriptions
     to Redis in the pub/sub interface. Unlike the other interfaces we've looked
     at thus far, the subscriber does not leverage the interactive connection.
 </p>
@@ -19,6 +23,6 @@
 </p>
 
 <p>
-    You you can get an instance of an <span style="font-family: 'courier new', courier;">ISubscriber</span> by calling the
-    <span style="font-family: 'courier new', courier;">IConnectionMultiplexer.GetSubscriber()</span> method.
+    You you can get an instance of an <span class="code">ISubscriber</span> by calling the
+    <span class="code">IConnectionMultiplexer.GetSubscriber()</span> method.
 </p>
