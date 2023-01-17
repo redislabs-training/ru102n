@@ -160,8 +160,6 @@ If you are using Docker or you have installed Redis Stack locally:
 
 Then click the "Add Redis Database" button to connect to your Redis instance.  You should see "RU102N" in the list of Redis databases, and can click on it to open the Browser view.
 
-![Configuring RedisInsight Desktop](readme_images/insight_setup.gif)
-
 If you see an error while trying to connect to Redis, ensure that your Redis instance is running (make sure the Docker container is up or your locally installed Redis Stack is running) and try again.
 
 Your next step is to load the sample data...
