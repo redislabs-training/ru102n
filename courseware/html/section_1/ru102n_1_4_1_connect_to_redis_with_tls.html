@@ -44,10 +44,10 @@
 </p>
 
 <p>
-<pre class="code">
+    <pre class="code">
     configurationOptions.CertificateSelection += delegate 
     {
-        var cert = new X509Certificate2(PATH_TO_CERT_FILE, "");
+        var cert = new X509Certificate2(PATH_TO_CERT_FILE, &quot;&quot;);
         return cert;
     };
 </pre>
@@ -59,7 +59,7 @@
 
 <p>
 <pre class="code">
-    configurationOptions.CertificateValidation += (sender, certificate, chain, errors) =>
+    configurationOptions.CertificateValidation += (sender, certificate, chain, errors) =&gt;
     {
         var isValid = true;
         // insert check certificate logic here
@@ -105,10 +105,10 @@
     Example:
  </p>
 
- <pre>
- <code>
-    options.SslClientAuthenticationOptions = new Func<string, SslClientAuthenticationOptions>(
-    hostName => new SslClientAuthenticationOptions
+ <p>
+     <pre class="code"> 
+    options.SslClientAuthenticationOptions = new Func&lt;string, SslClientAuthenticationOptions&gt;(
+    hostName =&gt; new SslClientAuthenticationOptions
     {
         EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13
     });

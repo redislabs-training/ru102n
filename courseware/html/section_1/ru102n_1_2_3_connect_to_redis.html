@@ -33,9 +33,9 @@
     is treated as a parameter value. So the connection string:
 </p>
 
-<code>
+<pre style="font-family: 'courier new', courier;" class="code sh literal-block">
     redis-1:6379,password=foobar
-</code>
+</pre>
 
 <p>
     Equates to StackExchange.Redis connecting to the host "redis-1", port 6379, and using the password "foobar" as it's password.
@@ -48,13 +48,13 @@
     The equivalent options to our connection string above would be:
 </p>
 
-<code>
+<pre style="font-family: 'courier new', courier;" class="code cs literal-block">
     var options = new ConfigurationOptions
     {
         EndPoints = new EndPointCollection{"redis-1:6379"},
         Password = "foobar"
     };
-</code>
+</pre>
 
 <h2>Ping Redis</h2>
 
