@@ -122,7 +122,7 @@ docker-compose down
 
 ### Option 3: Install Redis Stack
 
-Redis Stack can be installed using popular package manager for both macOS and Linux. [Follow the instructions on redis.io](https://redis.io/docs/stack/get-started/install/) to install and start Redis Stack.
+Redis Stack can be installed using popular package managers for both macOS and Linux. [Follow the instructions on redis.io](https://redis.io/docs/stack/get-started/install/) to install and start Redis Stack.
 
 ## RedisInsight Setup 
 
