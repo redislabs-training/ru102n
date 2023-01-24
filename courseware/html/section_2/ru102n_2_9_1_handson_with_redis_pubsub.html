@@ -48,7 +48,7 @@
 <h2>Simple Concurrent</h2>
 
 <p>
-    To listen to messages concurrently, you need only pass a delegate into the <span class="code">Subscribe</span> method. That delegate take two arguments,
+    To listen to messages concurrently, you need only pass a delegate into the <span class="code">Subscribe</span> method. That delegate takes two arguments,
     the channel the message was sent to, and the message itself.
 </p>
 
@@ -122,8 +122,8 @@
 <h3>Unsubscribe from Sequential Channel</h3>
 
 <p>
-    We can unsubscribe from the sequential channel we created earlier by calling Unsubscribe on the channel object. We'll add another
-    <span class="code"><code>Console.ReadKey</code></span> after this so that we can observe tha the channel stops producing messages.
+    We can unsubscribe from the sequential channel we created earlier by calling <span class="code">Unsubscribe</span> on the channel object. We'll add another
+    <span class="code"><code>Console.ReadKey</code></span> after this so that we can observe that the channel stops producing messages.
 </p>
 
 <p>
@@ -153,7 +153,7 @@
 <h3>Unsubscribe from Everything</h3>
 
 <p>
-    If you need to Unsubscribe from everything, just call <span class="code">UnsubscribeAll</pre>, and it will cut off all subscriptions to Redis.
+    If you need to unsubscribe from everything, just call <span class="code">UnsubscribeAll</span>, and it will cut off all subscriptions to Redis.
 </p>
 
 <p>

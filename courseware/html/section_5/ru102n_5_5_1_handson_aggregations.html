@@ -50,7 +50,7 @@
 <p>
     The Aggregations pipeline is all built around the <span class="code">AggregationSet&lt;T&gt;</span>, which is of course a generic that you can apply
     whatever your model is to. However, you'll notice that the return type of all the queries from the <span class="code">AggregationSet&lt;T&gt;</span>
-    is <span class="code">AggregationResult&lt;T&gt;</span> rather than whatever the type <code>&lt;T&gt;</code> was that you passed into it. 
+    is <span class="code">AggregationResult&lt;T&gt;</span> rather than whatever the type <span class="code">&lt;T&gt;</span> was that you passed into it. 
 </p>
 <p>This is critical
     to understanding how to construct queries within the <span class="code">AggregationSet</span>. Aggregations are not meant to pull out model data from your 
@@ -63,7 +63,7 @@
 
 <p>
     We've added some code to seed a bunch of sales data into our database. Using aggregations, we can find the sum of a given person's sales.
-    We can do that by filtering the sales by those who's employee id is Bob's, and then running a summation on all those records.
+    We can do that by filtering the sales by those whose employee id is Bob's, and then running a summation on all those records.
 </p>
 
 <p>
