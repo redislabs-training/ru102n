@@ -13,9 +13,9 @@
 <h2>Initialize Graph Object</h2>
 
 <p>
-    The command interface of NRedisGraph revolves around the <<span class="code">RedisGraph</span> class, which exposes the relevant RedisGraph commands.
+    The command interface of NRedisGraph revolves around the <span class="code">RedisGraph</span> class, which exposes the relevant RedisGraph commands.
     Consequentially the first thing we need to do, after we've initialized our multiplexer and gotten our <span class="code">IDatabase</span> is to
-    Initialize a new <span class="code">RedisGraph</span> object, we'll also delete our pets graph (which is what we'll be working with in this example):
+    Initialize a new <span class="code">RedisGraph</span> object, we'll also delete our <span class="code"><i>pets</i></span> graph (which is what we'll be working with in this example):
 </p>
 
 <p>
@@ -113,7 +113,7 @@
 <h2>Querying</h2>
 
 <p>
-    Now that we've created some nodes and relationships in our Graph we can go about querying, to run a Match,
+    Now that we've created some nodes and relationships in our Graph we can go about querying them. To run a Match,
     we'll use the <span class="code">Query</span> command, as we've been using in the previous examples, however in this case we'll be
     specifying a return type. So let's start off by finding all the owners of Honey. To perform the query, perform a match between
     a human and pet, where there is an own relationship between the human and the pet and the pet's name is honey, from this we'll return
@@ -139,7 +139,7 @@
 </p>
 
 <p>
-    We can then query all of the walkers of honey by pulling back all of the human nodes that have an <span class="code"><i>WALKS</i></span> relationship with honey.
+    We can then query all of the walkers of Honey by pulling back all of the human nodes that have an <span class="code"><i>WALKS</i></span> relationship with Honey.
     If we do a little bit more introspection on the result set, we can pull out individual nodes from each record, and print out only the
     information that we need, e.g. a name to print out the people who walk Honey.
 </p>

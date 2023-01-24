@@ -7,7 +7,7 @@
 <p>
     In this Hands-On we'll be exploring how to use the Ad-Hoc API and Probabilistic Data Structures from StackExchange.Redis.
     You can either create your own project to follow along with and connect a multiplexer,
-    or you can open <span class="code">/src/section_2/section2.1/section2.1.csproj</span> in your IDE.
+    or you can open <span class="code">/src/section_4/section4.1/section4.1.csproj</span> in your IDE.
 </p>
 
 <p>
@@ -81,7 +81,7 @@
 
 <p>
     Probabilistic Data Structures are a specialized family of data structures that allow you to approximate answers to very specific questions about a dataset.
-    They're also great for an example as to how to use the ad-hoc api for something really useful. We're going to look at how to use two of 
+    They're also great for an example as to how to use the ad-hoc API for something really useful. We're going to look at how to use two of 
     these probabilistic data structures.
 </p>
 
@@ -116,7 +116,7 @@
 </p>
 
 <p>
-    With the words aggregated together into a much larger argument list, all that's left to do is use the <span class="code">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set):
+    With the words aggregated together into a much larger argument list, all that's left to do is use the <span class="code">BF.RESERVE</span> command to reserve space for the Bloom Filter in Redis, specifying a key name, acceptable error rate and estimate of the size of our data set:
 </p>
 
 <p>
@@ -219,7 +219,7 @@
 </p>
 
 <p>
-    Both of these are Valid casts for our <span class="code">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
+    Both of these are valid casts for our <span class="code">RedisResult</span>, so it works just fine, but if we tried to cast it to something inappropriate (e.g. an
     array of <span class="code">RedisResults</span>), it will fail with an <span class="code">InvalidCastException</span>.
 </p>
 <p>

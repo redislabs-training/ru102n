@@ -21,7 +21,7 @@
     under <span class="code">/src/section_1/section1.5/section1.5.csproj</span>. We'll be using the <span class="code">ping</span>
     command in this case, but this will extrapolate to any command, and any sequence of
     commands where the intermediate results are not needed. If you'd like to start from the beginning you can checkout the <span class="code">starting-point</span> branch
-    and open the csproj file finding the <span class="code"></span>// TODO for Coding Challenge Start here on starting-point branch</span> in <span class="code">Program.cs</span>.
+    and open the csproj file finding the <span class="code">// TODO for Coding Challenge Start here on starting-point branch</span> in <span class="code">Program.cs</span>.
 </p>
 
 <h2>Preamble</h2>
@@ -84,7 +84,7 @@
     // If we run out async tasks to StackExchange.Redis concurrently, the library
     // will automatically manage pipelining of these commands to Redis, making
     // them significantly more performant as we remove most of the round trips to Redis.
-    var pingTasks = new List<Task<TimeSpan>>();
+    var pingTasks = new List&lt;Task&lt;TimeSpan&gt;&gt;();
 
     // restart stopwatch
     stopwatch.Restart();
