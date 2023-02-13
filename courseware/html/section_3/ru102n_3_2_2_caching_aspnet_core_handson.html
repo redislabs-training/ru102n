@@ -66,9 +66,9 @@
 
 <p>
 <pre class="code">
-    var cache = scope.ServiceProvider.GetRequiredService<IDistributedCache>();
+    var cache = scope.ServiceProvider.GetRequiredService&lt;IDistributedCache&gt;();
 
-    var cachePipe = new List<Task>
+    var cachePipe = new List&lt;Task&gt;
     {
         cache.RemoveAsync("top:sales", cancellationToken),
         cache.RemoveAsync("top:name", cancellationToken),
@@ -192,7 +192,7 @@
         if (!string.IsNullOrEmpty(topSalesTask.Result) && !string.IsNullOrEmpty(topNameTask.Result))
         {
             stopwatch.Stop();
-            return new Dictionary<string, object>()
+            return new Dictionary&lt;string, object&gt;()
             {
                 { "sum_sales", topSalesTask.Result },
                 { "employee_name", topNameTask.Result },
@@ -211,7 +211,7 @@
 
 <p>
 <pre class="code">
-    var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x=>x.EmployeeId == id).Select(x=>x.Sales.Average(y=>y.Total)).FirstAsync();
+    var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x => x.EmployeeId == id).Select(x => x.Sales.Average(y => y.Total)).FirstAsync();
 </pre>
 </p>
 
@@ -229,7 +229,7 @@
     if (cacheResult != null)
     {
         stopwatch.Stop();
-        return new Dictionary<string, double>
+        return new Dictionary&lt;string, double&gt;
         {
             { "average", double.Parse(cacheResult) },
             { "elapsed", stopwatch.ElapsedMilliseconds }
@@ -265,7 +265,7 @@
     if (cacheResult != null)
     {
         stopwatch.Stop();
-        return new Dictionary<string, long>()
+        return new Dictionary&lt;string, long&gt;()
         {
             { "Total Sales", long.Parse(cacheResult) },
             { "elapsed", stopwatch.ElapsedMilliseconds }
