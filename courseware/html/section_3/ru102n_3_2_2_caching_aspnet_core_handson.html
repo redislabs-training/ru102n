@@ -41,7 +41,7 @@
 
 <p>
 <pre class="code">
-    builder.Services.AddStackExchangeRedisCache(x => x.ConfigurationOptions = new ConfigurationOptions
+    builder.Services.AddStackExchangeRedisCache(x =&gt; x.ConfigurationOptions = new ConfigurationOptions
     {
         EndPoints = { "localhost:6379" },
         Password = ""
@@ -74,7 +74,7 @@
         cache.RemoveAsync("top:name", cancellationToken),
         cache.RemoveAsync("totalSales", cancellationToken)
     };
-    cachePipe.AddRange(salesDb.Employees.Select(employee => cache.RemoveAsync($"employee:{employee.EmployeeId}:avg", cancellationToken)));
+    cachePipe.AddRange(salesDb.Employees.Select(employee =&gt; cache.RemoveAsync($"employee:{employee.EmployeeId}:avg", cancellationToken)));
 
     await Task.WhenAll(cachePipe);
 </pre>
@@ -143,8 +143,8 @@
 
 <p>
 <pre class="code">
-    var topSalesperson = await _salesDb.Employees.Select(x=>new {Employee = x, sumSales = x.Sales
-        .Sum(x=>x.Total)}).OrderByDescending(x=>x.sumSales)
+    var topSalesperson = await _salesDb.Employees.Select(x =&gt; new {Employee = x, sumSales = x.Sales
+        .Sum(x =&gt; x.Total)}).OrderByDescending(x =&gt; x.sumSales)
         .FirstAsync();
 </pre>
 </p>
@@ -211,7 +211,7 @@
 
 <p>
 <pre class="code">
-    var avg = await _salesDb.Employees.Include(x => x.Sales).Where(x => x.EmployeeId == id).Select(x => x.Sales.Average(y => y.Total)).FirstAsync();
+    var avg = await _salesDb.Employees.Include(x =&gt; x.Sales).Where(x =&gt; x.EmployeeId == id).Select(x =&gt; x.Sales.Average(y =&gt; y.Total)).FirstAsync();
 </pre>
 </p>
 
