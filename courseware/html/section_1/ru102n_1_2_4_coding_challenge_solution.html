@@ -21,7 +21,7 @@
         
         var muxer = ConnectionMultiplexer.Connect(new ConfigurationOptions
         {
-            EndPoints = new EndPointCollection{"localhost:6379"}
+            EndPoints = {"localhost:6379"}
         });
         
         var db = muxer.GetDatabase();

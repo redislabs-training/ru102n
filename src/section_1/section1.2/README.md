@@ -35,7 +35,7 @@ The connection string will be pretty simple if you're running locally, but so we
 ```cs
 var options = new ConfigurationOptions
 {
-    EndPoints = new EndPointCollection{"localhost:6379"}
+    EndPoints = {"localhost:6379"}
 };
 
 var muxer = ConnectionMultiplexer.Connect(options);

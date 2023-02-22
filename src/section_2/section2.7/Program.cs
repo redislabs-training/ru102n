@@ -18,4 +18,14 @@ var key2 = db.ScriptEvaluate(script, new {id_key=(RedisKey)"autoIncrement", valu
 
 Console.WriteLine($"Key 1: {key1}");
 Console.WriteLine($"Key 2: {key2}");
+
+var nonPreparedScript = @"
+    local id = redis.call('incr', KEYS[1])
+    local key = 'key:' .. id
+    redis.call('set', key, ARGV[1])
+    return key
+";
+
+var key3 = db.ScriptEvaluate(nonPreparedScript, new RedisKey[] { "autoIncrement" }, new RedisValue[] { "Yet another string value" });
+Console.WriteLine($"Key 3: {key3}");
 //end coding challenge
