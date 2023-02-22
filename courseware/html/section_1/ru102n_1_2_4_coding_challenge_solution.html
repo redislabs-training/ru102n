@@ -13,20 +13,20 @@
     <li>Printed the results from that ping.</li>
 </ul>
 
-<pre>
-    <code class="language-cs line-numbers">
+<p>
+    <pre class="code">
         // Start Programming Challenge
         using StackExchange.Redis;
         Console.WriteLine("Hello Redis!");
-        
+
         var muxer = ConnectionMultiplexer.Connect(new ConfigurationOptions
         {
-            EndPoints = new EndPointCollection{"localhost:6379"}
+            EndPoints = {"localhost:6379"}
         });
-        
+
         var db = muxer.GetDatabase();
         var res = db.Ping();
         Console.WriteLine($"The ping took: {res.TotalMilliseconds} ms");
         //End Programming Challenge 
-    </code>
-</pre>
+    </pre>
+</p>

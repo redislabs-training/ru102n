@@ -57,3 +57,29 @@
 <p>
     If you'd like to learn more about sharding and hashtags check out <a class="page-link" target="_blank" href="https://university.redis.com/courses/ru301/">RU301: Running Redis at Scale</a>.
 </p>
+
+<h2>Non-Prepared Script</h2>
+
+<p>
+    With a non-prepared scripts the process is more compliant with the original Lua Scripting API, instead of using <span class="code"><b>@</b></span>
+    to mark your keys and values, you use <span class="code">KEYS</span> and <span class="code">ARGV</span> to deploy your keys
+    and arguments respectively. Then you pass in an array of type <span class="code">RedisKey</span> for the <span class="code">KEYS</span> and
+    an array of type <span class="code">RedisValue</span> for <span class="code">ARGV</span>. Add the following code:
+</p>
+
+<pre class="code">
+    var nonPreparedScript = @"
+        local id = redis.call('incr', KEYS[1])
+        local key = 'key:' .. id
+        redis.call('set', key, ARGV[1])
+        return key
+    ";
+
+    var key3 = db.ScriptEvaluate(nonPreparedScript, new RedisKey[] { "autoIncrement" }, new RedisValue[] { "Yet another string value" });
+    Console.WriteLine($"Key 3: {key3}");
+</pre>
+
+<p>
+    The logic here is equivalent to the previous example in that the script does the same thing, the key difference is that you do not have to map
+    an anonymous type for your parameters.
+</p>

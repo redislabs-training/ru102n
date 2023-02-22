@@ -22,7 +22,7 @@
 <h2>Prepared Scripts</h2>
 
 <p>
-    Prepared scripts are the preferred way to interact with scripting in StackExchange.Redis. Prepared scripts tend to be more readable than
+    Prepared scripts are a convenient way to interact with scripting in StackExchange.Redis. Prepared scripts tend to be more readable than
     their unprepared compatriots, because they allow for argument substitution rather than leaning heavily on the <span class="code"><i>ARGV</i></span> and <span class="code"><i>KEYS</i></span> 
     arrays to pass in arguments and keys to the script. 
 </p>
@@ -31,4 +31,13 @@
     tracks which scripts have been registered with which servers, and handles automatic retries of scripts after a server's script cache has 
     been cleared. In other words, the prepared script API removes a lot of the complexity from using Lua scripts in Redis. In this section 
     we'll briefly go over how to Prepare, run, and use the results from a script.
+</p>
+
+<h2>Non-Prepared Scripts</h2>
+
+<p>
+    Regular non-prepared Lua scripts can also be run with StackExchange.Redis, this API is much simpler. You only need to pass in a script formatted
+    as you would any other Lua script you'd use with Redis, then you simply pass in an array of <span class="code">RedisKey</span> values and
+    <span class="code">RedisValue</span> values which comprise the <span class="code">KEYS</span> and <span class="code">ARGV</span> arrays within
+    the script respectively. In this section we will also look briefly at using this API.
 </p>
