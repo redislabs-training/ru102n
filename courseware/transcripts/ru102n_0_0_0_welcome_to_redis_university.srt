@@ -1,0 +1,228 @@
+0
+00:00:00,000 --> 00:00:01,383
+[CHILDREN PLAYING]
+
+1
+00:00:01,383 --> 00:00:02,766
+[MUSIC PLAYING]
+
+2
+00:00:02,766 --> 00:00:03,690
+[BELL RINGING]
+
+3
+00:00:03,690 --> 00:00:04,350
+Hello.
+
+4
+00:00:04,350 --> 00:00:06,570
+And welcome to Redis University.
+
+5
+00:00:06,570 --> 00:00:08,970
+We're so happy you've signed up for this class.
+
+6
+00:00:08,970 --> 00:00:11,370
+We hope you gain as many insights and techniques
+
+7
+00:00:11,370 --> 00:00:13,650
+as you need to get the most out of Redis.
+
+8
+00:00:13,650 --> 00:00:16,170
+But before we dive into the course content, let's
+
+9
+00:00:16,170 --> 00:00:18,270
+deal with some logistics first.
+
+10
+00:00:18,270 --> 00:00:21,700
+Each course is broken down into a series of chapters.
+
+11
+00:00:21,700 --> 00:00:24,660
+Each chapter is made up of between 30 and 45 minutes
+
+12
+00:00:24,660 --> 00:00:26,550
+of videos to review.
+
+13
+00:00:26,550 --> 00:00:28,680
+The videos are 5 to 7 minutes in length,
+
+14
+00:00:28,680 --> 00:00:30,660
+with quizzes at the end of each to help
+
+15
+00:00:30,660 --> 00:00:32,610
+you check your understanding.
+
+16
+00:00:32,610 --> 00:00:34,080
+At the end of each chapter, there
+
+17
+00:00:34,080 --> 00:00:36,960
+may be labs and homework questions for you to complete.
+
+18
+00:00:36,960 --> 00:00:40,073
+The labs aren't graded, but the homework questions are.
+
+19
+00:00:40,073 --> 00:00:41,490
+Depending on the course and you're
+
+20
+00:00:41,490 --> 00:00:43,110
+familiarity with the material, you
+
+21
+00:00:43,110 --> 00:00:45,570
+should expect to spend anywhere from 1 to 2 hours
+
+22
+00:00:45,570 --> 00:00:48,630
+on each week's videos, labs, and homework questions.
+
+23
+00:00:48,630 --> 00:00:51,540
+Now keep in mind that you're not alone in taking this course.
+
+24
+00:00:51,540 --> 00:00:53,880
+Along with the other students enrolled in the course,
+
+25
+00:00:53,880 --> 00:00:55,710
+our teachers and other engineers are
+
+26
+00:00:55,710 --> 00:00:57,150
+available to help if you get stuck
+
+27
+00:00:57,150 --> 00:00:58,980
+or need more clarification.
+
+28
+00:00:58,980 --> 00:01:00,660
+Just click on the discussion tab,
+
+29
+00:01:00,660 --> 00:01:02,730
+head over to our Discord server, will be
+
+30
+00:01:02,730 --> 00:01:05,410
+there to answer your questions.
+
+31
+00:01:05,410 --> 00:01:07,750
+Most of our courses have a public GitHub repo
+
+32
+00:01:07,750 --> 00:01:09,760
+containing all of the example code
+
+33
+00:01:09,760 --> 00:01:12,070
+on how to set up a lab environment at home.
+
+34
+00:01:12,070 --> 00:01:14,200
+It's here that we'll also provide instructions
+
+35
+00:01:14,200 --> 00:01:16,390
+for setting up your own Redis server,
+
+36
+00:01:16,390 --> 00:01:18,610
+whether that's by launching a Docker instance
+
+37
+00:01:18,610 --> 00:01:22,220
+or compiling their Redis code base and running it locally.
+
+38
+00:01:22,220 --> 00:01:25,660
+Now all the homework questions count towards your final grade.
+
+39
+00:01:25,660 --> 00:01:27,470
+And during the last week of the course,
+
+40
+00:01:27,470 --> 00:01:29,590
+you'll be given a final exam.
+
+41
+00:01:29,590 --> 00:01:32,890
+50% of your final grade will come from each chapter's
+
+42
+00:01:32,890 --> 00:01:33,940
+homework questions.
+
+43
+00:01:33,940 --> 00:01:36,370
+And the remaining 50% will come from the score
+
+44
+00:01:36,370 --> 00:01:38,270
+on your final exam.
+
+45
+00:01:38,270 --> 00:01:40,450
+You'll need to score a 65% or better
+
+46
+00:01:40,450 --> 00:01:43,210
+to get a certification of completion.
+
+47
+00:01:43,210 --> 00:01:46,360
+Of course, let's not let grades get in the way of learning.
+
+48
+00:01:46,360 --> 00:01:49,630
+Most of all, we want to ensure that you have a fun
+
+49
+00:01:49,630 --> 00:01:51,710
+and engaging learning experience.
+
+50
+00:01:51,710 --> 00:01:54,430
+So jump into the discussion, say Hi,
+
+51
+00:01:54,430 --> 00:01:57,260
+and provide us with any feedback you might have.
+
+52
+00:01:57,260 --> 00:01:59,240
+Thanks again for joining this course.
+
+53
+00:01:59,240 --> 00:02:02,140
+We're excited to have you here, and we wish you all the best
+
+54
+00:02:02,140 --> 00:02:03,610
+in your Redis learning journey.
+
+55
+00:02:03,610 --> 00:02:06,660
+[MUSIC PLAYING]
+
+56
+00:02:06,660 --> 00:02:09,000
+
+
