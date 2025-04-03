@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Welcome! This is the course repository for the Redis University Course RU102N: Redis for .NET Developers.
+Welcome! This is the course repository for the [Redis University](https://university.redis.io) course [RU102N: Redis for .NET Developers](https://university.redis.io/learningpath/bpxrq9oqh1syrv).
 
 To take this course you'll need the following.
 
