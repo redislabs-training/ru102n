@@ -1,4 +1,4 @@
-# RU102N: Redis for .NET Developers
+# Redis University: Redis for .NET developers
 
 ## Introduction
 
